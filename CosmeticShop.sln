@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmeticShop.WebAPI", "Presentation\CosmeticShop.WebAPI\CosmeticShop.WebAPI.csproj", "{3815A8A5-C279-40AA-85F0-65683525EB8C}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "cosmeticshop.client", "Presentation\cosmeticshop.client\cosmeticshop.client.esproj", "{4CEACF8A-622B-4340-B421-CF9A860FCA8A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{00283613-8BE3-4F0E-A629-93AE4393D0D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{87CEF6D5-FE7E-47C2-9F43-33E1AB1B4B37}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{68C8BDA8-CBF7-4A25-A2D7-FD30EC79399E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{D2A9BD57-E34F-4C2F-AB35-F74FA6D41D0C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persitence", "Persitence", "{2EB3E67D-DC0B-4DFB-A843-BE87BC097119}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{0FA1B4B9-35FA-4323-AA85-B0AC77036CA0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalServises", "ExternalServises", "{6C3EBEE4-6434-421C-B7A0-A7A6A787D272}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmeticShop.DB.EF", "Infrastructure\Persistence\CosmeticShop.DB.EF\CosmeticShop.DB.EF.csproj", "{2E7AB5CA-F2E0-4044-AD1B-9E7B9A98B20C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmeticShop.Domain", "Domain\CosmeticShop.Domain\CosmeticShop.Domain.csproj", "{B66A60FA-E69E-4429-AFB9-067B9761C68A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityPasswordHasher", "Infrastructure\ExternalServices\IdentityPasswordHasher\IdentityPasswordHasher.csproj", "{E7B3C96C-2D6A-4894-8D0C-0E5748DFD619}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JwtTokenGenerator", "Infrastructure\ExternalServices\JwtTokenService\JwtTokenGenerator.csproj", "{584591EC-A514-4F1C-BC12-204DB95A434D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3815A8A5-C279-40AA-85F0-65683525EB8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3815A8A5-C279-40AA-85F0-65683525EB8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3815A8A5-C279-40AA-85F0-65683525EB8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3815A8A5-C279-40AA-85F0-65683525EB8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CEACF8A-622B-4340-B421-CF9A860FCA8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CEACF8A-622B-4340-B421-CF9A860FCA8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CEACF8A-622B-4340-B421-CF9A860FCA8A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4CEACF8A-622B-4340-B421-CF9A860FCA8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CEACF8A-622B-4340-B421-CF9A860FCA8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CEACF8A-622B-4340-B421-CF9A860FCA8A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2E7AB5CA-F2E0-4044-AD1B-9E7B9A98B20C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E7AB5CA-F2E0-4044-AD1B-9E7B9A98B20C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E7AB5CA-F2E0-4044-AD1B-9E7B9A98B20C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E7AB5CA-F2E0-4044-AD1B-9E7B9A98B20C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B66A60FA-E69E-4429-AFB9-067B9761C68A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B66A60FA-E69E-4429-AFB9-067B9761C68A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B66A60FA-E69E-4429-AFB9-067B9761C68A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B66A60FA-E69E-4429-AFB9-067B9761C68A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7B3C96C-2D6A-4894-8D0C-0E5748DFD619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7B3C96C-2D6A-4894-8D0C-0E5748DFD619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7B3C96C-2D6A-4894-8D0C-0E5748DFD619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7B3C96C-2D6A-4894-8D0C-0E5748DFD619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{584591EC-A514-4F1C-BC12-204DB95A434D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{584591EC-A514-4F1C-BC12-204DB95A434D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{584591EC-A514-4F1C-BC12-204DB95A434D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{584591EC-A514-4F1C-BC12-204DB95A434D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3815A8A5-C279-40AA-85F0-65683525EB8C} = {D2A9BD57-E34F-4C2F-AB35-F74FA6D41D0C}
+		{4CEACF8A-622B-4340-B421-CF9A860FCA8A} = {D2A9BD57-E34F-4C2F-AB35-F74FA6D41D0C}
+		{2EB3E67D-DC0B-4DFB-A843-BE87BC097119} = {68C8BDA8-CBF7-4A25-A2D7-FD30EC79399E}
+		{0FA1B4B9-35FA-4323-AA85-B0AC77036CA0} = {68C8BDA8-CBF7-4A25-A2D7-FD30EC79399E}
+		{6C3EBEE4-6434-421C-B7A0-A7A6A787D272} = {68C8BDA8-CBF7-4A25-A2D7-FD30EC79399E}
+		{2E7AB5CA-F2E0-4044-AD1B-9E7B9A98B20C} = {2EB3E67D-DC0B-4DFB-A843-BE87BC097119}
+		{B66A60FA-E69E-4429-AFB9-067B9761C68A} = {00283613-8BE3-4F0E-A629-93AE4393D0D3}
+		{E7B3C96C-2D6A-4894-8D0C-0E5748DFD619} = {6C3EBEE4-6434-421C-B7A0-A7A6A787D272}
+		{584591EC-A514-4F1C-BC12-204DB95A434D} = {6C3EBEE4-6434-421C-B7A0-A7A6A787D272}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CF980729-06CA-45F2-929F-3ADB00358EA1}
+	EndGlobalSection
+EndGlobal

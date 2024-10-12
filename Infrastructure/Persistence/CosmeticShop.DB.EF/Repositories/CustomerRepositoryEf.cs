@@ -17,5 +17,13 @@ namespace CosmeticShop.DB.EF.Repositories
 
             return Entities.SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
         }
+
+        public override Task<Customer> GetById(Guid id, CancellationToken cancellationToken)
+        {
+            return Entities
+                .Include(c => c.Favorites)
+                    .ThenInclude(f => f.Product)
+                .FirstAsync(c => c.Id == id, cancellationToken);
+        }
     }
 }

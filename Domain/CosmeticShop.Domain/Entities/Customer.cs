@@ -113,47 +113,5 @@ namespace CosmeticShop.Domain.Entities
             Reviews = new List<Review>();
         }
 
-        /// <summary>
-        /// Adds a product to the favorites list.
-        /// </summary>
-        /// <param name="productId">The unique identifier of the product.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if the list of favorite products is null or if the product is already in the favorites list.
-        /// </exception>
-        public Task AddFavorite(Guid productId)
-        {
-            if(Favorites == null) throw new InvalidOperationException(message: "List of favorite products is null");
-
-            if (Favorites.Any(f => f.ProductId == productId))
-            {
-                throw new InvalidOperationException("The product is already in favorites");
-            }
-
-            Favorites.Add(new Favorite(Id, productId));
-
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Removes a product from the favorites list.
-        /// </summary>
-        /// <param name="productId">The unique identifier of the product.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if the list of favorite products is null.
-        /// </exception>
-        public Task RemoveFavorite(Guid productId)
-        {
-            if (Favorites == null) throw new InvalidOperationException(message: "List of favorite products is null");
-
-            var favorite = Favorites.SingleOrDefault(f => f.ProductId == productId);
-            if (favorite is not null)
-            {
-                Favorites.Remove(favorite);
-            }
-
-            return Task.CompletedTask;
-        }
     }
 }

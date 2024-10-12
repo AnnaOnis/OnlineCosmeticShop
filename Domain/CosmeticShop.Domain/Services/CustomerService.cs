@@ -1,13 +1,16 @@
 ﻿using CosmeticShop.Domain.Entities;
 using CosmeticShop.Domain.Exceptions.Customer;
+using CosmeticShop.Domain.Exceptions.Product;
 using CosmeticShop.Domain.Exceptions.Users;
 using CosmeticShop.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -137,7 +140,6 @@ namespace CosmeticShop.Domain.Services
         /// <param name="newShippingAddress">New shipping address</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="newFirstName"/>, <paramref name="newlastName"/>, <paramref name="newEmail"/>, 
         /// <paramref name="newPhoneNumber"/> or <paramref name="newShippingAddress"/> is <c>null</c>.</exception>
-        /// <exception cref="CustomerNotFoundException">Thrown when customer is not found.</exception>
         public async Task<Customer> UpdateCustomerProfile(Guid customerId, 
                                                 string newEmail, 
                                                 string newFirstName, 
@@ -152,11 +154,8 @@ namespace CosmeticShop.Domain.Services
             ArgumentNullException.ThrowIfNull(newPhoneNumber, nameof(newPhoneNumber));
             ArgumentNullException.ThrowIfNull(newShippingAddress, nameof(newPhoneNumber));
 
-            var customer = await _unitOfWork.CustomerRepository.GetById(customerId, cancellationToken);
-            if (customer == null)
-                throw new CustomerNotFoundException("Customer not found.");
-
-            
+            var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
+           
             customer.FirstName = newFirstName;
             customer.LastName = newlastName;
             customer.Email = newEmail;
@@ -174,15 +173,12 @@ namespace CosmeticShop.Domain.Services
         /// </summary>
         /// <param name="customerId">Customer's ID</param>
         /// <param name="newPassword">New password</param>
-        /// <exception cref="CustomerNotFoundException">Thrown when customer is not found.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="newPassword"/> is null</exception>
         public async Task ResetPassword(Guid customerId, string newPassword, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(newPassword, nameof(newPassword));
 
-            var customer = await _unitOfWork.CustomerRepository.GetById(customerId, cancellationToken);
-            if (customer == null)
-                throw new CustomerNotFoundException("Customer not found.");
+            var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
 
             customer.PasswordHash = _hasher.HashPassword(customer, newPassword);
 
@@ -194,15 +190,91 @@ namespace CosmeticShop.Domain.Services
         /// Deletes a customer by their ID.
         /// </summary>
         /// <param name="customerId">Customer's ID</param>
-        /// <exception cref="CustomerNotFoundException">Thrown when customer not found.</exception>
         public async Task DeleteCustomer(Guid customerId, CancellationToken cancellationToken)
+        {
+            var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
+
+            await _unitOfWork.CustomerRepository.Delete(customer.Id, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves a read-only list of products that are marked as favorites by a specified customer.
+        /// </summary>
+        /// <param name="customerId">The unique identifier of the customer whose favorite products are being retrieved.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a read-only list of favorite products.
+        /// </returns>
+        public async Task<IReadOnlyList<Product>> GetAllFavorites(Guid customerId, CancellationToken cancellationToken)
+        {
+            var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
+
+            var products = customer.Favorites.Select(f => f.Product).ToList();
+
+            return products;
+        }
+
+        /// <summary>
+        /// Adds a product to the favorites list.
+        /// </summary>
+        /// <param name="productId">The unique identifier of the product.</param>
+        /// <param name="customerId">The unique identifier of the customer.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ProductAlreadyInFavoritesException">Thrown if the product is already in the favorites list.</exception> 
+        public async Task AddFavorite(Guid customerId, Guid productId, CancellationToken cancellationToken)
+        {
+            var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
+
+            if (customer.Favorites.Any(f => f.ProductId == productId))
+            {
+                throw new ProductAlreadyInFavoritesException("Product is already in favorites");
+            }
+
+            var favorite = new Favorite (customerId, productId);
+            customer.Favorites.Add(favorite);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+
+        /// <summary>
+        /// Removes a product from the favorites list.
+        /// </summary>
+        /// <param name="productId">The unique identifier of the product.</param>
+        /// <param name="customerId">The unique identifier of the customer.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="CustomerNotFoundException">Thrown when customer not found.</exception>
+        public async Task RemoveFavorite(Guid customerId, Guid productId, CancellationToken cancellationToken)
+        {
+            Customer customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
+
+            var favorite = customer.Favorites.SingleOrDefault(f => f.ProductId == productId);
+            if (favorite is not null)
+            {
+                customer.Favorites.Remove(favorite);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a customer by their unique identifier. 
+        /// Throws an exception if the customer is not found.
+        /// </summary>
+        /// <param name="customerId">The unique identifier of the customer.</param>
+        /// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. 
+        /// The task result contains the customer object if found.
+        /// </returns>
+        /// <exception cref="CustomerNotFoundException">
+        /// Thrown if the customer with the specified <paramref name="customerId"/> cannot be found.
+        /// </exception>
+        private async Task<Customer> GetCustomerOrThrowAsync(Guid customerId, CancellationToken cancellationToken)
         {
             var customer = await _unitOfWork.CustomerRepository.GetById(customerId, cancellationToken);
             if (customer == null)
                 throw new CustomerNotFoundException("Customer not found.");
-
-            await _unitOfWork.CustomerRepository.Delete(customer.Id, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return customer;
         }
     }
 

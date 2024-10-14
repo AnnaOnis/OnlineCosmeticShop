@@ -49,5 +49,6 @@ namespace CosmeticShop.DB.EF.Repositories
             var entity = await Entities.FirstAsync(x => x.Id == Id, cancellationToken);
             Entities.Remove(entity);
         }
+
     }
 }

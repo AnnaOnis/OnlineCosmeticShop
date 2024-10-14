@@ -39,8 +39,8 @@ namespace CosmeticShop.Domain.Services
         /// <param name="phoneNumber">Customer's phoneNumber</param>
         /// <param name="shippingAddress">Customer's shippingAddress</param>
         /// <returns>Customer object after registration</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="firstName"/>, <paramref name="lastName"/>, <paramref name="email"/>, 
-        /// <paramref name="password"/>, <paramref name="phoneNumber"/> or <paramref name="shippingAddress"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="firstName"/>, <paramref name="lastName"/>, <paramref name="email"/>, 
+        /// <paramref name="password"/>, <paramref name="phoneNumber"/> or <paramref name="shippingAddress"/> is <c>null</c> or contains only space.</exception>
         /// <exception cref="EmailAlreadyExistsException">Thrown when the user with the entered email has already been registered.</exception>
         public async Task<Customer> Register(
                                  string firstName, 
@@ -51,12 +51,12 @@ namespace CosmeticShop.Domain.Services
                                  string shippingAddress, 
                                  CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(firstName, nameof(firstName));
-            ArgumentNullException.ThrowIfNull(lastName, nameof(lastName));
-            ArgumentNullException.ThrowIfNull(email, nameof(email));
-            ArgumentNullException.ThrowIfNull(password, nameof(password));
-            ArgumentNullException.ThrowIfNull(nameof(phoneNumber));
-            ArgumentNullException.ThrowIfNull(nameof(shippingAddress));
+            ArgumentException.ThrowIfNullOrWhiteSpace(firstName, nameof(firstName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(lastName, nameof(lastName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(email, nameof(email));
+            ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(phoneNumber));
+            ArgumentException.ThrowIfNullOrWhiteSpace(nameof(shippingAddress));
 
             var existingCustomer = _unitOfWork.CustomerRepository.FindByEmail(email, cancellationToken);
             if (existingCustomer != null)
@@ -82,13 +82,13 @@ namespace CosmeticShop.Domain.Services
         /// <param name="email">Customer's email</param>
         /// <param name="password">Customer's password</param>
         /// <returns>Customer object on successful login</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="email"/> or <paramref name="password"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="email"/> or <paramref name="password"/> is <c>null</c> or contains only space.</exception>
         /// <exception cref="CustomerNotFoundException">Thrown when customer with given email not found.</exception>
         /// <exception cref="InvalidPasswordException">Thrown when given password is invalid.</exception>
         public async Task<Customer> Login(string email, string password, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(email, nameof(email));
-            ArgumentNullException.ThrowIfNull(password, nameof(password));
+            ArgumentException.ThrowIfNullOrWhiteSpace(email, nameof(email));
+            ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
 
             var customer = await _unitOfWork.CustomerRepository.FindByEmail(email, cancellationToken);
             if (customer == null)
@@ -113,10 +113,41 @@ namespace CosmeticShop.Domain.Services
         /// <summary>
         /// Retrieves a list of all customers.
         /// </summary>
+        /// <param name="filter">Optional filter by customer FirstName, LastName, Email, PhoneNumber, DateRegistered or ShippingAddress.</param>
+        /// <param name="sortField">Field to sort by (e.g., "FirstName", "LastName", "Email", "DateRegistered").</param>
+        /// <param name="sortOrder">Indicates whether the sort order is ascending.</param>
         /// <returns>List of Customer objects</returns>
-        public async Task<IReadOnlyList<Customer>> GetAllCustomers(CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<Customer>> GetAllCustomers(CancellationToken cancellationToken,
+                                                                   string? filter = null,
+                                                                   string sortField = "LastName",
+                                                                   string sortOrder = "asc")
         {
-            return await _unitOfWork.CustomerRepository.GetAll(cancellationToken);
+            var customers = await _unitOfWork.CustomerRepository.GetAll(cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                customers = customers.Where(c =>
+                                c.FirstName.Contains(filter) ||
+                                c.LastName.Contains(filter) ||
+                                c.Email.Contains(filter) ||
+                                c.PhoneNumber.Contains(filter) ||
+                                c.ShippingAddress.Contains(filter) ||
+                                c.DateRegistered.Date.ToString() == filter
+                                        ).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(sortField))
+            {
+                customers = sortField switch
+                {
+                    "FirstName" => sortOrder == "asc" ? customers.OrderBy(o => o.FirstName).ToList() : customers.OrderByDescending(o => o.FirstName).ToList(),
+                    "Email" => sortOrder == "asc" ? customers.OrderBy(o => o.Email).ToList() : customers.OrderByDescending(o => o.Email).ToList(),
+                    "DateRegistered" => sortOrder == "asc" ? customers.OrderBy(o => o.DateRegistered).ToList() : customers.OrderByDescending(o => o.DateRegistered).ToList(),
+                    _ => sortOrder == "asc" ? customers.OrderBy(o => o.LastName).ToList() : customers.OrderByDescending(o => o.LastName).ToList(),
+                };
+            }
+
+            return customers;
         }
 
         /// <summary>
@@ -138,8 +169,8 @@ namespace CosmeticShop.Domain.Services
         /// <param name="newlastName">New last name</param>
         /// <param name="newPhoneNumber">New phone number</param>
         /// <param name="newShippingAddress">New shipping address</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="newFirstName"/>, <paramref name="newlastName"/>, <paramref name="newEmail"/>, 
-        /// <paramref name="newPhoneNumber"/> or <paramref name="newShippingAddress"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="newFirstName"/>, <paramref name="newlastName"/>, <paramref name="newEmail"/>, 
+        /// <paramref name="newPhoneNumber"/> or <paramref name="newShippingAddress"/> is <c>null</c> or contains only space.</exception>
         public async Task<Customer> UpdateCustomerProfile(Guid customerId, 
                                                 string newEmail, 
                                                 string newFirstName, 
@@ -148,11 +179,11 @@ namespace CosmeticShop.Domain.Services
                                                 string newShippingAddress,
                                                 CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(newFirstName, nameof(newFirstName));
-            ArgumentNullException.ThrowIfNull(newlastName, nameof(newlastName));
-            ArgumentNullException.ThrowIfNull(newEmail, nameof(newEmail));
-            ArgumentNullException.ThrowIfNull(newPhoneNumber, nameof(newPhoneNumber));
-            ArgumentNullException.ThrowIfNull(newShippingAddress, nameof(newPhoneNumber));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newFirstName, nameof(newFirstName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newlastName, nameof(newlastName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newEmail, nameof(newEmail));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newPhoneNumber, nameof(newPhoneNumber));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newShippingAddress, nameof(newPhoneNumber));
 
             var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
            
@@ -173,10 +204,10 @@ namespace CosmeticShop.Domain.Services
         /// </summary>
         /// <param name="customerId">Customer's ID</param>
         /// <param name="newPassword">New password</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="newPassword"/> is null</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="newPassword"/> is null or contains only space</exception>
         public async Task ResetPassword(Guid customerId, string newPassword, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(newPassword, nameof(newPassword));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newPassword, nameof(newPassword));
 
             var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
 

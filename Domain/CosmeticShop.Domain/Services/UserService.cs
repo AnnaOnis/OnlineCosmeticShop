@@ -28,8 +28,9 @@ namespace CosmeticShop.Domain.Services
         /// <param name="firstName">User's first name</param>
         /// <param name="lastName">User's last name</param>
         /// <param name="role">The role to assign to the user (Admin, Moderator, etc.)</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="firstName"/>, <paramref name="lastName"/>, 
-        /// <paramref name="email"/>, <paramref name="password"/>, <paramref name="role"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="role"/> is <c>null</c></exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="firstName"/>, <paramref name="lastName"/>, 
+        /// <paramref name="email"/>, <paramref name="password"/> is <c>null</c> or contains only a space.</exception>
         /// <exception cref="EmailAlreadyExistsException">Thrown when the user with given email has already been registered.</exception>
         public async Task AddUser(string email, 
                             string password, 
@@ -38,10 +39,10 @@ namespace CosmeticShop.Domain.Services
                             RoleType role, 
                             CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(firstName, nameof(firstName));
-            ArgumentNullException.ThrowIfNull(lastName, nameof(lastName));
-            ArgumentNullException.ThrowIfNull(email, nameof(email));
-            ArgumentNullException.ThrowIfNull(password, nameof(password));
+            ArgumentException.ThrowIfNullOrWhiteSpace(firstName, nameof(firstName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(lastName, nameof(lastName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(email, nameof(email));
+            ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
             ArgumentNullException.ThrowIfNull(role, nameof(role));
 
             var existingUser = _unitOfWork.UserRepository.FindByEmail(email, cancellationToken);
@@ -63,13 +64,13 @@ namespace CosmeticShop.Domain.Services
         /// <param name="email">User's email</param>
         /// <param name="password">User's password</param>
         /// <returns>User object on successful login</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="email"/>, <paramref name="password"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="email"/>, <paramref name="password"/> is <c>null</c> or contains only a space.</exception>
         /// <exception cref="UserNotFoundException">Thrown when user with given email not found.</exception>
         /// <exception cref="InvalidPasswordException">Thrown when given password is invalid.</exception>
         public async Task<User> Login(string email, string password, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(email, nameof(email));
-            ArgumentNullException.ThrowIfNull(password, nameof(password));
+            ArgumentException.ThrowIfNullOrWhiteSpace(email, nameof(email));
+            ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
 
             var user = await _unitOfWork.UserRepository.FindByEmail(email, cancellationToken);
             if (user == null)
@@ -96,10 +97,20 @@ namespace CosmeticShop.Domain.Services
         /// <summary>
         /// Retrieves a list of all users.
         /// </summary>
+        /// <param name="filter">Optional filter by user FirstName, LastName, Email or Role.</param>
+        /// <param name="sortField">Field to sort by (e.g., "FirstName", "LastName", "Email").</param>
+        /// <param name="sortOrder">Specifies the sort order.</param>
+        /// <param name="pageNumber">Specifies the page number</param>
+        /// <param name="pageSize">Specifies the page size</param>
         /// <returns>List of User objects</returns>
-        public async Task<IReadOnlyList<User>> GetAllUsers(CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<User>> GetAllSortedUsers(CancellationToken cancellationToken,
+                                                                   string? filter = null,
+                                                                   string sortField = "LastName",
+                                                                   string sortOrder = "asc",
+                                                                   int pageNumber = 1,
+                                                                   int pageSize = 10)
         {
-            return await _unitOfWork.UserRepository.GetAll(cancellationToken);
+            return  await _unitOfWork.UserRepository.GetAllSorted(cancellationToken, filter, sortField, sortOrder, pageNumber, pageSize);;
         }
 
         /// <summary>
@@ -119,6 +130,8 @@ namespace CosmeticShop.Domain.Services
         /// <param name="newEmail">New email address</param>
         /// <param name="newFirstName">New first name</param>
         /// <param name="newLastName">New last name</param>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="newEmail"/>, <paramref name="newFirstName"/>, 
+        /// <paramref name="newLastName"/> is <c>null</c> or contains only a space.</exception>
         /// <exception cref="UserNotFoundException">Thrown when user not found.</exception>
         public async Task UpdateUser(Guid userId,
                                      string newEmail,
@@ -126,6 +139,10 @@ namespace CosmeticShop.Domain.Services
                                      string newLastName,
                                      CancellationToken cancellationToken)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(newFirstName, nameof(newFirstName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newLastName, nameof(newLastName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newEmail, nameof(newEmail));
+
             var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
             if (user == null)
                 throw new UserNotFoundException("User not found.");
@@ -144,10 +161,10 @@ namespace CosmeticShop.Domain.Services
         /// <param name="userId">User's ID</param>
         /// <param name="newPassword">New password</param>
         /// <exception cref="UserNotFoundException">Thrown when user is not found.</exception>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="newPassword"/> is null</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="newPassword"/> is null or contains only a space</exception>
         public async Task ResetPassword(Guid userId, string newPassword, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(newPassword, nameof(newPassword));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newPassword, nameof(newPassword));
 
             var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
             if (user == null)

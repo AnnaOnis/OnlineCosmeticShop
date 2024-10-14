@@ -46,8 +46,11 @@ namespace CosmeticShop.Domain.Services
         /// </summary>
         /// <param name="productId">ID of the product to update.</param>
         /// <exception cref="ProductNotFoundException">Thrown when the product not found.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the product is null.</exception>
         public async Task UpdateProductAsync(Product product, CancellationToken cancellationToken)
         {
+            if (product is null) throw new ArgumentNullException(nameof(product));
+
             var existedProduct = await _unitOfWork.ProductRepository.GetById(product.Id, cancellationToken);
             if (existedProduct is null)
             {
@@ -65,35 +68,40 @@ namespace CosmeticShop.Domain.Services
         /// <summary>
         /// Retrieves a list of products with optional filtering, sorting, and searching.
         /// </summary>
-        /// <param name="search">Search term for product names.</param>
-        /// <param name="sortBy">Field to sort by (e.g., "name", "price").</param>
-        /// <param name="ascending">Indicates whether the sort order is ascending.</param>
+        /// <param name="filter">Search term for product names.</param>
+        /// <param name="sortField">Field to sort by (e.g., "name", "price").</param>
+        /// <param name="sortOrder">Indicates whether the sort order is ascending.</param>
         /// <param name="categoryId">Optional category ID to filter products by category.</param>
         /// <returns>A collection of products that match the criteria.</returns>
         /// <exception cref="ProductNotFoundException">Thrown when the products is null.</exception>
-        public async Task<IEnumerable<Product>> GetProductsAsync(CancellationToken cancellationToken,
-                                                                 string? search = null,
-                                                                 string? sortBy = "Rating", 
-                                                                 bool ascending = true, 
+        public async Task<IReadOnlyList<Product>> GetProductsAsync(CancellationToken cancellationToken,
+                                                                 string? filter = null,
+                                                                 string sortField = "Rating", 
+                                                                 string sortOrder = "asc", 
                                                                  Guid? categoryId = null)
         {
             var products = await _unitOfWork.ProductRepository.GetAll(cancellationToken);
 
-            if(products is null) throw new ProductNotFoundException($"{nameof(products)} is null");
-
-            if (!string.IsNullOrWhiteSpace(search))
+            if (!string.IsNullOrWhiteSpace(filter))
             {
-                products = products.Where(p => p.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList().AsReadOnly();
+                products = products.Where(p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             if (categoryId.HasValue)
             {
-                products = products.Where(p => p.CategoryId == categoryId.Value).ToList().AsReadOnly();
+                products = products.Where(p => p.CategoryId == categoryId.Value).ToList();
             }
 
-            if (!string.IsNullOrWhiteSpace(sortBy))
+            if (!string.IsNullOrWhiteSpace(sortField))
             {
-                products = SortProducts(products, sortBy, ascending).ToList().AsReadOnly();
+                products = sortField.ToLower() switch
+                {
+                    "Name" => sortOrder == "asc" ? products.OrderBy(p => p.Name).ToList() : products.OrderByDescending(p => p.Name).ToList(),
+                    "Price" => sortOrder == "asc" ? products.OrderBy(p => p.Price).ToList() : products.OrderByDescending(p => p.Price).ToList(),
+                    "StockQuantity" => sortOrder == "asc" ? products.OrderBy(p => p.StockQuantity).ToList().ToList() : products.OrderByDescending(p => p.StockQuantity).ToList(),
+                    "DateAdded" => sortOrder == "asc" ? products.OrderBy(p => p.DateAdded).ToList() : products.OrderByDescending(p => p.DateAdded).ToList(),
+                    _ => sortOrder == "asc" ? products.OrderBy(p => p.Rating).ToList() : products.OrderByDescending(p => p.Rating).ToList()
+                };
             }
             
             return products;
@@ -137,25 +145,6 @@ namespace CosmeticShop.Domain.Services
             var category = await _unitOfWork.CategoryRepository.GetById(categoryId, cancellationToken);
             if (category == null)
                 throw new CategoryNotFoundException("Category not found");
-        }
-
-        /// <summary>
-        /// Sorts the collection of products based on the provided field and order.
-        /// </summary>
-        /// <param name="products">The collection of products to sort.</param>
-        /// <param name="sortBy">The field to sort by.</param>
-        /// <param name="ascending">Indicates whether the sort should be ascending.</param>
-        /// <returns>The sorted collection of products.</returns>
-        private IEnumerable<Product> SortProducts(IEnumerable<Product> products, string sortBy, bool ascending)
-        {
-            return sortBy?.ToLower() switch
-            {
-                "Name" => ascending ? products.OrderBy(p => p.Name) : products.OrderByDescending(p => p.Name),
-                "Price" => ascending ? products.OrderBy(p => p.Price) : products.OrderByDescending(p => p.Price),
-                "StockQuantity" => ascending ? products.OrderBy(p => p.StockQuantity) : products.OrderByDescending(p => p.StockQuantity),
-                "DateAdded" => ascending ? products.OrderBy(p => p.DateAdded) : products.OrderByDescending(p => p.DateAdded),
-                _ => ascending ? products.OrderBy(p => p.Rating) : products.OrderByDescending(p => p.Rating)
-            };
         }
     }
 }

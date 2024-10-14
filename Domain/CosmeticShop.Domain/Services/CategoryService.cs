@@ -38,14 +38,11 @@ namespace CosmeticShop.Domain.Services
         /// </summary>
         /// <param name="name">The name of the category.</param>
         /// <returns>The created category.</returns>
-        /// <exception cref="ArgumentException">Thrown when the category name is null or empty.</exception>
+        /// <exception cref="ArgumentException">Thrown when the category name is null or contains only space.</exception>
         /// <exception cref="InvalidCategoryNameException">Thrown when the category name is invalid or already exists.</exception>
         public async Task<Category> AddCategoryAsync(string name, CancellationToken cancellationToken, Guid? parentCategoryId = null)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Category name cannot be null or empty.");
-            }
+            ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
 
             if (await _unitOfWork.CategoryRepository.ExistsByNameAsync(name, cancellationToken))
             {
@@ -65,13 +62,10 @@ namespace CosmeticShop.Domain.Services
         /// <param name="newName">The new name for the category.</param>
         /// <returns>The updated category.</returns>
         /// <exception cref="InvalidCategoryNameException">Thrown when the category name is invalid or already exists.</exception>
-        /// <exception cref="ArgumentException">Thrown when the category name is null or empty.</exception>
+        /// <exception cref="ArgumentException">Thrown when the category name is null or contains only space.</exception>
         public async Task<Category> UpdateCategoryAsync(Guid categoryId, string newName, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(newName))
-            {
-                throw new ArgumentException("Category name cannot be null or empty.");
-            }
+            ArgumentException.ThrowIfNullOrWhiteSpace(newName, nameof(newName));
 
             var category = await GetCategoryByIdAsync(categoryId, cancellationToken);
 

@@ -60,7 +60,9 @@ namespace CosmeticShop.Domain.Services
         /// <returns>A list of orders for the specified customer.</returns>
         public async Task<IEnumerable<Order>> GetCustomerOrdersAsync(Guid customerId, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.OrderRepository.GetOrdersByCustomerId(customerId, cancellationToken);
+            var orders = await _unitOfWork.OrderRepository.GetOrdersByCustomerId(customerId, cancellationToken);
+            orders = orders.OrderBy(o => o.OrderDate);
+            return orders;
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="sortBy">Optional sorting by fields like OrderDate or TotalAmount.</param>
         /// <param name="ascending">Indicates whether the sort should be ascending.</param>
         /// <returns>A list of filtered and sorted orders.</returns>
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync(CancellationToken cancellationToken,
+        public async Task<IReadOnlyList<Order>> GetAllOrdersAsync(CancellationToken cancellationToken,
                                                                 string? searchTerm = null, 
                                                                 OrderStatus? statusFilter = null, 
                                                                 string sortBy = "OrderDate", 

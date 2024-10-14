@@ -6,7 +6,9 @@ using CosmeticShop.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -105,60 +107,55 @@ namespace CosmeticShop.Domain.Services
         /// Retrieves all orders across all users, with options for filtering, sorting, and searching.
         /// This operation is restricted to administrators.
         /// </summary>
-        /// <param name="searchTerm">Optional search term to filter orders by customer name, product, etc.</param>
-        /// <param name="statusFilter">Optional filter by order status (e.g., Pending, Shipped).</param>
-        /// <param name="sortBy">Optional sorting by fields like OrderDate or TotalAmount.</param>
-        /// <param name="ascending">Indicates whether the sort should be ascending.</param>
+        /// <param name="filter">Optional search term to filter orders by customer name, product, etc.</param>
+        /// <param name="sortField">Field to sort by (OrderDate, TotalAmount, TotalQuantity).</param>
+        /// <param name="sortOrder">Indicates whether the sort should be ascending.</param>
+        /// <param name="pageNumber">Specifies the page number</param>
+        /// <param name="pageSize">Specifies the page size</param>
         /// <returns>A list of filtered and sorted orders.</returns>
         public async Task<IReadOnlyList<Order>> GetAllOrdersAsync(CancellationToken cancellationToken,
-                                                                string? searchTerm = null, 
-                                                                OrderStatus? statusFilter = null, 
-                                                                string sortBy = "OrderDate", 
-                                                                bool ascending = true)
+                                                                  string? filter = null,
+                                                                  string sortField = "OrderDate",
+                                                                  string sortOrder = "asc",
+                                                                  int pageNumber = 1,
+                                                                  int pageSize = 10)
         {
-            var orders = await _unitOfWork.OrderRepository.GetAll(cancellationToken);
-
-            // Apply search term if provided
-            if (!string.IsNullOrWhiteSpace(searchTerm))
+            // Метод фильтрации
+            Expression<Func<Order, bool>>? filterExpression = null;
+            if (!string.IsNullOrWhiteSpace(filter))
             {
-                orders = orders.Where(o => o.Customer.FirstName.Contains(searchTerm) ||
-                                      o.Customer.LastName.Contains(searchTerm) ||
-                                      o.OrderItems.Any(i => i.Product.Name.Contains(searchTerm)))
-                                        .ToList().AsReadOnly();
+                filterExpression = o => o.Customer.FirstName.Contains(filter) ||
+                                      o.Customer.LastName.Contains(filter) ||
+                                      o.OrderItems.Any(i => i.Product.Name.Contains(filter) ||
+                                      o.Status.ToString().Equals(filter, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Apply status filter if provided
-            if (statusFilter.HasValue)
+            // Метод сортировки
+            Func<IQueryable<Order>, IOrderedQueryable<Order>>? sortExpression = null;
+
+            if (!string.IsNullOrWhiteSpace(sortField))
             {
-                orders = orders.Where(o => o.Status == statusFilter.Value).ToList().AsReadOnly();
+                sortOrder = sortOrder == "asc" || sortOrder == "desc" ? sortOrder : "asc";
+
+                sortExpression = sortField switch
+                {
+                    "TotalAmount" => sortOrder == "asc" 
+                        ? q => q.OrderBy(o => o.TotalAmount) 
+                        : q => q.OrderByDescending(o => o.TotalAmount),
+                    "TotalQuantity" => sortOrder == "asc" 
+                        ? q => q.OrderBy(o => o.TotalQuantity) 
+                        : q => q.OrderByDescending(o => o.TotalQuantity),
+                    _ => sortOrder == "asc" 
+                        ? q => q.OrderBy(o => o.OrderDate) 
+                        : q => q.OrderByDescending(o => o.OrderDate),
+                };
             }
 
-            if (!string.IsNullOrWhiteSpace(sortBy))
-            {
-                // Apply sorting
-                orders = SortOrders(sortBy, ascending, orders).ToList().AsReadOnly();
-            }
-
-            return orders;
+            return await _unitOfWork.OrderRepository.GetAllSorted(cancellationToken,
+                filter: filterExpression,
+                sorter: sortExpression,
+                pageNumber: pageNumber,
+                pageSize: pageSize);
         }
-
-        /// <summary>
-        /// Sorts the collection of orders based on the provided field and order.
-        /// </summary>
-        /// <param name="orders">The collection of orders to sort.</param>
-        /// <param name="sortBy">The field to sort by.</param>
-        /// <param name="ascending">Indicates whether the sort should be ascending.</param>
-        /// <returns>The sorted collection of orders.</returns>
-        private IEnumerable<Order> SortOrders(string sortBy, bool ascending, IEnumerable<Order> orders)
-        {
-            orders = sortBy switch
-            {
-                "TotalAmount" => ascending ? orders.OrderBy(o => o.TotalAmount) : orders.OrderByDescending(o => o.TotalAmount),
-                "TotalQuantity" => ascending ? orders.OrderBy(o => o.TotalQuantity) : orders.OrderByDescending(o => o.TotalQuantity),
-                _ => ascending ? orders.OrderBy(o => o.OrderDate) : orders.OrderByDescending(o => o.OrderDate),
-            };
-            return orders;
-        }
-    }
-    
+    }   
 }

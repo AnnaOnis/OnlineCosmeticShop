@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -71,40 +72,80 @@ namespace CosmeticShop.Domain.Services
         /// <param name="filter">Search term for product names.</param>
         /// <param name="sortField">Field to sort by (e.g., "name", "price").</param>
         /// <param name="sortOrder">Indicates whether the sort order is ascending.</param>
+        /// <param name="pageNumber">Specifies the page number</param>
+        /// <param name="pageSize">Specifies the page size</param>
         /// <param name="categoryId">Optional category ID to filter products by category.</param>
         /// <returns>A collection of products that match the criteria.</returns>
         /// <exception cref="ProductNotFoundException">Thrown when the products is null.</exception>
         public async Task<IReadOnlyList<Product>> GetProductsAsync(CancellationToken cancellationToken,
                                                                  string? filter = null,
                                                                  string sortField = "Rating", 
-                                                                 string sortOrder = "asc", 
+                                                                 string sortOrder = "asc",
+                                                                 int pageNumber = 1,
+                                                                 int pageSize = 10,
                                                                  Guid? categoryId = null)
         {
-            var products = await _unitOfWork.ProductRepository.GetAll(cancellationToken);
+            // Метод фильтрации
+            Expression<Func<Product, bool>>? filterExpression = null;
 
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                products = products.Where(p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+                filterExpression = p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase);
             }
 
             if (categoryId.HasValue)
             {
-                products = products.Where(p => p.CategoryId == categoryId.Value).ToList();
+                Expression<Func<Product, bool>> categoryFilterExpression = p => p.CategoryId == categoryId.Value;
+
+                // Если фильтрация по имени уже задана
+                if (filterExpression != null)
+                {
+                    // Объединяем с существующим условием                  
+                    var parameter = Expression.Parameter(typeof(Product));
+
+                    var combinedExpression = Expression.AndAlso(
+                        Expression.Invoke(filterExpression, parameter),
+                        Expression.Invoke(categoryFilterExpression, parameter)
+                    );
+
+                    filterExpression = Expression.Lambda<Func<Product, bool>>(combinedExpression, parameter);
+                }
+                else
+                {
+                    // Если нет фильтрации по имени, просто фильтруем по категории
+                    filterExpression = categoryFilterExpression;
+                }
             }
 
+            // Метод сортировки
+            Func<IQueryable<Product>, IOrderedQueryable<Product>>? sortExpression = null;
             if (!string.IsNullOrWhiteSpace(sortField))
             {
-                products = sortField.ToLower() switch
+                sortExpression = sortField switch
                 {
-                    "Name" => sortOrder == "asc" ? products.OrderBy(p => p.Name).ToList() : products.OrderByDescending(p => p.Name).ToList(),
-                    "Price" => sortOrder == "asc" ? products.OrderBy(p => p.Price).ToList() : products.OrderByDescending(p => p.Price).ToList(),
-                    "StockQuantity" => sortOrder == "asc" ? products.OrderBy(p => p.StockQuantity).ToList().ToList() : products.OrderByDescending(p => p.StockQuantity).ToList(),
-                    "DateAdded" => sortOrder == "asc" ? products.OrderBy(p => p.DateAdded).ToList() : products.OrderByDescending(p => p.DateAdded).ToList(),
-                    _ => sortOrder == "asc" ? products.OrderBy(p => p.Rating).ToList() : products.OrderByDescending(p => p.Rating).ToList()
+                    "Name" => sortOrder == "asc" 
+                        ? q => q.OrderBy(p => p.Name) 
+                        : q => q.OrderByDescending(p => p.Name),
+                    "Price" => sortOrder == "asc"
+                        ? q => q.OrderBy(p => p.Price) 
+                        : q => q.OrderByDescending(p => p.Price),
+                    "StockQuantity" => sortOrder == "asc" 
+                        ? q => q.OrderBy(p => p.StockQuantity) 
+                        : q => q.OrderByDescending(p => p.StockQuantity),
+                    "DateAdded" => sortOrder == "asc" 
+                        ? q => q.OrderBy(p => p.DateAdded)
+                        : q => q.OrderByDescending(p => p.DateAdded),
+                    _ => sortOrder == "asc" 
+                        ? q => q.OrderBy(p => p.Rating)
+                        : q => q.OrderByDescending(p => p.Rating)
                 };
             }
             
-            return products;
+            return await _unitOfWork.ProductRepository.GetAllSorted(cancellationToken,
+                filter: filterExpression,
+                sorter: sortExpression,
+                pageNumber: pageNumber,
+                pageSize: pageSize);
         }
 
         /// <summary>

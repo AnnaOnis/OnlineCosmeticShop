@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,5 +51,32 @@ namespace CosmeticShop.DB.EF.Repositories
             Entities.Remove(entity);
         }
 
+        // Универсальный метод GetAllSorted с фильтрацией, сортировкой и пагинацией
+        public virtual async Task<IReadOnlyList<TEntity>> GetAllSorted(
+                    CancellationToken cancellationToken,
+                    Expression<Func<TEntity, bool>>? filter = null,                         // Лямбда для фильтрации
+                    Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? sorter = null,   // Делегат для сортировки
+                    int pageNumber = 1,                                                     // Номер страницы
+                    int pageSize = 10)                                                      // Размер страницы
+        {
+            IQueryable<TEntity> query = Entities;
+
+            // Применение фильтрации
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            // Применение сортировки
+            if (sorter != null)
+            {
+                query = sorter(query);
+            }
+
+            // Применение пагинации
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            return await query.ToListAsync(cancellationToken);
+        }
     }
 }

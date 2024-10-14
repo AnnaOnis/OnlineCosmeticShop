@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
 using System.Text;
@@ -116,38 +117,60 @@ namespace CosmeticShop.Domain.Services
         /// <param name="filter">Optional filter by customer FirstName, LastName, Email, PhoneNumber, DateRegistered or ShippingAddress.</param>
         /// <param name="sortField">Field to sort by (e.g., "FirstName", "LastName", "Email", "DateRegistered").</param>
         /// <param name="sortOrder">Indicates whether the sort order is ascending.</param>
+        /// <param name="pageNumber">Specifies the page number</param>
+        /// <param name="pageSize">Specifies the page size</param>
         /// <returns>List of Customer objects</returns>
-        public async Task<IReadOnlyList<Customer>> GetAllCustomers(CancellationToken cancellationToken,
+        public async Task<IReadOnlyList<Customer>> GetAllSortedCustomers(CancellationToken cancellationToken,
                                                                    string? filter = null,
                                                                    string sortField = "LastName",
-                                                                   string sortOrder = "asc")
+                                                                   string sortOrder = "asc",
+                                                                   int pageNumber = 1,
+                                                                   int pageSize = 10)
         {
-            var customers = await _unitOfWork.CustomerRepository.GetAll(cancellationToken);
-
+            // Метод фильтрации
+            Expression<Func<Customer, bool>>? filterExpression = null;
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                customers = customers.Where(c =>
+                DateTime dateFilter;
+                bool isDateFilter = DateTime.TryParse(filter, out dateFilter);
+
+                filterExpression = c =>
                                 c.FirstName.Contains(filter) ||
                                 c.LastName.Contains(filter) ||
                                 c.Email.Contains(filter) ||
                                 c.PhoneNumber.Contains(filter) ||
                                 c.ShippingAddress.Contains(filter) ||
-                                c.DateRegistered.Date.ToString() == filter
-                                        ).ToList();
+                                (isDateFilter && c.DateRegistered.Date == dateFilter);
             }
 
+            // Метод сортировки
+            Func<IQueryable<Customer>, IOrderedQueryable<Customer>>? sortExpression = null;
             if (!string.IsNullOrWhiteSpace(sortField))
             {
-                customers = sortField switch
+                sortOrder = sortOrder == "asc" || sortOrder == "desc" ? sortOrder : "asc";
+
+                sortExpression = sortField switch
                 {
-                    "FirstName" => sortOrder == "asc" ? customers.OrderBy(o => o.FirstName).ToList() : customers.OrderByDescending(o => o.FirstName).ToList(),
-                    "Email" => sortOrder == "asc" ? customers.OrderBy(o => o.Email).ToList() : customers.OrderByDescending(o => o.Email).ToList(),
-                    "DateRegistered" => sortOrder == "asc" ? customers.OrderBy(o => o.DateRegistered).ToList() : customers.OrderByDescending(o => o.DateRegistered).ToList(),
-                    _ => sortOrder == "asc" ? customers.OrderBy(o => o.LastName).ToList() : customers.OrderByDescending(o => o.LastName).ToList(),
+                    "FirstName" => sortOrder == "asc" 
+                        ? q => q.OrderBy(o => o.FirstName) 
+                        : q => q.OrderByDescending(o => o.FirstName),
+                    "Email" => sortOrder == "asc" 
+                        ? q => q.OrderBy(o => o.Email) 
+                        : q => q.OrderByDescending(o => o.Email),
+                    "DateRegistered" => sortOrder == "asc" 
+                        ? q => q.OrderBy(o => o.DateRegistered) 
+                        : q => q.OrderByDescending(o => o.DateRegistered),
+                    _ => sortOrder == "asc" 
+                        ? q => q.OrderBy(o => o.LastName) 
+                        : q => q.OrderByDescending(o => o.LastName),
                 };
             }
 
-            return customers;
+            return await _unitOfWork.CustomerRepository.GetAllSorted(cancellationToken,
+                filter: filterExpression,
+                sorter: sortExpression,
+                pageNumber: pageNumber,
+                pageSize: pageSize);
         }
 
         /// <summary>

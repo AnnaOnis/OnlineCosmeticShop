@@ -2,7 +2,9 @@
 using CosmeticShop.Domain.Enumerations;
 using CosmeticShop.Domain.Exceptions.Customer;
 using CosmeticShop.Domain.Exceptions.Users;
+using CosmeticShop.Domain.Repositories;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace CosmeticShop.Domain.Services
 {
@@ -110,7 +112,44 @@ namespace CosmeticShop.Domain.Services
                                                                    int pageNumber = 1,
                                                                    int pageSize = 10)
         {
-            return  await _unitOfWork.UserRepository.GetAllSorted(cancellationToken, filter, sortField, sortOrder, pageNumber, pageSize);;
+            // Метод фильтрации
+            Expression<Func<User, bool>>? filterExpression = null;
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                filterExpression = u =>
+                    u.FirstName.Contains(filter) ||
+                    u.LastName.Contains(filter) ||
+                    u.Email.Contains(filter) ||
+                    u.Role.Equals(filter);
+            }
+
+            // Метод сортировки
+            Func<IQueryable<User>, IOrderedQueryable<User>>? sortExpression = null;
+            if (!string.IsNullOrWhiteSpace(sortField))
+            {
+                sortOrder = sortOrder == "asc" || sortOrder == "desc" ? sortOrder : "asc";
+                sortExpression = sortField switch
+                {
+                    "FirstName" => sortOrder == "asc"
+                        ? q => q.OrderBy(o => o.FirstName)
+                        : q => q.OrderByDescending(o => o.FirstName),
+                    "Email" => sortOrder == "asc"
+                        ? q => q.OrderBy(o => o.Email)
+                        : q => q.OrderByDescending(o => o.Email),
+                    _ => sortOrder == "asc"
+                        ? q => q.OrderBy(o => o.LastName)
+                        : q => q.OrderByDescending(o => o.LastName),
+                };
+            }
+
+            // Вызов универсального метода GetAllSorted
+            return await _unitOfWork.UserRepository.GetAllSorted(
+                cancellationToken,
+                filter: filterExpression,  // Фильтр
+                sorter: sortExpression,   // Сортировка
+                pageNumber: pageNumber,    // Пагинация - номер страницы
+                pageSize: pageSize         // Пагинация - размер страницы
+            );
         }
 
         /// <summary>

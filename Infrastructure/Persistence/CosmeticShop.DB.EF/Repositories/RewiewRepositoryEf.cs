@@ -18,17 +18,26 @@ namespace CosmeticShop.DB.EF.Repositories
 
         public async Task<IReadOnlyList<Review>> GetAllNotApprovedReviews(CancellationToken cancellationToken)
         {
-            return await Entities.Where(e => e.IsApproved == false).ToListAsync(cancellationToken);
+            return await Entities
+                .Where(e => e.IsApproved == false)
+                .OrderByDescending(e => e.ReviewDate)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<IReadOnlyList<Review>> GetApprovedReviewsByProductId(Guid productId, CancellationToken cancellationToken)
         {
-            return await Entities.Where(e => e.ProductId == productId && e.IsApproved == true).ToListAsync(cancellationToken);
+            return await Entities
+                .Where(e => e.ProductId == productId && e.IsApproved == true)
+                .OrderBy(e => e.ReviewDate)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<IReadOnlyList<Review>> GetByProductId(Guid productId, CancellationToken cancellationToken)
         {
-            return await Entities.Where(e => e.ProductId == productId).ToListAsync(cancellationToken);
+            return await Entities
+                .Where(e => e.ProductId == productId)
+                .OrderBy(e => e.ReviewDate)
+                .ToListAsync(cancellationToken);
         }
     }
 }

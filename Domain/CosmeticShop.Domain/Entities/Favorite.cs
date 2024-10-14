@@ -24,6 +24,12 @@ namespace CosmeticShop.Domain.Entities
         public Guid ProductId { get; init; }
 
         /// <summary>
+        /// Gets or sets the date the product was added.
+        /// </summary>
+        [Required]
+        public DateTime DateAdded { get; set; }
+
+        /// <summary>
         /// Gets or sets the customer who marked the product as a favorite.
         /// </summary>
         public Customer Customer { get; set; } = null!;
@@ -42,6 +48,7 @@ namespace CosmeticShop.Domain.Entities
         {
             CustomerId = customerId;
             ProductId = productId;
+            DateAdded = DateTime.Now;
         }
     }
 }

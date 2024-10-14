@@ -5,8 +5,10 @@ using CosmeticShop.Domain.Services;
 using IdentityPasswordHasher;
 using JwtTokenGenerator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 
 namespace CosmeticShop.WebAPI
 {
@@ -25,6 +27,14 @@ namespace CosmeticShop.WebAPI
             }
             builder.Services.AddSingleton(jwtConfig);
             builder.Services.AddSingleton<ITokenService, JwtTokenService>();
+
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[] { new CultureInfo("ru-RU") };
+                options.DefaultRequestCulture = new RequestCulture("ru-RU");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
 
             // Add services to the container.
 
@@ -77,6 +87,8 @@ namespace CosmeticShop.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseRequestLocalization();
 
             app.UseHttpsRedirection();
 

@@ -20,7 +20,7 @@ namespace CosmeticShop.DB.EF.Repositories
         {
             return await Entities
                 .Where(e => e.IsApproved == false)
-                .OrderByDescending(e => e.ReviewDate)
+                .OrderBy(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);
         }
 
@@ -28,7 +28,7 @@ namespace CosmeticShop.DB.EF.Repositories
         {
             return await Entities
                 .Where(e => e.ProductId == productId && e.IsApproved == true)
-                .OrderBy(e => e.ReviewDate)
+                .OrderByDescending(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);
         }
 
@@ -36,7 +36,7 @@ namespace CosmeticShop.DB.EF.Repositories
         {
             return await Entities
                 .Where(e => e.ProductId == productId)
-                .OrderBy(e => e.ReviewDate)
+                .OrderByDescending(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);
         }
     }

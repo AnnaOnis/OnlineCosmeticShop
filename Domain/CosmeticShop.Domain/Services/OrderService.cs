@@ -63,7 +63,7 @@ namespace CosmeticShop.Domain.Services
         public async Task<IEnumerable<Order>> GetCustomerOrdersAsync(Guid customerId, CancellationToken cancellationToken)
         {
             var orders = await _unitOfWork.OrderRepository.GetOrdersByCustomerId(customerId, cancellationToken);
-            orders = orders.OrderBy(o => o.OrderDate);
+            orders = orders.OrderByDescending(o => o.OrderDate);
             return orders;
         }
 

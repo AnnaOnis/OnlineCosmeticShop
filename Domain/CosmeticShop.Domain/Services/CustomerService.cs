@@ -120,7 +120,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="pageNumber">Specifies the page number</param>
         /// <param name="pageSize">Specifies the page size</param>
         /// <returns>List of Customer objects</returns>
-        public async Task<IReadOnlyList<Customer>> GetAllSortedCustomers(CancellationToken cancellationToken,
+        public async Task<IReadOnlyList<Customer>> GetAllCustomers(CancellationToken cancellationToken,
                                                                    string? filter = null,
                                                                    string sortField = "LastName",
                                                                    string sortOrder = "asc",
@@ -263,7 +263,10 @@ namespace CosmeticShop.Domain.Services
         {
             var customer = await GetCustomerOrThrowAsync(customerId, cancellationToken);
 
-            var products = customer.Favorites.Select(f => f.Product).ToList();
+            var products = customer.Favorites
+                .OrderByDescending(f => f.DateAdded)
+                .Select(f => f.Product)
+                .ToList();
 
             return products;
         }

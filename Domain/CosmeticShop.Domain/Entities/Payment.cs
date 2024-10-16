@@ -1,4 +1,5 @@
 ﻿using CosmeticShop.Domain.Enumerations;
+using CosmeticShop.Domain.Exceptions.Payment;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -65,7 +66,7 @@ namespace CosmeticShop.Domain.Entities
         public Payment(Guid orderId, Guid customerId, PaymentMethod method)
         {
             if (!Enum.IsDefined(typeof(PaymentMethod), method))
-                throw new ArgumentOutOfRangeException(nameof(method), "Invalid payment method.");
+                throw new InvalidPaymentMethodException(nameof(method), "Invalid payment method.");
 
             Id = Guid.NewGuid();
             OrderId = orderId;

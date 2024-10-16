@@ -1,4 +1,5 @@
-﻿using CosmeticShop.Domain.Enumerations;
+﻿using CosmeticShop.Domain.Entities;
+using CosmeticShop.Domain.Enumerations;
 using CosmeticShop.Domain.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,18 +10,18 @@ namespace JwtTokenGenerator
 {
     /// <summary>
     /// Service responsible for generating JWT tokens based on user information.
-    /// Implements the <see cref="ITokenService"/> interface.
+    /// Implements the <see cref="ITokenGenerationService"/> interface.
     /// </summary>
-    public class JwtTokenService : ITokenService
+    public class JwtTokenGenerationService : ITokenGenerationService
     {
         private readonly JwtConfig _jwtConfig;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JwtTokenService"/> class with specified JWT configuration.
+        /// Initializes a new instance of the <see cref="JwtTokenGenerationService"/> class with specified JWT configuration.
         /// </summary>
         /// <param name="jwtConfig">JWT configuration that contains settings such as the issuer, audience, signing key, and token lifetime.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="jwtConfig"/> is null.</exception>
-        public JwtTokenService(JwtConfig jwtConfig)
+        public JwtTokenGenerationService(JwtConfig jwtConfig)
         {
             _jwtConfig = jwtConfig ?? throw new ArgumentNullException(nameof(jwtConfig));
         }
@@ -31,7 +32,8 @@ namespace JwtTokenGenerator
         /// <param name="userId">Unique identifier of the user.</param>
         /// <param name="role">Optional parameter specifying the role of the user. Defaults to "Customer" if not provided.</param>
         /// <returns>A string representation of the generated JWT token.</returns>
-        public string GenerateToken(Guid userId, RoleType? role = null)
+        /// <exception cref="InvalidOperationException">Thrown when the Jti claim or token expiration is missing.</exception>
+        public string GenerateToken(Guid userId, CancellationToken cancellationToken, RoleType? role = null)
         {
             string userRole = role.HasValue ? role.Value.ToString() : "Customer";
 
@@ -53,7 +55,9 @@ namespace JwtTokenGenerator
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return tokenString;
         }
     }
 }

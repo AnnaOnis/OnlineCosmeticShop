@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\Infrastructure\ExternalServices\IdentityPasswordHasher\IdentityPasswordHasher.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ExternalServices\JwtTokenService\JwtTokenGenerator.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Persistence\CosmeticShop.DB.EF\CosmeticShop.DB.EF.csproj" />
+    <ProjectReference Include="..\..\PaymentGateway\PaymentGateway.csproj" />
   </ItemGroup>
 
 </Project>

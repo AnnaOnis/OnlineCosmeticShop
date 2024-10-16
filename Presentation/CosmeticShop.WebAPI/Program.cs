@@ -1,13 +1,17 @@
 
 using CosmeticShop.DB.EF;
+using CosmeticShop.DB.EF.Repositories;
 using CosmeticShop.Domain.Entities;
+using CosmeticShop.Domain.Repositories;
 using CosmeticShop.Domain.Services;
+using CosmeticShop.WebAPI.Middlewares;
 using IdentityPasswordHasher;
 using JwtTokenGenerator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PaymentGateway;
 using System.Globalization;
 
 namespace CosmeticShop.WebAPI
@@ -26,7 +30,7 @@ namespace CosmeticShop.WebAPI
                 throw new InvalidOperationException("JwtConfig is not configured");
             }
             builder.Services.AddSingleton(jwtConfig);
-            builder.Services.AddSingleton<ITokenService, JwtTokenService>();
+            builder.Services.AddSingleton<ITokenGenerationService, JwtTokenGenerationService>();
 
             builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -75,6 +79,29 @@ namespace CosmeticShop.WebAPI
             builder.Services.AddSingleton<IAppPasswordHasher<Customer>, CustomerPasswordHasher>();
             builder.Services.AddSingleton<IAppPasswordHasher<User>, UserPasswordHasher>();
 
+            builder.Services.AddScoped<ICartRepository, CartRepositoryEf>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepositoryEf>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepositoryEf>();
+            builder.Services.AddScoped<IJwtTokenRepository, JwtTokenRepositoryEf>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepositoryEf>();  
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepositoryEf>();
+            builder.Services.AddScoped<IProductRepository, ProductRepositoryEf>();
+            builder.Services.AddScoped<IRewiewRepository, RewiewRepositoryEf>();
+            builder.Services.AddScoped<IUserActionRepository, UserActionRepositoryEf>();
+            builder.Services.AddScoped<IUserRepository, UserRepositoryEf>();
+
+            builder.Services.AddScoped<CartService> ();
+            builder.Services.AddScoped<CategoryService> ();
+            builder.Services.AddScoped<CustomerService> ();
+            builder.Services.AddScoped<OrderService> ();
+            builder.Services.AddScoped<PaymentService> ();
+            builder.Services.AddScoped<ProductService> ();
+            builder.Services.AddScoped<ReviewService> ();
+            builder.Services.AddScoped<UserService> ();
+            builder.Services.AddScoped<JwtTokenService> ();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWorkEf>();
+            builder.Services.AddScoped<IPaymentGateway, PaymentGatewayService>();
+
 
             var app = builder.Build();
 
@@ -93,6 +120,7 @@ namespace CosmeticShop.WebAPI
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
+            app.UseMiddleware<TokenValidationMiddleware>();
             app.UseAuthorization();
 
             app.MapControllers();

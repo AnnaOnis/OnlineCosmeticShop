@@ -19,9 +19,9 @@ namespace CosmeticShop.Domain.Services
     public class ProductService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<CartService> _logger;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IUnitOfWork unitOfWork, ILogger<CartService> logger)
+        public ProductService(IUnitOfWork unitOfWork, ILogger<ProductService> logger)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

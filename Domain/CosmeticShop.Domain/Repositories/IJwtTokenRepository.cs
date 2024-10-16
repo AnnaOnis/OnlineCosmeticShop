@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace CosmeticShop.Domain.Repositories
 {
-    public interface IPaymentRepository : IRepository<Payment>
+    public interface IJwtTokenRepository : IRepository<JwtToken>
     {
-        public Task<Payment?> FindById(Guid Id, CancellationToken cancellationToken);
+        Task<JwtToken?> FindTokenByJti(string token, CancellationToken cancellationToken);
     }
 }

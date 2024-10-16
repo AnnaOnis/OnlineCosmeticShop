@@ -18,6 +18,7 @@ namespace CosmeticShop.Domain.Services
         IRewiewRepository RewiewRepository { get; }
         IUserActionRepository UserActionRepository { get; }
         IUserRepository UserRepository { get; }
+        IJwtTokenRepository JwtTokenRepository { get; }
 
         Task SaveChangesAsync(CancellationToken cancellationToken);
     }

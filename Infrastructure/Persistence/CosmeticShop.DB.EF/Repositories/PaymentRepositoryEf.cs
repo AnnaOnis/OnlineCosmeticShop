@@ -1,5 +1,6 @@
 ﻿using CosmeticShop.Domain.Entities;
 using CosmeticShop.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,19 @@ namespace CosmeticShop.DB.EF.Repositories
     {
         public PaymentRepositoryEf(AppDbContext dbContext) : base(dbContext)
         {
+        }
+
+        public async Task<Payment?> FindById(Guid Id, CancellationToken cancellationToken)
+        {
+            return await Entities.SingleOrDefaultAsync(e => e.Id == Id, cancellationToken);
+        }
+
+        public override async Task<Payment> GetById(Guid Id, CancellationToken cancellationToken)
+        {
+            return await Entities
+                .Include(e => e.Order)
+                .Include(e => e.Customer)
+                .FirstAsync(x => x.Id == Id, cancellationToken);
         }
     }
 }

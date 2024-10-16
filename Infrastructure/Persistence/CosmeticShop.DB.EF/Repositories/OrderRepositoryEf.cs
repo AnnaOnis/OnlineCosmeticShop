@@ -17,7 +17,7 @@ namespace CosmeticShop.DB.EF.Repositories
                                     .ThenInclude(oi => oi.Product)
                                  .ToListAsync(cancellationToken);
 
-            return orders.AsReadOnly();
+            return orders;
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByCustomerId(Guid customerId, CancellationToken cancellationToken)

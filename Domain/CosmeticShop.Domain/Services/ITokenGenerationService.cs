@@ -5,7 +5,7 @@ namespace CosmeticShop.Domain.Services
     /// <summary>
     /// Interface defining the contract for token generation services.
     /// </summary>
-    public interface ITokenService
+    public interface ITokenGenerationService
     {
         /// <summary>
         /// Generates a JWT token for a user.
@@ -13,6 +13,6 @@ namespace CosmeticShop.Domain.Services
         /// <param name="userId">Unique identifier of the user.</param>
         /// <param name="role">Optional user role. If not provided, a default role will be assigned.</param>
         /// <returns>A string containing the generated JWT token.</returns>
-        string GenerateToken(Guid userId, RoleType? role = null);
+        string GenerateToken(Guid userId, CancellationToken cancellationToken, RoleType? role = null);
     }
 }

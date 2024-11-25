@@ -29,7 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityPasswordHasher", "I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JwtTokenGenerator", "Infrastructure\ExternalServices\JwtTokenService\JwtTokenGenerator.csproj", "{584591EC-A514-4F1C-BC12-204DB95A434D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentGateway", "PaymentGateway\PaymentGateway.csproj", "{D5DEF1EF-A81A-4A1A-BE42-BABC6F99C7FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentGateway", "Infrastructure\ExternalServices\PaymentGateway\PaymentGateway.csproj", "{D5DEF1EF-A81A-4A1A-BE42-BABC6F99C7FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{C87C35F8-A778-40A4-8A94-9B7F38733284}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpModels", "Presentation\Models\HttpModels\HttpModels.csproj", "{BD93A85E-B613-4C14-875A-8D911790BCD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +71,10 @@ Global
 		{D5DEF1EF-A81A-4A1A-BE42-BABC6F99C7FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5DEF1EF-A81A-4A1A-BE42-BABC6F99C7FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5DEF1EF-A81A-4A1A-BE42-BABC6F99C7FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD93A85E-B613-4C14-875A-8D911790BCD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD93A85E-B613-4C14-875A-8D911790BCD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD93A85E-B613-4C14-875A-8D911790BCD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD93A85E-B613-4C14-875A-8D911790BCD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +90,8 @@ Global
 		{E7B3C96C-2D6A-4894-8D0C-0E5748DFD619} = {6C3EBEE4-6434-421C-B7A0-A7A6A787D272}
 		{584591EC-A514-4F1C-BC12-204DB95A434D} = {6C3EBEE4-6434-421C-B7A0-A7A6A787D272}
 		{D5DEF1EF-A81A-4A1A-BE42-BABC6F99C7FE} = {6C3EBEE4-6434-421C-B7A0-A7A6A787D272}
+		{C87C35F8-A778-40A4-8A94-9B7F38733284} = {D2A9BD57-E34F-4C2F-AB35-F74FA6D41D0C}
+		{BD93A85E-B613-4C14-875A-8D911790BCD3} = {C87C35F8-A778-40A4-8A94-9B7F38733284}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF980729-06CA-45F2-929F-3ADB00358EA1}

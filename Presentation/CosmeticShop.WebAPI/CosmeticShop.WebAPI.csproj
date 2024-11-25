@@ -11,24 +11,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
       <Version>8.*-*</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\CosmeticShop.Domain\CosmeticShop.Domain.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ExternalServices\IdentityPasswordHasher\IdentityPasswordHasher.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ExternalServices\JwtTokenService\JwtTokenGenerator.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ExternalServices\PaymentGateway\PaymentGateway.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Persistence\CosmeticShop.DB.EF\CosmeticShop.DB.EF.csproj" />
-    <ProjectReference Include="..\..\PaymentGateway\PaymentGateway.csproj" />
+    <ProjectReference Include="..\Models\HttpModels\HttpModels.csproj" />
   </ItemGroup>
 
 </Project>

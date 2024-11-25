@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PaymentGateway;
 using System.Globalization;
+using CosmeticShop.WebAPI.Controllers;
 
 namespace CosmeticShop.WebAPI
 {

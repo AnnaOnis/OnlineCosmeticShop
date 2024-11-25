@@ -1,0 +1,176 @@
+﻿├───.github
+│   ├───workflows
+├───Application
+├───Domain
+│   ├───CosmeticShop.Domain
+│   │   ├───Entities
+│   │   │   │   Cart.cs
+│   │   │   │   CartItem.cs
+│   │   │   │   Category.cs
+│   │   │   │   Customer.cs
+│   │   │   │   Favorite.cs
+│   │   │   │   IEntity.cs
+│   │   │   │   JwtToken.cs
+│   │   │   │   Order.cs
+│   │   │   │   OrderItem.cs
+│   │   │   │   Payment.cs
+│   │   │   │   Product.cs
+│   │   │   │   ProductImage.cs
+│   │   │   │   Review.cs
+│   │   │   │   User.cs
+│   │   │   │   UserAction.cs
+│   │   ├───Enumerations
+│   │   │   │   ActionType.cs
+│   │   │   │   OrderStatus.cs
+│   │   │   │   PaymentMethod.cs
+│   │   │   │   PaymentStatus.cs
+│   │   │   │   RoleType.cs
+│   │   │   │   ShippingMethod.cs
+│   │   ├───Events
+│   │   ├───Exceptions
+│   │   │   ├───Category
+│   │   │   │   │   CategoryNotFoundException.cs
+│   │   │   │   │   InvalidCategoryNameException.cs
+│   │   │   ├───Order
+│   │   │   │   │   OrderNotFoundException.cs
+│   │   │   ├───Payment
+│   │   │   │   │   InvalidPaymentMethodException.cs
+│   │   │   │   │   PaymentNotFoundException.cs
+│   │   │   ├───Product
+│   │   │   │   │   ProductAlreadyInFavoritesException.cs
+│   │   │   │   │   ProductNotFoundException.cs
+│   │   │   ├───Review
+│   │   │   │   │   ReviewAlreadyApprovedException.cs
+│   │   │   │   │   ReviewNotFoundException.cs
+│   │   │   ├───Users
+│   │   │   │   │   CustomerNotFoundException.cs
+│   │   │   │   │   EmailAlreadyExistsException.cs
+│   │   │   │   │   InvalidPasswordException.cs
+│   │   │   │   │   UserNotFoundException.cs
+│   │   │   │   DomainException.cs
+│   │   ├───Repositories
+│   │   │   │   ICartRepository.cs
+│   │   │   │   ICategoryRepository.cs
+│   │   │   │   ICustomerRepository.cs
+│   │   │   │   IJwtTokenRepository.cs
+│   │   │   │   IOrderRepository.cs
+│   │   │   │   IPaymentRepository.cs
+│   │   │   │   IProductRepository.cs
+│   │   │   │   IRepository.cs
+│   │   │   │   IRewiewRepository.cs
+│   │   │   │   IUserActionRepository.cs
+│   │   │   │   IUserRepository.cs
+│   │   ├───Services
+│   │   │   │   CartService.cs
+│   │   │   │   CategoryService.cs
+│   │   │   │   CustomerService.cs
+│   │   │   │   IAppPasswordHasher.cs
+│   │   │   │   IPaymentGateway.cs
+│   │   │   │   ITokenGenerationService.cs
+│   │   │   │   IUnitOfWork.cs
+│   │   │   │   JwtTokenService.cs
+│   │   │   │   OrderService.cs
+│   │   │   │   PaymentService.cs
+│   │   │   │   ProductService.cs
+│   │   │   │   ReviewService.cs
+│   │   │   │   UserService.cs
+│   │   │   CosmeticShop.Domain.csproj
+├───Infrastructure
+│   ├───Configurations
+│   ├───ExternalServices
+│   │   ├───IdentityPasswordHasher
+│   │   │   │   CustomerPasswordHasher.cs
+│   │   │   │   IdentityPasswordHasher.csproj
+│   │   │   │   UserPasswordHasher.cs
+│   │   ├───JwtTokenService
+│   │   │   │   JwtConfig.cs
+│   │   │   │   JwtTokenGenerationService.cs
+│   │   │   │   JwtTokenGenerator.csproj
+│   │   ├───PaymentGateway
+│   │   │   │   PaymentGateway.csproj
+│   │   │   │   PaymentGatewayService.cs
+│   ├───Persistence
+│   │   ├───CosmeticShop.DB.EF
+│   │   │   ├───Migrations
+│   │   │   │   │   20240925145422_InitialCreate.cs
+│   │   │   │   │   20240925145422_InitialCreate.Designer.cs
+│   │   │   │   │   20241014125923_AddingDateAddedToFavorite.cs
+│   │   │   │   │   20241014125923_AddingDateAddedToFavorite.Designer.cs
+│   │   │   │   │   20241016145450_AddingJwtTokensTable.cs
+│   │   │   │   │   20241016145450_AddingJwtTokensTable.Designer.cs
+│   │   │   │   │   AppDbContextModelSnapshot.cs
+│   │   │   ├───Repositories
+│   │   │   │   │   CartRepositoryEf.cs
+│   │   │   │   │   CategoryRepositoryEf.cs
+│   │   │   │   │   CustomerRepositoryEf.cs
+│   │   │   │   │   EfRepository.cs
+│   │   │   │   │   JwtTokenRepositoryEf.cs
+│   │   │   │   │   OrderRepositoryEf.cs
+│   │   │   │   │   PaymentRepositoryEf.cs
+│   │   │   │   │   ProductRepositoryEf.cs
+│   │   │   │   │   RewiewRepositoryEf.cs
+│   │   │   │   │   UnitOfWorkEf.cs
+│   │   │   │   │   UserActionRepositoryEf.cs
+│   │   │   │   │   UserRepositoryEf.cs
+│   │   │   │   AppDbContext.cs
+│   │   │   │   CosmeticShop.DB.EF.csproj
+├───Presentation
+│   ├───cosmeticshop.client
+│   │   ├───.vscode
+│   │   │   │   launch.json
+│   │   ├───certs
+│   │   │   │   cosmeticshop.client.key
+│   │   │   │   cosmeticshop.client.pem
+│   │   ├───public
+│   │   │   │   vite.svg
+│   │   ├───src
+│   │   │   ├───assets
+│   │   │   │   │   react.svg
+│   │   │   │   App.css
+│   │   │   │   App.tsx
+│   │   │   │   index.css
+│   │   │   │   main.tsx
+│   │   │   │   vite-env.d.ts
+│   │   │   .gitignore
+│   │   │   CHANGELOG.md
+│   │   │   cosmeticshop.client.esproj
+│   │   │   eslint.config.js
+│   │   │   index.html
+│   │   │   nuget.config
+│   │   │   package-lock.json
+│   │   │   package.json
+│   │   │   README.md
+│   │   │   tsconfig.app.json
+│   │   │   tsconfig.json
+│   │   │   tsconfig.node.json
+│   │   │   vite.config.ts
+│   ├───CosmeticShop.WebAPI
+│   │   ├───Controllers
+│   │   │   │   ProductsController.cs
+│   │   │   │   WeatherForecastController.cs
+│   │   ├───Middlewares
+│   │   │   │   TokenValidationMiddleware.cs
+│   │   ├───Properties
+│   │   │   │   launchSettings.json
+│   │   ├───wwwroot
+│   │   │   appsettings.Development.json
+│   │   │   appsettings.json
+│   │   │   CHANGELOG.md
+│   │   │   CosmeticShop.Server.http
+│   │   │   CosmeticShop.WebAPI.csproj
+│   │   │   CosmeticShop.WebAPI.csproj.user
+│   │   │   Program.cs
+│   │   │   WeatherForecast.cs
+│   ├───Models
+│   │   ├───HttpModels
+│   │   │   ├───Requests
+│   │   │   ├───Responses
+│   │   │   │   FilterDto.cs
+│   │   │   │   HttpModels.csproj
+│   .gitattributes
+│   .gitignore
+│   CosmeticShop.sln
+│   docker-compose.yml
+│   Dockerfile
+│   project_structure.txt
+│   структура_проекта.txt

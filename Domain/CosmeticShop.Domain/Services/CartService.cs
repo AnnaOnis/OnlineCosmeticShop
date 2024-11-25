@@ -28,7 +28,7 @@ namespace CosmeticShop.Domain.Services
         /// </summary>
         /// <param name="customerId">The ID of the customer.</param>
         /// <returns>The customer's cart.</returns>
-        public async Task<Cart> GetCartByCustomerId(Guid customerId, CancellationToken cancellationToken)
+        public async Task<Cart> GetCartByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
         {
             var cart =  await _unitOfWork.CartRepository.GetCartByCustomerId(customerId, cancellationToken);
             return cart ?? new Cart(customerId);
@@ -47,7 +47,7 @@ namespace CosmeticShop.Domain.Services
             if (product is null) throw new ArgumentNullException(nameof(product));
             if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
 
-            var cart = await GetCartByCustomerId(customerId, cancellationToken);
+            var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
 
             await cart.AddItem(product.Id, quantity);
             await _unitOfWork.CartRepository.Update(cart, cancellationToken);
@@ -61,7 +61,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="productId">The ID of the product to remove.</param>
         public async Task RemoveItemFromCartAsync(Guid customerId, Guid productId, CancellationToken cancellationToken)
         {
-            var cart = await GetCartByCustomerId(customerId, cancellationToken);
+            var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
  
             await cart.RemoveItem(productId);
             await _unitOfWork.CartRepository.Update(cart, cancellationToken);
@@ -79,9 +79,24 @@ namespace CosmeticShop.Domain.Services
         {
             if (quantity <= 0) throw new ArgumentOutOfRangeException("Quantity must be greater than zero");
 
-            var cart = await GetCartByCustomerId(customerId, cancellationToken);
+            var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
 
             await cart.UpdateItemQuantity(productId, quantity);
+            await _unitOfWork.CartRepository.Update(cart, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Clears all items from the cart of the specified customer.
+        /// </summary>
+        /// <param name="customerId">The unique identifier of the customer whose cart will be cleared.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation of clearing the cart.</returns>
+        public async Task ClearCartAsync(Guid customerId, CancellationToken cancellationToken)
+        {
+            var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
+
+            await cart.ClearItems();
             await _unitOfWork.CartRepository.Update(cart, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }

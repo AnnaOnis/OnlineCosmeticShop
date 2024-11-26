@@ -79,7 +79,7 @@ namespace CosmeticShop.Domain.Services
         /// <exception cref="ProductNotFoundException">Thrown when the products is null.</exception>
         public async Task<IReadOnlyList<Product>> GetProductsAsync(CancellationToken cancellationToken,
                                                                  string? filter = null,
-                                                                 string sortField = "Rating", 
+                                                                 string? sortField = "Rating", 
                                                                  string sortOrder = "asc",
                                                                  int pageNumber = 1,
                                                                  int pageSize = 10,

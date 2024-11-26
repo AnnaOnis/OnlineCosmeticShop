@@ -49,8 +49,7 @@ namespace CosmeticShop.WebAPI
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-                             new MySqlServerVersion(new Version(8, 0, 39))));
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddAuthentication(options =>
             {
@@ -102,6 +101,8 @@ namespace CosmeticShop.WebAPI
             builder.Services.AddScoped<JwtTokenService> ();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWorkEf>();
             builder.Services.AddScoped<IPaymentGateway, PaymentGatewayService>();
+
+            builder.Services.AddAutoMapper(typeof(Mappers.AssemblyMarker).Assembly);
 
 
             var app = builder.Build();

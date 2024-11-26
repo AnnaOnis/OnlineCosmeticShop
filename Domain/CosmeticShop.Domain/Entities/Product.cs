@@ -42,7 +42,7 @@ namespace CosmeticShop.Domain.Entities
         /// Gets the category ID to which the product belongs.
         /// </summary>
         [Required]
-        public Guid CategoryId { get; init; }
+        public Guid CategoryId { get; set; }
 
         /// <summary>
         /// Gets or sets the stock quantity of the product.

@@ -10,6 +10,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{00283613-8BE3-4F0E-A629-93AE4393D0D3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{87CEF6D5-FE7E-47C2-9F43-33E1AB1B4B37}"
+	ProjectSection(SolutionItems) = preProject
+		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.cs
+		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.Designer.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.Designer.cs
+		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.cs
+		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.Designer.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.Designer.cs
+		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.cs
+		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.Designer.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.Designer.cs
+		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\AppDbContextModelSnapshot.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\AppDbContextModelSnapshot.cs
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{68C8BDA8-CBF7-4A25-A2D7-FD30EC79399E}"
 EndProject
@@ -33,7 +42,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentGateway", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{C87C35F8-A778-40A4-8A94-9B7F38733284}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpModels", "Presentation\Models\HttpModels\HttpModels.csproj", "{BD93A85E-B613-4C14-875A-8D911790BCD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpModels", "Presentation\Models\HttpModels\HttpModels.csproj", "{BD93A85E-B613-4C14-875A-8D911790BCD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mappers", "Mappers", "{5735F0BA-2470-44B0-8D83-DD6CD6368643}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mappers", "Presentation\Mappers\Mappers\Mappers.csproj", "{2D430321-7F52-4D69-ACC3-F704D25C6648}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +88,10 @@ Global
 		{BD93A85E-B613-4C14-875A-8D911790BCD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD93A85E-B613-4C14-875A-8D911790BCD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD93A85E-B613-4C14-875A-8D911790BCD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D430321-7F52-4D69-ACC3-F704D25C6648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D430321-7F52-4D69-ACC3-F704D25C6648}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D430321-7F52-4D69-ACC3-F704D25C6648}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D430321-7F52-4D69-ACC3-F704D25C6648}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +109,8 @@ Global
 		{D5DEF1EF-A81A-4A1A-BE42-BABC6F99C7FE} = {6C3EBEE4-6434-421C-B7A0-A7A6A787D272}
 		{C87C35F8-A778-40A4-8A94-9B7F38733284} = {D2A9BD57-E34F-4C2F-AB35-F74FA6D41D0C}
 		{BD93A85E-B613-4C14-875A-8D911790BCD3} = {C87C35F8-A778-40A4-8A94-9B7F38733284}
+		{5735F0BA-2470-44B0-8D83-DD6CD6368643} = {D2A9BD57-E34F-4C2F-AB35-F74FA6D41D0C}
+		{2D430321-7F52-4D69-ACC3-F704D25C6648} = {5735F0BA-2470-44B0-8D83-DD6CD6368643}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF980729-06CA-45F2-929F-3ADB00358EA1}

@@ -9,6 +9,6 @@
         public int PageSize { get; set; } = 10; // Количество элементов на странице
 
         // Параметр, специфичный для продуктов
-        public int? CategoryId { get; set; }
+        public Guid? CategoryId { get; set; }
     }
 }

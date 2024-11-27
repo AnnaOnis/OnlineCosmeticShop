@@ -104,7 +104,7 @@ namespace CosmeticShop.Domain.Entities
 
             Id = Guid.NewGuid();
             CustomerId = cart.CustomerId;
-            OrderDate = DateTime.Now;
+            OrderDate = DateTime.UtcNow;
             Status = OrderStatus.Pending;
             TotalQuantity = cart.CartItems.Count;
             TotalAmount = cart.TotalAmount;

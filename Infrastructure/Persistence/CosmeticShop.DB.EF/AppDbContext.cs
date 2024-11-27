@@ -33,7 +33,7 @@ namespace CosmeticShop.DB.EF
             // Category - Parent Category (Self-Referencing)
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.ParentCategory)
-                .WithMany()
+                .WithMany(c => c.SubCategories)
                 .HasForeignKey(c => c.ParentCategoryId)
                 .OnDelete(DeleteBehavior.Restrict); // Prevent cascade deletion
 

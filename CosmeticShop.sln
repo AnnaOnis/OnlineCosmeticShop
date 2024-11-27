@@ -10,15 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{00283613-8BE3-4F0E-A629-93AE4393D0D3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{87CEF6D5-FE7E-47C2-9F43-33E1AB1B4B37}"
-	ProjectSection(SolutionItems) = preProject
-		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.cs
-		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.Designer.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20240925145422_InitialCreate.Designer.cs
-		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.cs
-		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.Designer.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241014125923_AddingDateAddedToFavorite.Designer.cs
-		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.cs
-		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.Designer.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\20241016145450_AddingJwtTokensTable.Designer.cs
-		Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\AppDbContextModelSnapshot.cs = Infrastructure\Persistence\CosmeticShop.DB.EF\Migrations\AppDbContextModelSnapshot.cs
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{68C8BDA8-CBF7-4A25-A2D7-FD30EC79399E}"
 EndProject

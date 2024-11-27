@@ -55,7 +55,7 @@ namespace CosmeticShop.Domain.Entities
         {
             Id = Guid.NewGuid();
             CustomerId = customerId;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
             CartItems = new List<CartItem>();
             TotalAmount = 0;
         }

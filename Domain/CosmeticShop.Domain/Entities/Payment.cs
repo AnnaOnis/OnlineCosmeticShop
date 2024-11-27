@@ -71,7 +71,7 @@ namespace CosmeticShop.Domain.Entities
             Id = Guid.NewGuid();
             OrderId = orderId;
             CustomerId = customerId;
-            PaymentDate = DateTime.Now;
+            PaymentDate = DateTime.UtcNow;
             Status = PaymentStatus.Pending;
             Method = method;
         }

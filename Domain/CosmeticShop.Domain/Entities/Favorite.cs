@@ -48,7 +48,7 @@ namespace CosmeticShop.Domain.Entities
         {
             CustomerId = customerId;
             ProductId = productId;
-            DateAdded = DateTime.Now;
+            DateAdded = DateTime.UtcNow;
         }
     }
 }

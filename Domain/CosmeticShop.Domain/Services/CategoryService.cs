@@ -63,18 +63,21 @@ namespace CosmeticShop.Domain.Services
         /// <returns>The updated category.</returns>
         /// <exception cref="InvalidCategoryNameException">Thrown when the category name is invalid or already exists.</exception>
         /// <exception cref="ArgumentException">Thrown when the category name is null or contains only space.</exception>
-        public async Task<Category> UpdateCategoryAsync(Guid categoryId, string newName, CancellationToken cancellationToken)
+        public async Task<Category> UpdateCategoryAsync(Guid categoryId, 
+                                                        string newName, 
+                                                        CancellationToken cancellationToken, 
+                                                        Guid? parentCategoryId = null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(newName, nameof(newName));
-
-            var category = await GetCategoryByIdAsync(categoryId, cancellationToken);
 
             if (await _unitOfWork.CategoryRepository.ExistsByNameAsync(newName, cancellationToken))
             {
                 throw new InvalidCategoryNameException($"Category with name '{newName}' already exists.");
             }
 
+            var category = await GetCategoryByIdAsync(categoryId, cancellationToken);
             category.CategoryName = newName;
+            if(parentCategoryId != null) { category.ParentCategoryId = parentCategoryId; }
             await _unitOfWork.CategoryRepository.Update(category, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return category;
@@ -106,7 +109,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="categoryId">The ID of the category.</param>
         /// <returns>The category.</returns>
         /// <exception cref="CategoryNotFoundException">Thrown when the category is not found.</exception>
-        private async Task<Category> GetCategoryByIdAsync(Guid categoryId, CancellationToken cancellationToken)
+        public async Task<Category> GetCategoryByIdAsync(Guid categoryId, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.CategoryRepository.GetById(categoryId, cancellationToken);
             if (category == null)

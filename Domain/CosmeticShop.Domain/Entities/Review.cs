@@ -88,7 +88,7 @@ namespace CosmeticShop.Domain.Entities
             ProductId = productId;
             CustomerId = customerId; 
             Rating = rating;
-            ReviewDate = DateTime.Now;
+            ReviewDate = DateTime.UtcNow;
             IsApproved = false;
             ReviewText = reviewText;
         }

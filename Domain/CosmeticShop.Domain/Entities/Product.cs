@@ -115,7 +115,7 @@ namespace CosmeticShop.Domain.Entities
             Price = price;
             CategoryId = categoryId;
             StockQuantity = stockQuantity;
-            DateAdded = DateTime.Now;
+            DateAdded = DateTime.UtcNow;
             Manufacturer = manufacturer;
             Rating = 0;
             ImageUrl = imageUrl;

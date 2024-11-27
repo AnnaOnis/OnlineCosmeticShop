@@ -40,7 +40,7 @@ namespace CosmeticShop.WebAPI.Controllers
                                                                   filterDto.PageSize, 
                                                                   filterDto.CategoryId);
 
-            var productDtos = _mapper.Map<ProductResponseDto>(products);
+            var productDtos = _mapper.Map<ProductResponseDto[]>(products);
             //var productDtos = products.Select(p => new ProductResponseDto
             //{
             //    Id = p.Id,

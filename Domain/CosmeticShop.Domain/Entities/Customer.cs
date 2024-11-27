@@ -105,7 +105,7 @@ namespace CosmeticShop.Domain.Entities
             PasswordHash = passwordHash ?? throw new ArgumentNullException(nameof(passwordHash));
             PhoneNumber = phoneNumber ?? throw new ArgumentNullException(nameof(phoneNumber));
             ShippingAddress = shippingAddress ?? throw new ArgumentNullException(nameof(shippingAddress));
-            DateRegistered = DateTime.Now;
+            DateRegistered = DateTime.UtcNow;
 
             Favorites = new List<Favorite>();
             Orders = new List<Order>();

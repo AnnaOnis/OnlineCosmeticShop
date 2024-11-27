@@ -60,7 +60,7 @@ namespace CosmeticShop.Domain.Entities
             Id = Guid.NewGuid();
             UserId = userId;
             Type = type;
-            ActionDate = DateTime.Now;
+            ActionDate = DateTime.UtcNow;
         }
     }
 }

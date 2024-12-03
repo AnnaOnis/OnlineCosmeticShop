@@ -2,6 +2,7 @@
 using CosmeticShop.Domain.Services;
 using HttpModels.Requests;
 using HttpModels.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(categoryDtos);
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<CategoryResponseDto>> CreateCategory(CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
         {
@@ -47,6 +49,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(responseDto);
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(Guid id, CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
         {
@@ -61,6 +64,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(responseDto);
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id, CancellationToken cancellationToken)
         {

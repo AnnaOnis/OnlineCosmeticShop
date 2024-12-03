@@ -59,7 +59,7 @@ namespace CosmeticShop.Domain.Services
             ArgumentException.ThrowIfNullOrWhiteSpace(nameof(phoneNumber));
             ArgumentException.ThrowIfNullOrWhiteSpace(nameof(shippingAddress));
 
-            var existingCustomer = _unitOfWork.CustomerRepository.FindByEmail(email, cancellationToken);
+            var existingCustomer = await _unitOfWork.CustomerRepository.FindByEmail(email, cancellationToken);
             if (existingCustomer != null)
                 throw new EmailAlreadyExistsException(message: "The customer with this email has already been registered.");
 
@@ -111,6 +111,15 @@ namespace CosmeticShop.Domain.Services
             return customer;
         }
 
+        public async Task<bool> ExistsByEmail(string email, CancellationToken cancellationToken)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(email, nameof(email));
+
+            var existingCustomer = await _unitOfWork.CustomerRepository.FindByEmail(email, cancellationToken);
+            if (existingCustomer == null) return false;
+            return true;
+        }
+
         /// <summary>
         /// Retrieves a list of all customers.
         /// </summary>
@@ -122,7 +131,7 @@ namespace CosmeticShop.Domain.Services
         /// <returns>List of Customer objects</returns>
         public async Task<IReadOnlyList<Customer>> GetAllCustomers(CancellationToken cancellationToken,
                                                                    string? filter = null,
-                                                                   string sortField = "LastName",
+                                                                   string? sortField = "LastName",
                                                                    string sortOrder = "asc",
                                                                    int pageNumber = 1,
                                                                    int pageSize = 10)
@@ -178,7 +187,7 @@ namespace CosmeticShop.Domain.Services
         /// </summary>
         /// <param name="customerId">The ID of the customer</param>
         /// <returns>Customer object</returns>
-        public async Task<Customer> GetCustomerInfo(Guid customerId, CancellationToken cancellationToken)
+        public async Task<Customer> GetCustomerById(Guid customerId, CancellationToken cancellationToken)
         {
             return await _unitOfWork.CustomerRepository.GetById(customerId, cancellationToken);
         }
@@ -333,6 +342,8 @@ namespace CosmeticShop.Domain.Services
                 throw new CustomerNotFoundException("Customer not found.");
             return customer;
         }
+
+
     }
 
 }

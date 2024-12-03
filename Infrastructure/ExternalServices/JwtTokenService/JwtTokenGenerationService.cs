@@ -1,10 +1,9 @@
-﻿using CosmeticShop.Domain.Entities;
+﻿using CosmeticShop.Domain.DTOs;
 using CosmeticShop.Domain.Enumerations;
 using CosmeticShop.Domain.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Principal;
 
 namespace JwtTokenGenerator
 {
@@ -30,19 +29,21 @@ namespace JwtTokenGenerator
         /// Generates a JWT token containing the user's ID and optional role information.
         /// </summary>
         /// <param name="userId">Unique identifier of the user.</param>
+        /// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
         /// <param name="role">Optional parameter specifying the role of the user. Defaults to "Customer" if not provided.</param>
-        /// <returns>A string representation of the generated JWT token.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when the Jti claim or token expiration is missing.</exception>
-        public string GenerateToken(Guid userId, CancellationToken cancellationToken, RoleType? role = null)
+        /// <returns>A <see cref="JwtTokenDto"/> containing the generated JWT token, JTI, user ID, and expiration time.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when token expiration is missing.</exception>
+        public JwtTokenDto GenerateToken(Guid userId, CancellationToken cancellationToken, RoleType? role = null)
         {
             string userRole = role.HasValue ? role.Value.ToString() : "Customer";
+            var jti = Guid.NewGuid().ToString();
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, jti),
                     new Claim(ClaimTypes.Role, userRole)
                 }),
                 Expires = DateTime.UtcNow.Add(_jwtConfig.LifeTime),
@@ -57,7 +58,9 @@ namespace JwtTokenGenerator
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return tokenString;
+            var tokenDto = new JwtTokenDto(tokenString, jti, userId, tokenDescriptor.Expires.Value);
+
+            return tokenDto;
         }
     }
 }

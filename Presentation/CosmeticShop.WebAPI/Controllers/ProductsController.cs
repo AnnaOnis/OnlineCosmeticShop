@@ -57,6 +57,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(productDtos);
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<ProductResponseDto>> CreateProduct(ProductRequestDto productRequestDto, CancellationToken cancellationToken)
         {
@@ -77,6 +78,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(responseDto);
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ProductResponseDto>> UpdateProduct(Guid id, ProductRequestDto productRequestDto, CancellationToken cancellationToken)
         {
@@ -97,6 +99,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(responseDto);
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(Guid id, CancellationToken cancellationToken)
         {

@@ -229,6 +229,15 @@ namespace CosmeticShop.Domain.Services
             await _unitOfWork.UserRepository.Delete(user.Id, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task<bool> ExistsByEmail(string email, CancellationToken cancellationToken)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(email, nameof(email));
+
+            var existingUser = await _unitOfWork.UserRepository.FindByEmail(email, cancellationToken);
+            if (existingUser == null) return false;
+            return true;
+        }
     }
 
 }

@@ -3,9 +3,7 @@ using CosmeticShop.Domain.Services;
 using HttpModels.Responses;
 using HttpModels.Requests;
 using HttpModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CosmeticShop.Domain.Entities;
 using System.Security.Claims;
 
 namespace CosmeticShop.WebAPI.Controllers
@@ -42,7 +40,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<CustomerResponseDto>> GetCustomerById(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult<CustomerResponseDto>> GetCustomerById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var customer = await _customerService.GetCustomerById(id, cancellationToken);
             var customerDto = _mapper.Map<CustomerResponseDto>(customer);
@@ -51,7 +49,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomer(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteCustomer([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _customerService.DeleteCustomer(id, cancellationToken);
             return NoContent();
@@ -72,10 +70,13 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(customerDto);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<CustomerResponseDto>> UpdateCustomerProfile(Guid id, CustomerUpdateRequestDto customerRequestDto, CancellationToken cancellationToken)
+        [HttpPut]
+        public async Task<ActionResult<CustomerResponseDto>> UpdateCustomerProfile([FromBody] CustomerUpdateRequestDto customerRequestDto, CancellationToken cancellationToken)
         {
-            var updatedCustomer = await _customerService.UpdateCustomerProfile(id,
+            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var guid = Guid.Parse(strId);
+
+            var updatedCustomer = await _customerService.UpdateCustomerProfile(guid,
                                                          customerRequestDto.Email,
                                                          customerRequestDto.FirstName,
                                                          customerRequestDto.LastName,
@@ -89,12 +90,12 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ResetPasword (string newPassword, CancellationToken cancellationToken)
+        public async Task<IActionResult> ResetPasword ([FromBody] PasswordResetRequestDto passwordResetRequest, CancellationToken cancellationToken)
         {
             var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var guid = Guid.Parse(strId);
 
-            await _customerService.ResetPassword(guid, newPassword, cancellationToken);
+            await _customerService.ResetPassword(guid, passwordResetRequest.NewPassword, cancellationToken);
 
             return NoContent();
         }

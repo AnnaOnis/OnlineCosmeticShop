@@ -59,7 +59,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<ProductResponseDto>> CreateProduct(ProductRequestDto productRequestDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<ProductResponseDto>> CreateProduct([FromBody] ProductRequestDto productRequestDto, CancellationToken cancellationToken)
         {
             Product newProduct = _mapper.Map<Product>(productRequestDto);
 
@@ -71,7 +71,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductResponseDto>> GetProductById(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult<ProductResponseDto>> GetProductById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var product = await _productService.GetProductByIdAsync(id, cancellationToken);
             ProductResponseDto responseDto = _mapper.Map<ProductResponseDto>(product);
@@ -80,7 +80,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProductResponseDto>> UpdateProduct(Guid id, ProductRequestDto productRequestDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<ProductResponseDto>> UpdateProduct([FromRoute] Guid id, [FromBody] ProductRequestDto productRequestDto, CancellationToken cancellationToken)
         {
             var updatingProduct = await _productService.GetProductByIdAsync(id, cancellationToken);
 
@@ -101,7 +101,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteProduct([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _productService.DeleteProductAsync(id, cancellationToken);
             return NoContent();

@@ -15,5 +15,6 @@ namespace CosmeticShop.Domain.Services
         /// <param name="role">Optional user role. If not provided, a default role will be assigned.</param>
         /// <returns>A string containing the generated JWT token.</returns>
         JwtTokenDto GenerateToken(Guid userId, CancellationToken cancellationToken, RoleType? role = null);
+        public string? ExtractJtiFromToken(string token, CancellationToken cancellationToken);
     }
 }

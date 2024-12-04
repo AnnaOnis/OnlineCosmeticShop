@@ -107,7 +107,7 @@ namespace CosmeticShop.Domain.Services
         /// <returns>List of User objects</returns>
         public async Task<IReadOnlyList<User>> GetAllSortedUsers(CancellationToken cancellationToken,
                                                                    string? filter = null,
-                                                                   string sortField = "LastName",
+                                                                   string? sortField = "LastName",
                                                                    string sortOrder = "asc",
                                                                    int pageNumber = 1,
                                                                    int pageSize = 10)
@@ -172,7 +172,7 @@ namespace CosmeticShop.Domain.Services
         /// <exception cref="ArgumentException">Thrown when <paramref name="newEmail"/>, <paramref name="newFirstName"/>, 
         /// <paramref name="newLastName"/> is <c>null</c> or contains only a space.</exception>
         /// <exception cref="UserNotFoundException">Thrown when user not found.</exception>
-        public async Task UpdateUser(Guid userId,
+        public async Task<User> UpdateUser(Guid userId,
                                      string newEmail,
                                      string newFirstName,
                                      string newLastName,
@@ -192,6 +192,8 @@ namespace CosmeticShop.Domain.Services
 
             await _unitOfWork.UserRepository.Update(user, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return user;
         }
 
         /// <summary>

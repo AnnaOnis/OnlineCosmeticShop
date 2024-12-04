@@ -32,7 +32,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<CustomerAuthResponseDto>> RegisterCustomer(CustomerRegisterRequestDto customerRegisterRequestDto, 
+        public async Task<ActionResult<CustomerAuthResponseDto>> RegisterCustomer([FromBody] CustomerRegisterRequestDto customerRegisterRequestDto, 
                                                                                       CancellationToken cancellationToken)
         {
             var registeredCustomer = await _customerService.Register(customerRegisterRequestDto.FirstName,
@@ -60,7 +60,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<CustomerAuthResponseDto>> Login(LoginRequest loginRequest, CancellationToken cancellationToken)
+        public async Task<ActionResult<CustomerAuthResponseDto>> Login([FromBody] LoginRequest loginRequest, CancellationToken cancellationToken)
         {
             var role = await DetermineUserRoleAsync(loginRequest.Email, cancellationToken);
 
@@ -104,6 +104,27 @@ namespace CosmeticShop.WebAPI.Controllers
                 return Conflict(new ErrorResponse("Аккаунт с таким Email не найден!"));
             }
 
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequest logoutRequest, CancellationToken cancellationToken)
+        {
+            // Предполагается, что в запросе передается токен, который нужно аннулировать
+            var token = logoutRequest.Token;
+
+            var jti = _tokenGenerationService.ExtractJtiFromToken(token, cancellationToken);
+
+            // Удаляем токен из хранилища
+            var result = await _jwtTokenService.RemoveTokenByJtiAsync(jti, cancellationToken);
+
+            if (result)
+            {
+                return Ok(new { message = "Вы успешно вышли из системы." });
+            }
+            else
+            {
+                return BadRequest(new ErrorResponse("Не удалось выйти из системы. Попробуйте еще раз."));
+            }
         }
 
         private async Task<string> DetermineUserRoleAsync(string email, CancellationToken cancellationToken)

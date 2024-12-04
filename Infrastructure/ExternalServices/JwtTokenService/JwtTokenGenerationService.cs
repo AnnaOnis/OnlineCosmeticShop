@@ -62,5 +62,14 @@ namespace JwtTokenGenerator
 
             return tokenDto;
         }
+       
+        public string? ExtractJtiFromToken(string token, CancellationToken cancellationToken)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(token);
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            return jwtToken.Payload.Jti;
+        }
     }
 }

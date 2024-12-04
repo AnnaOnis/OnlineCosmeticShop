@@ -21,7 +21,7 @@ namespace CosmeticShop.Domain.Services
 
         public async Task<JwtToken?> FindTokenByJti(string jti, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(jti, nameof(jti));
+            ArgumentException.ThrowIfNullOrWhiteSpace(jti, nameof(jti));
 
             return await _unitOfWork.JwtTokenRepository.FindTokenByJti(jti, cancellationToken);
         }
@@ -38,18 +38,19 @@ namespace CosmeticShop.Domain.Services
             }
         }
 
-        public async Task RemoveTokenAsync(JwtToken userToken, CancellationToken cancellationToken)
+        public async Task<bool> RemoveTokenByJtiAsync(string jti, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(nameof(userToken));
+            ArgumentException.ThrowIfNullOrWhiteSpace(jti, nameof(jti));
 
-            var existedToken = await _unitOfWork.JwtTokenRepository.FindTokenByJti(userToken.Jti, cancellationToken);
-            if (existedToken is not null)
+            var existedToken = await _unitOfWork.JwtTokenRepository.FindTokenByJti(jti, cancellationToken);
+            if (existedToken != null)
             {
                 await _unitOfWork.JwtTokenRepository.Delete(existedToken.Id, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
+                return true;
             }
+
+            return false;
         }
-
-
     }
 }

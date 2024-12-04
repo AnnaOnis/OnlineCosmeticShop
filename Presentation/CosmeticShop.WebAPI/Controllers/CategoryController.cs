@@ -31,7 +31,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<CategoryResponseDto>> CreateCategory(CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<CategoryResponseDto>> CreateCategory([FromBody] CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
         {
             string name = categoryRequestDto.CategoryName;
             var parentId = categoryRequestDto.ParentCategoryId;
@@ -42,7 +42,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryResponseDto>> GetCategoryById(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult<CategoryResponseDto>> GetCategoryById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id, cancellationToken);
             var responseDto = _mapper.Map<CategoryResponseDto>(category);
@@ -51,7 +51,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(Guid id, CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
         {
             var updatingCategory = await _categoryService.GetCategoryByIdAsync(id, cancellationToken);
 
@@ -66,7 +66,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _categoryService.DeleteCategoryAsync(id, cancellationToken);
             return NoContent();

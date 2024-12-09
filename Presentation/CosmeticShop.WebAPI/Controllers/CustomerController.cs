@@ -57,6 +57,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //Методы для самого пользователя
 
+        //[Authorize]
         [HttpGet("current")]
         public async Task<ActionResult<CustomerResponseDto>> GetCurrentCustomerProfile(CancellationToken cancellationToken)
         {
@@ -70,6 +71,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(customerDto);
         }
 
+        //[Authorize]
         [HttpPut]
         public async Task<ActionResult<CustomerResponseDto>> UpdateCustomerProfile([FromBody] CustomerUpdateRequestDto customerRequestDto, CancellationToken cancellationToken)
         {
@@ -89,6 +91,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(updatedCustomer);
         }
 
+        //[Authorize]
         [HttpPost]
         public async Task<IActionResult> ResetPasword ([FromBody] PasswordResetRequestDto passwordResetRequest, CancellationToken cancellationToken)
         {

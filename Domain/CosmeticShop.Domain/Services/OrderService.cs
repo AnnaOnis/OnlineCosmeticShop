@@ -43,7 +43,7 @@ namespace CosmeticShop.Domain.Services
                                                   CancellationToken cancellationToken)
         {
             var cart = await _unitOfWork.CartRepository.GetCartByCustomerId(customerId, cancellationToken);
-            if (cart == null || !cart.CartItems.Any())
+            if (cart == null || cart.CartItems.Count == 0)
             {
                 throw new InvalidOperationException("Cart is empty or not found.");
             }
@@ -115,7 +115,7 @@ namespace CosmeticShop.Domain.Services
         /// <returns>A list of filtered and sorted orders.</returns>
         public async Task<IReadOnlyList<Order>> GetAllOrdersAsync(CancellationToken cancellationToken,
                                                                   string? filter = null,
-                                                                  string sortField = "OrderDate",
+                                                                  string? sortField = "OrderDate",
                                                                   string sortOrder = "asc",
                                                                   int pageNumber = 1,
                                                                   int pageSize = 10)
@@ -156,6 +156,18 @@ namespace CosmeticShop.Domain.Services
                 sorter: sortExpression,
                 pageNumber: pageNumber,
                 pageSize: pageSize);
+        }
+
+        public async Task DeleteOrder(Guid orderId, CancellationToken cancellationToken)
+        {
+            var order = await _unitOfWork.OrderRepository.GetById(orderId, cancellationToken);
+            if (order == null)
+            {
+                throw new OrderNotFoundException("Order not found.");
+            }
+
+            await _unitOfWork.OrderRepository.Delete(orderId, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }   
 }

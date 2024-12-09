@@ -40,16 +40,14 @@ namespace CosmeticShop.Domain.Services
         /// <param name="customerId">The ID of the customer.</param>
         /// <param name="product">The product to add.</param>
         /// <param name="quantity">The quantity of the product to add.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the product is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the quantity is less than or equal to zero.</exception>
-        public async Task AddItemToCartAsync(Guid customerId, Product product, int quantity, CancellationToken cancellationToken)
+        public async Task AddItemToCartAsync(Guid customerId, Guid productId, int quantity, CancellationToken cancellationToken)
         {
-            if (product is null) throw new ArgumentNullException(nameof(product));
             if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
 
             var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
 
-            await cart.AddItem(product.Id, quantity);
+            await cart.AddItem(productId, quantity);
             await _unitOfWork.CartRepository.Update(cart, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }

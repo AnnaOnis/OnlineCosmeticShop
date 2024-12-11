@@ -1,4 +1,5 @@
 ﻿using CosmeticShop.Domain.Entities;
+using CosmeticShop.Domain.Exceptions.Product;
 using CosmeticShop.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -41,13 +42,20 @@ namespace CosmeticShop.Domain.Services
         /// <param name="product">The product to add.</param>
         /// <param name="quantity">The quantity of the product to add.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the quantity is less than or equal to zero.</exception>
+        /// <exception cref="ProductNotFoundException">Throw when product not found.</exception>
         public async Task AddItemToCartAsync(Guid customerId, Guid productId, int quantity, CancellationToken cancellationToken)
         {
             if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
 
+            var product = await _unitOfWork.ProductRepository.GetById(productId, cancellationToken);
+            if (product == null)
+            {
+                throw new ProductNotFoundException("Product not found.");
+            }
+
             var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
 
-            await cart.AddItem(productId, quantity);
+            await cart.AddItem(product.Id, quantity);
             await _unitOfWork.CartRepository.Update(cart, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
@@ -57,11 +65,18 @@ namespace CosmeticShop.Domain.Services
         /// </summary>
         /// <param name="customerId">The ID of the customer.</param>
         /// <param name="productId">The ID of the product to remove.</param>
+        /// <exception cref="ProductNotFoundException">Throw when product not found.</exception>
         public async Task RemoveItemFromCartAsync(Guid customerId, Guid productId, CancellationToken cancellationToken)
         {
+            var product = await _unitOfWork.ProductRepository.GetById(productId, cancellationToken);
+            if (product == null)
+            {
+                throw new ProductNotFoundException("Product not found.");
+            }
+
             var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
  
-            await cart.RemoveItem(productId);
+            await cart.RemoveItem(product.Id);
             await _unitOfWork.CartRepository.Update(cart, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
@@ -72,14 +87,21 @@ namespace CosmeticShop.Domain.Services
         /// <param name="customerId">The ID of the customer.</param>
         /// <param name="productId">The ID of the product to update.</param>
         /// <param name="quantity">The new quantity of the product.</param>
-        /// /// <exception cref="ArgumentOutOfRangeException">Thrown when the quantity is less than or equal to zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the quantity is less than or equal to zero.</exception>
+        /// <exception cref="ProductNotFoundException">Throw when product not found.</exception>
         public async Task UpdateCartItemQuantityAsync(Guid customerId, Guid productId, int quantity, CancellationToken cancellationToken)
         {
             if (quantity <= 0) throw new ArgumentOutOfRangeException("Quantity must be greater than zero");
 
+            var product = await _unitOfWork.ProductRepository.GetById(productId, cancellationToken);
+            if (product == null)
+            {
+                throw new ProductNotFoundException("Product not found.");
+            }
+
             var cart = await GetCartByCustomerIdAsync(customerId, cancellationToken);
 
-            await cart.UpdateItemQuantity(productId, quantity);
+            await cart.UpdateItemQuantity(product.Id, quantity);
             await _unitOfWork.CartRepository.Update(cart, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }

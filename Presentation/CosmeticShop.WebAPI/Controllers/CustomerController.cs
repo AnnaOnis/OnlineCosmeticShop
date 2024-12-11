@@ -61,8 +61,7 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpGet("current")]
         public async Task<ActionResult<CustomerResponseDto>> GetCurrentCustomerProfile(CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            Guid guid = GetCurrentCustomerId();
 
             var currentCustomer = await _customerService.GetCustomerById(guid, cancellationToken);
 
@@ -75,8 +74,7 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpPut]
         public async Task<ActionResult<CustomerResponseDto>> UpdateCustomerProfile([FromBody] CustomerUpdateRequestDto customerRequestDto, CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            Guid guid = GetCurrentCustomerId();
 
             var updatedCustomer = await _customerService.UpdateCustomerProfile(guid,
                                                          customerRequestDto.Email,
@@ -95,12 +93,18 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPasword ([FromBody] PasswordResetRequestDto passwordResetRequest, CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            Guid guid = GetCurrentCustomerId();
 
             await _customerService.ResetPassword(guid, passwordResetRequest.NewPassword, cancellationToken);
 
             return NoContent();
+        }
+
+        private Guid GetCurrentCustomerId()
+        {
+            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var guid = Guid.Parse(strId);
+            return guid;
         }
     }
 }

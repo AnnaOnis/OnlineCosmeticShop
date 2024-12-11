@@ -15,7 +15,7 @@ namespace CosmeticShop.Domain.Services
         IOrderRepository OrderRepository { get; }
         IPaymentRepository PaymentRepository { get; }
         IProductRepository ProductRepository { get; }
-        IRewiewRepository RewiewRepository { get; }
+        IReviewRepository ReviewRepository { get; }
         IUserActionRepository UserActionRepository { get; }
         IUserRepository UserRepository { get; }
         IJwtTokenRepository JwtTokenRepository { get; }

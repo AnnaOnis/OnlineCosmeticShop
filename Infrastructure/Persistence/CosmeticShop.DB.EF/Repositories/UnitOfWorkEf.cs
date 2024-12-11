@@ -17,7 +17,7 @@ namespace CosmeticShop.DB.EF.Repositories
         public IOrderRepository OrderRepository { get; }
         public IPaymentRepository PaymentRepository { get; }
         public IProductRepository ProductRepository { get; }
-        public IRewiewRepository RewiewRepository { get; } 
+        public IReviewRepository ReviewRepository { get; } 
         public IUserActionRepository UserActionRepository { get; }
         public IUserRepository UserRepository { get; }
 
@@ -31,7 +31,7 @@ namespace CosmeticShop.DB.EF.Repositories
                             IOrderRepository orderRepository, 
                             IPaymentRepository paymentRepository, 
                             IProductRepository productRepository, 
-                            IRewiewRepository rewiewRepository, 
+                            IReviewRepository rewiewRepository, 
                             IUserActionRepository userActionRepository, 
                             IUserRepository userRepository,
                             IJwtTokenRepository jwtTokenRepository,
@@ -43,7 +43,7 @@ namespace CosmeticShop.DB.EF.Repositories
             OrderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
             PaymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
             ProductRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
-            RewiewRepository = rewiewRepository ?? throw new ArgumentNullException(nameof(rewiewRepository));
+            ReviewRepository = rewiewRepository ?? throw new ArgumentNullException(nameof(rewiewRepository));
             UserActionRepository = userActionRepository ?? throw new ArgumentNullException(nameof(userActionRepository));
             UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             JwtTokenRepository = jwtTokenRepository ?? throw new ArgumentNullException(nameof(jwtTokenRepository));

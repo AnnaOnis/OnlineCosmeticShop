@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace CosmeticShop.DB.EF.Repositories
 {
-    public class RewiewRepositoryEf : EfRepository<Review>, IRewiewRepository
+    public class ReviewRepositoryEf : EfRepository<Review>, IReviewRepository
     {
-        public RewiewRepositoryEf(AppDbContext dbContext) : base(dbContext)
+        public ReviewRepositoryEf(AppDbContext dbContext) : base(dbContext)
         {
         }
 

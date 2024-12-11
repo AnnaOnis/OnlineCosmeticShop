@@ -1,6 +1,7 @@
 ﻿using CosmeticShop.Domain.Entities;
 using CosmeticShop.Domain.Exceptions.Product;
 using CosmeticShop.Domain.Exceptions.Review;
+using CosmeticShop.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace CosmeticShop.Domain.Services
@@ -30,7 +31,7 @@ namespace CosmeticShop.Domain.Services
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the rating is out of the 1.0 to 5.0 range.</exception>
         /// <exception cref="ArgumentNullException">Thrown when the review text is null or contains only a space.</exception>
         /// <exception cref="ProductNotFoundException">Throw when product not found.</exception>
-        public async Task AddReviewAsync(Guid productId, 
+        public async Task<Review> AddReviewAsync(Guid productId, 
                                          Guid customerId, 
                                          int rating, 
                                          string comment,
@@ -50,8 +51,10 @@ namespace CosmeticShop.Domain.Services
 
             var review = new Review(productId, customerId, rating, comment);
 
-            await _unitOfWork.RewiewRepository.Add(review, cancellationToken);
+            await _unitOfWork.ReviewRepository.Add(review, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return review;
         }
 
         /// <summary>
@@ -68,7 +71,7 @@ namespace CosmeticShop.Domain.Services
                 throw new ProductNotFoundException("Product not found.");
             }
 
-            return await _unitOfWork.RewiewRepository.GetByProductId(productId, cancellationToken);
+            return await _unitOfWork.ReviewRepository.GetByProductId(productId, cancellationToken);
         }
 
         /// <summary>
@@ -85,7 +88,7 @@ namespace CosmeticShop.Domain.Services
                 throw new ProductNotFoundException("Product not found.");
             }
 
-            return await _unitOfWork.RewiewRepository.GetApprovedReviewsByProductId(productId, cancellationToken);
+            return await _unitOfWork.ReviewRepository.GetApprovedReviewsByProductId(productId, cancellationToken);
         }
 
         /// <summary>
@@ -96,13 +99,13 @@ namespace CosmeticShop.Domain.Services
         /// <exception cref="ReviewNotFoundException">Throw when review not found.</exception>
         public async Task DeleteReviewAsync(Guid reviewId, CancellationToken cancellationToken)
         {
-            var review = await _unitOfWork.RewiewRepository.GetById(reviewId, cancellationToken);
+            var review = await _unitOfWork.ReviewRepository.GetById(reviewId, cancellationToken);
             if (review == null)
             {
                 throw new ReviewNotFoundException("Review not found.");
             }
 
-            await _unitOfWork.RewiewRepository.Delete(review.Id , cancellationToken);
+            await _unitOfWork.ReviewRepository.Delete(review.Id , cancellationToken);
         }
 
         /// <summary>
@@ -115,7 +118,7 @@ namespace CosmeticShop.Domain.Services
         /// <exception cref="ProductNotFoundException">Throw when product not found.</exception>
         public async Task ApproveReviewAsync(Guid reviewId, CancellationToken cancellationToken)
         {
-            var review = await _unitOfWork.RewiewRepository.GetById(reviewId, cancellationToken);
+            var review = await _unitOfWork.ReviewRepository.GetById(reviewId, cancellationToken);
             if (review == null)
             {
                 throw new ReviewNotFoundException("Review not found.");
@@ -128,7 +131,7 @@ namespace CosmeticShop.Domain.Services
 
             // Одобряем отзыв
             review.IsApproved = true;
-            await _unitOfWork.RewiewRepository.Update(review, cancellationToken);
+            await _unitOfWork.ReviewRepository.Update(review, cancellationToken);
 
             // Обновляем рейтинг товара
             var product = await _unitOfWork.ProductRepository.GetById(review.ProductId, cancellationToken);
@@ -138,7 +141,7 @@ namespace CosmeticShop.Domain.Services
             }
 
             // Получаем все одобренные отзывы для данного товара
-            var approvedReviews = await _unitOfWork.RewiewRepository.GetApprovedReviewsByProductId(review.ProductId, cancellationToken);
+            var approvedReviews = await _unitOfWork.ReviewRepository.GetApprovedReviewsByProductId(review.ProductId, cancellationToken);
 
             // Рассчитываем средний рейтинг
             product.Rating = approvedReviews.Average(r => r.Rating);
@@ -161,7 +164,7 @@ namespace CosmeticShop.Domain.Services
         /// </remarks>
         public async Task<IReadOnlyList<Review>> GetAllNotApprovedReviewsAsync(CancellationToken cancellationToken)
         {
-            return await _unitOfWork.RewiewRepository.GetAllNotApprovedReviews(cancellationToken);
+            return await _unitOfWork.ReviewRepository.GetAllNotApprovedReviews(cancellationToken);
         }
     }
 }

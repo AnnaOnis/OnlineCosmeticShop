@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CosmeticShop.Domain.Repositories
 {
-    public interface IRewiewRepository : IRepository<Review>
+    public interface IReviewRepository : IRepository<Review>
     {
         Task<IReadOnlyList<Review>> GetAllNotApprovedReviews(CancellationToken cancellationToken);
         Task<IReadOnlyList<Review>> GetApprovedReviewsByProductId(Guid productId, CancellationToken cancellationToken);

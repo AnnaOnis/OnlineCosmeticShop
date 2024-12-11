@@ -86,7 +86,7 @@ namespace CosmeticShop.WebAPI
             builder.Services.AddScoped<IOrderRepository, OrderRepositoryEf>();  
             builder.Services.AddScoped<IPaymentRepository, PaymentRepositoryEf>();
             builder.Services.AddScoped<IProductRepository, ProductRepositoryEf>();
-            builder.Services.AddScoped<IRewiewRepository, RewiewRepositoryEf>();
+            builder.Services.AddScoped<IReviewRepository, ReviewRepositoryEf>();
             builder.Services.AddScoped<IUserActionRepository, UserActionRepositoryEf>();
             builder.Services.AddScoped<IUserRepository, UserRepositoryEf>();
 

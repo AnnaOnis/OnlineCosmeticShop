@@ -90,7 +90,7 @@ namespace CosmeticShop.Domain.Services
 
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                filterExpression = p => p.Name.Contains(filter, StringComparison.OrdinalIgnoreCase);
+                filterExpression = p => p.Name.ToLower().Contains(filter.ToLower());
             }
 
             if (categoryId.HasValue)

@@ -124,10 +124,10 @@ namespace CosmeticShop.Domain.Services
             Expression<Func<Order, bool>>? filterExpression = null;
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                filterExpression = o => o.Customer.FirstName.Contains(filter) ||
-                                      o.Customer.LastName.Contains(filter) ||
-                                      o.OrderItems.Any(i => i.Product.Name.Contains(filter) ||
-                                      o.Status.ToString().Equals(filter, StringComparison.OrdinalIgnoreCase));
+                filterExpression = o => o.Customer.FirstName.ToLower().Contains(filter.ToLower()) ||
+                                      o.Customer.LastName.ToLower().Contains(filter.ToLower()) ||
+                                      o.OrderItems.Any(i => i.Product.Name.ToLower().Contains(filter.ToLower()) ||
+                                      o.Status.ToString().ToLower().Equals(filter.ToLower()));
             }
 
             // Метод сортировки

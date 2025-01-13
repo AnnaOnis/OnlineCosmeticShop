@@ -144,11 +144,11 @@ namespace CosmeticShop.Domain.Services
                 bool isDateFilter = DateTime.TryParse(filter, out dateFilter);
 
                 filterExpression = c =>
-                                c.FirstName.Contains(filter) ||
-                                c.LastName.Contains(filter) ||
-                                c.Email.Contains(filter) ||
-                                c.PhoneNumber.Contains(filter) ||
-                                c.ShippingAddress.Contains(filter) ||
+                                c.FirstName.ToLower().Contains(filter.ToLower()) ||
+                                c.LastName.ToLower().Contains(filter.ToLower()) ||
+                                c.Email.ToLower().Contains(filter.ToLower()) ||
+                                c.PhoneNumber.ToLower().Contains(filter.ToLower()) ||
+                                c.ShippingAddress.ToLower().Contains(filter.ToLower()) ||
                                 (isDateFilter && c.DateRegistered.Date == dateFilter);
             }
 

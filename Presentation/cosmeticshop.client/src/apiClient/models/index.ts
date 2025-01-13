@@ -14,6 +14,7 @@ export * from './order-create-request-dto';
 export * from './order-response-dto';
 export * from './order-status';
 export * from './order-update-request-dto';
+export * from './paged-response';
 export * from './password-reset-request-dto';
 export * from './payment-method';
 export * from './product-request-dto';

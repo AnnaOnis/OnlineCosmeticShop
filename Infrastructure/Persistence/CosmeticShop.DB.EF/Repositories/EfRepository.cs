@@ -74,6 +74,7 @@ namespace CosmeticShop.DB.EF.Repositories
             }
 
             var totalEntities = await query.CountAsync(cancellationToken);
+
             // Применение пагинации
             query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 

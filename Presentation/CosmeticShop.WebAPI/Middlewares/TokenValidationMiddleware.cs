@@ -50,6 +50,7 @@ namespace CosmeticShop.WebAPI.Middlewares
                 }
             }
 
+            
             await _next(context);
         }
     }

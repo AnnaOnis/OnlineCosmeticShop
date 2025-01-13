@@ -7,7 +7,7 @@ const ProductCatalog: React.FC = () => {
   const [products, setProducts] = useState<ProductResponseDto[]>([]);
   const [filterDto, setFilterDto] = useState<FilterDto>({
     filter: '',
-    sortField: 'name',
+    sortField: '',
     sortOrder: true,
     pageNumber: 1,
     pageSize: 10
@@ -17,13 +17,14 @@ const ProductCatalog: React.FC = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      console.log('Fetching products with:', filterDto); // Логирование для отладки
       try {
-        const response = await productsService.getProducts(filterDto, new AbortController().signal);
-        setProducts(response);
-        // Предполагается, что сервер возвращает общее количество страниц
-        // Например, в заголовке ответа или в теле ответа
-        // Здесь мы просто устанавливаем totalPages в 10 для примера
-        setTotalPages(10);
+        const response = await productsService.getProducts({
+          ...filterDto,
+          filter: filterDto.filter.toLowerCase()
+      }, new AbortController().signal);
+        setProducts(response.items);
+        setTotalPages(Math.ceil(response.totalItems / filterDto.pageSize));
       } catch (error) {
         console.error(error);
       }
@@ -49,7 +50,7 @@ const ProductCatalog: React.FC = () => {
   const handleSortOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilterDto({
       ...filterDto,
-      sortOrder: e.target.value == "asc"
+      sortOrder: e.target.value === "asc"
     });
   };
 
@@ -57,6 +58,13 @@ const ProductCatalog: React.FC = () => {
     setFilterDto({
       ...filterDto,
       pageNumber
+    });
+  };
+
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) =>{
+    setFilterDto({
+      ...filterDto,
+      pageSize: parseInt(e.target.value, 10)
     });
   };
 
@@ -73,9 +81,9 @@ const ProductCatalog: React.FC = () => {
         <div>
           <label>Сортировка по:</label>
           <select value={filterDto.sortField} onChange={handleSortFieldChange}>
-            <option value="name">Названию</option>
-            <option value="price">Цене</option>
-            <option value="rating">Рейтингу</option>
+            <option value="Name">Названию</option>
+            <option value="Price">Цене</option>
+            <option value="Rating">Рейтингу</option>
           </select>
         </div>
         <div>
@@ -83,6 +91,15 @@ const ProductCatalog: React.FC = () => {
           <select value={filterDto.sortOrder ? "asc" : "desc"} onChange={handleSortOrderChange}>
             <option value="asc">По возрастанию</option>
             <option value="desc">По убыванию</option>
+          </select>
+        </div>
+        <div>
+          <label>Товаров на странице:</label>
+          <select value={filterDto.pageSize} onChange={handlePageSizeChange}>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
           </select>
         </div>
       </div>

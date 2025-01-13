@@ -22,16 +22,20 @@ namespace CosmeticShop.WebAPI.Controllers
     {
         private readonly ProductService _productService;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(ProductService productService, IMapper mapper)
+        public ProductsController(ProductService productService, IMapper mapper, ILogger<ProductsController> logger)
         {
             _productService = productService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedResponse<ProductResponseDto>>> GetProducts([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Received filterDto: {@FilterDto}", filterDto); // Логирование для отладки
+
             var (products, totalProducts) = await _productService.GetProductsAsync(cancellationToken, 
                                                                   filterDto.Filter, 
                                                                   filterDto.SortField, 

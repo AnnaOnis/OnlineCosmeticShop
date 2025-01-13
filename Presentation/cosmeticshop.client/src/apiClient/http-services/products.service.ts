@@ -1,5 +1,5 @@
 import HttpClient from '../httpClient';
-import { ProductRequestDto, ProductResponseDto, FilterDto } from '../models';
+import { ProductRequestDto, ProductResponseDto, FilterDto, PagedResponse } from '../models';
 
 export class ProductsService {
   private httpClient: HttpClient;
@@ -9,14 +9,14 @@ export class ProductsService {
   }
 
   // Получение списка продуктов с фильтрацией
-  public async getProducts(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<ProductResponseDto[]> {
+  public async getProducts(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<PagedResponse<ProductResponseDto>> {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(filterDto)) {
       if (value !== undefined && value !== null) {
         params.append(key, String(value));
       }
     }
-    return await this.httpClient.get<ProductResponseDto[]>(`/products`, { params, signal: cancellationToken });
+    return await this.httpClient.get<PagedResponse<ProductResponseDto>>(`/products`, { params, signal: cancellationToken });
   }
 
   // Создание нового продукта

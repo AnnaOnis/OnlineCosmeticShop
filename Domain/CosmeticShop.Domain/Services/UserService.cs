@@ -117,9 +117,9 @@ namespace CosmeticShop.Domain.Services
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 filterExpression = u =>
-                    u.FirstName.Contains(filter) ||
-                    u.LastName.Contains(filter) ||
-                    u.Email.Contains(filter) ||
+                    u.FirstName.ToLower().Contains(filter.ToLower()) ||
+                    u.LastName.ToLower().Contains(filter.ToLower()) ||
+                    u.Email.ToLower().Contains(filter.ToLower()) ||
                     u.Role.Equals(filter);
             }
 

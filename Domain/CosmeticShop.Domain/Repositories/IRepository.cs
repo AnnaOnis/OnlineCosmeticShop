@@ -16,7 +16,7 @@ namespace CosmeticShop.Domain.Repositories
     {
         Task<TEntity> GetById(Guid id, CancellationToken cancellationToken);
         Task<IReadOnlyList<TEntity>> GetAll(CancellationToken cancellationToken);
-        Task<IReadOnlyList<TEntity>> GetAllSorted(CancellationToken cancellationToken,
+        Task<(IReadOnlyList<TEntity>, int)> GetAllSorted(CancellationToken cancellationToken,
                                                   Expression<Func<TEntity, bool>>? filter = null,                           // Лямбда для фильтрации
                                                   Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? sorter = null,    // Делегат для сортировки
                                                   int pageNumber = 1,                                                       // Номер страницы

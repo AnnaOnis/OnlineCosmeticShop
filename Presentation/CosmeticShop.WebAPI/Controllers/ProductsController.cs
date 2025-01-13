@@ -30,9 +30,9 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProducts([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<PagedResponse<ProductResponseDto>>> GetProducts([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
         {
-            var products = await _productService.GetProductsAsync(cancellationToken, 
+            var (products, totalProducts) = await _productService.GetProductsAsync(cancellationToken, 
                                                                   filterDto.Filter, 
                                                                   filterDto.SortField, 
                                                                   filterDto.SortOrder ? "asc" : "desc", 
@@ -41,20 +41,9 @@ namespace CosmeticShop.WebAPI.Controllers
                                                                   filterDto.CategoryId);
 
             var productDtos = _mapper.Map<ProductResponseDto[]>(products);
-            //var productDtos = products.Select(p => new ProductResponseDto
-            //{
-            //    Id = p.Id,
-            //    Name = p.Name,
-            //    Description = p.Description,
-            //    Price = p.Price,
-            //    CategoryId = p.CategoryId,
-            //    StockQuantity = p.StockQuantity,
-            //    Rating = p.Rating,
-            //    Manufacturer = p.Manufacturer,
-            //    ImageUrl = p.ImageUrl
-            //});
+            var response = new PagedResponse<ProductResponseDto> { Items = productDtos, TotalItems = totalProducts };
 
-            return Ok(productDtos);
+            return Ok(response);
         }
 
         //[Authorize(Roles = "Admin")]

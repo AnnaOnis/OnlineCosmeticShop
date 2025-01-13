@@ -31,7 +31,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(reviewDtos);
         }
 
-        [HttpGet("approved")]
+        [HttpGet("approved/{productId}")]
         public async Task<ActionResult<IEnumerable<ReviewResponseDto>>> GetApprovedReviewsByProduct([FromRoute] Guid productId, CancellationToken cancellationToken)
         {
             var reviews = await _reviewService.GetApprovedReviewsByProductAsync(productId, cancellationToken);

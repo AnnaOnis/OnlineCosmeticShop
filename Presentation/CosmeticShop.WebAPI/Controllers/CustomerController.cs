@@ -24,9 +24,9 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerResponseDto>>> GetCustomers([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<PagedResponse<CustomerResponseDto>>> GetCustomers([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
         {
-            var customers = await _customerService.GetAllCustomers(cancellationToken, 
+            var (customers, totalCustomers) = await _customerService.GetAllCustomers(cancellationToken, 
                                                                    filterDto.Filter, 
                                                                    filterDto.SortField, 
                                                                    filterDto.SortOrder ? "asc" : "desc", 
@@ -35,7 +35,9 @@ namespace CosmeticShop.WebAPI.Controllers
 
             var customerDtos = _mapper.Map<CustomerResponseDto[]>(customers);
 
-            return Ok(customerDtos);
+            var response = new PagedResponse<CustomerResponseDto> { Items = customerDtos, TotalItems = totalCustomers };
+
+            return Ok(response);
         }
 
         //[Authorize(Roles = "Admin")]
@@ -95,6 +97,11 @@ namespace CosmeticShop.WebAPI.Controllers
         {
             Guid guid = GetCurrentCustomerId();
 
+            //if (guid == Guid.Empty)
+            //{ 
+            //    return Unauthorized(new ErrorResponse("Ошибка авторизации"));
+            //}
+
             await _customerService.ResetPassword(guid, passwordResetRequest.NewPassword, cancellationToken);
 
             return NoContent();
@@ -102,7 +109,11 @@ namespace CosmeticShop.WebAPI.Controllers
 
         private Guid GetCurrentCustomerId()
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(strId == null)
+            {
+                return Guid.Empty;
+            }
             var guid = Guid.Parse(strId);
             return guid;
         }

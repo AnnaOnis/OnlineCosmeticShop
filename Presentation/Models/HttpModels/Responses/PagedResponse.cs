@@ -6,5 +6,9 @@ using System.Threading.Tasks;
 
 namespace HttpModels.Responses
 {
-    public record UserLoginResponse(Guid id, string firstName, string lastName, string email, string role, string token);
+    public class PagedResponse<T>
+    {
+        public IEnumerable<T> Items { get; set; }
+        public int TotalItems { get; set; }
+    }
 }

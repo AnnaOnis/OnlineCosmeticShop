@@ -82,6 +82,8 @@ namespace CosmeticShop.Domain.Entities
             {
                 existedCartItem.Quantity += quantity;
             }
+
+            UpdateTotalAmount();
             return Task.CompletedTask;
         }
 
@@ -108,6 +110,8 @@ namespace CosmeticShop.Domain.Entities
             {
                 existedCartItem.Quantity = quantity;
             }
+
+            UpdateTotalAmount();
             return Task.CompletedTask;
         }
 
@@ -132,6 +136,7 @@ namespace CosmeticShop.Domain.Entities
                 throw new ProductNotFoundException("Product not found in cart");
             }
 
+            UpdateTotalAmount();
             return Task.CompletedTask;
         }
 
@@ -147,7 +152,17 @@ namespace CosmeticShop.Domain.Entities
             if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
 
             CartItems.Clear();
+            TotalAmount = 0;
 
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Updates the total amount of the cart.
+        /// </summary>
+        private Task UpdateTotalAmount()
+        {
+            TotalAmount = CartItems.Sum(item => item.Product.Price * item.Quantity);
             return Task.CompletedTask;
         }
 

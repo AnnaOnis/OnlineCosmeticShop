@@ -13,6 +13,7 @@ namespace CosmeticShop.DB.EF.Repositories
         public Task<Cart> GetCartByCustomerId(Guid customerId, CancellationToken cancellationToken)
         {
             return Entities.Include(cart => cart.CartItems)
+                           .ThenInclude(cartItem => cartItem.Product)
                            .SingleAsync(e => e.CustomerId == customerId, cancellationToken);
         }
     }

@@ -13,7 +13,8 @@ namespace Mappers
     {
         public ReviewMappingProfile() 
         { 
-           CreateMap<Review, ReviewResponseDto>();
+           CreateMap<Review, ReviewResponseDto>()
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FirstName + " " + src.Customer.LastName));
         }
     }
 }

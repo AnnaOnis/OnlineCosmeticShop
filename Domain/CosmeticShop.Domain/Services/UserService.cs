@@ -105,7 +105,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="pageNumber">Specifies the page number</param>
         /// <param name="pageSize">Specifies the page size</param>
         /// <returns>List of User objects</returns>
-        public async Task<IReadOnlyList<User>> GetAllSortedUsers(CancellationToken cancellationToken,
+        public async Task<(IReadOnlyList<User>, int)> GetAllSortedUsers(CancellationToken cancellationToken,
                                                                    string? filter = null,
                                                                    string? sortField = "LastName",
                                                                    string sortOrder = "asc",

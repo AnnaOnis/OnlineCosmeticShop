@@ -15,6 +15,9 @@ namespace HttpModels.Responses
         [Required]
         public Guid CustomerId { get; set; }
 
+        [Required]
+        public decimal TotalAmount { get; set; }
+
         public List<CartItemResponseDto> CartItems { get; set; } = new List<CartItemResponseDto>();
     }
 }

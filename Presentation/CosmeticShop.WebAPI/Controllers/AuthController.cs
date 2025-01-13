@@ -32,7 +32,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<CustomerAuthResponseDto>> RegisterCustomer([FromBody] CustomerRegisterRequestDto customerRegisterRequestDto, 
+        public async Task<ActionResult<AuthResponseDto>> RegisterCustomer([FromBody] CustomerRegisterRequestDto customerRegisterRequestDto, 
                                                                                       CancellationToken cancellationToken)
         {
             var registeredCustomer = await _customerService.Register(customerRegisterRequestDto.FirstName,
@@ -48,19 +48,14 @@ namespace CosmeticShop.WebAPI.Controllers
             var newJwtToken = new JwtToken(tokenDto.token, tokenDto.jti, tokenDto.UserId, tokenDto.Expiration);
             await _jwtTokenService.AddTokenAsync(newJwtToken, cancellationToken);
 
-            var responseDto = new CustomerAuthResponseDto(registeredCustomer.Id,
-                                                              registeredCustomer.FirstName,
-                                                              registeredCustomer.LastName,
-                                                              registeredCustomer.Email,
-                                                              registeredCustomer.PhoneNumber,
-                                                              registeredCustomer.ShippingAddress,
-                                                              newJwtToken.Token);              
+            var responseDto = _mapper.Map<CustomerResponseDto>(registeredCustomer);
+            responseDto.Token = newJwtToken.Token;
 
             return Ok(responseDto);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<CustomerAuthResponseDto>> Login([FromBody] LoginRequest loginRequest, CancellationToken cancellationToken)
+        public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginRequest loginRequest, CancellationToken cancellationToken)
         {
             var role = await DetermineUserRoleAsync(loginRequest.Email, cancellationToken);
 
@@ -72,13 +67,8 @@ namespace CosmeticShop.WebAPI.Controllers
                 var newJwtToken = new JwtToken(tokenDto.token, tokenDto.jti, tokenDto.UserId, tokenDto.Expiration);
                 await _jwtTokenService.AddTokenAsync(newJwtToken, cancellationToken);
 
-                var responseDto = new CustomerAuthResponseDto(logingCustomer.Id,
-                                                              logingCustomer.FirstName,
-                                                              logingCustomer.LastName,
-                                                              logingCustomer.Email,
-                                                              logingCustomer.PhoneNumber,
-                                                              logingCustomer.ShippingAddress,
-                                                              newJwtToken.Token);
+                var responseDto = _mapper.Map<CustomerResponseDto>(logingCustomer);
+                responseDto.Token = newJwtToken.Token;
 
                 return Ok(responseDto);
             }
@@ -90,12 +80,8 @@ namespace CosmeticShop.WebAPI.Controllers
                 var newJwtToken = new JwtToken(tokenDto.token, tokenDto.jti, tokenDto.UserId, tokenDto.Expiration);
                 await _jwtTokenService.AddTokenAsync(newJwtToken, cancellationToken);
 
-                var responseDto = new UserLoginResponse(logingUser.Id,
-                                                        logingUser.FirstName,
-                                                        logingUser.LastName,
-                                                        logingUser.Email,
-                                                        logingUser.Role.ToString(),
-                                                        newJwtToken.Token);
+                var responseDto = _mapper.Map<UserResponseDto>(logingUser);
+                responseDto.Token = newJwtToken.Token;
 
                 return Ok(responseDto);
             }
@@ -119,7 +105,7 @@ namespace CosmeticShop.WebAPI.Controllers
 
             if (result)
             {
-                return Ok(new { message = "Вы успешно вышли из системы." });
+                return Ok();
             }
             else
             {

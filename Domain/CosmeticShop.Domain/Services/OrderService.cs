@@ -113,7 +113,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="pageNumber">Specifies the page number</param>
         /// <param name="pageSize">Specifies the page size</param>
         /// <returns>A list of filtered and sorted orders.</returns>
-        public async Task<IReadOnlyList<Order>> GetAllOrdersAsync(CancellationToken cancellationToken,
+        public async Task<(IReadOnlyList<Order>, int)> GetAllOrdersAsync(CancellationToken cancellationToken,
                                                                   string? filter = null,
                                                                   string? sortField = "OrderDate",
                                                                   string sortOrder = "asc",
@@ -151,11 +151,13 @@ namespace CosmeticShop.Domain.Services
                 };
             }
 
-            return await _unitOfWork.OrderRepository.GetAllSorted(cancellationToken,
+             var (orders, totalOrders) = await _unitOfWork.OrderRepository.GetAllSorted(cancellationToken,
                 filter: filterExpression,
                 sorter: sortExpression,
                 pageNumber: pageNumber,
                 pageSize: pageSize);
+
+            return (orders, totalOrders);
         }
 
         public async Task DeleteOrder(Guid orderId, CancellationToken cancellationToken)

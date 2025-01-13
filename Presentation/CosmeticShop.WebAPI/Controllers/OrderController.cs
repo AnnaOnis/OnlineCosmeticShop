@@ -24,17 +24,18 @@ namespace CosmeticShop.WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GetOrders([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<PagedResponse<OrderResponseDto>>> GetOrders([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
         {
-            var orders = await _orderService.GetAllOrdersAsync(cancellationToken, 
+            var (orders, totalOrders) = await _orderService.GetAllOrdersAsync(cancellationToken, 
                                                                filterDto.Filter, 
                                                                filterDto.SortField, 
                                                                filterDto.SortOrder ? "asc" : "desc", 
                                                                filterDto.PageNumber, 
                                                                filterDto.PageSize);
             var responseDtos = _mapper.Map<OrderResponseDto[]>(orders);
+            var response = new PagedResponse<OrderResponseDto> { Items = responseDtos, TotalItems = totalOrders };
 
-            return Ok(responseDtos);
+            return Ok(response);
         }
 
         //[Authorize]
@@ -74,7 +75,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateOrderStatus([FromBody] OrderUpdateRequestDto orderRequestDto, CancellationToken cancellationToken)
         {
             await _orderService.UpdateOrderStatusAsync(orderRequestDto.Id, orderRequestDto.NewStatus, cancellationToken);

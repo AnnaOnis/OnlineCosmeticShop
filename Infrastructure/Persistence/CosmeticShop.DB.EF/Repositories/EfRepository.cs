@@ -52,7 +52,7 @@ namespace CosmeticShop.DB.EF.Repositories
         }
 
         // Универсальный метод GetAllSorted с фильтрацией, сортировкой и пагинацией
-        public virtual async Task<IReadOnlyList<TEntity>> GetAllSorted(
+        public virtual async Task<(IReadOnlyList<TEntity>, int)> GetAllSorted(
                     CancellationToken cancellationToken,
                     Expression<Func<TEntity, bool>>? filter = null,                         // Лямбда для фильтрации
                     Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? sorter = null,   // Делегат для сортировки
@@ -73,10 +73,13 @@ namespace CosmeticShop.DB.EF.Repositories
                 query = sorter(query);
             }
 
+            var totalEntities = await query.CountAsync(cancellationToken);
             // Применение пагинации
             query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-            return await query.ToListAsync(cancellationToken);
+            var entities = await query.ToListAsync(cancellationToken);
+
+            return (entities, totalEntities);
         }
     }
 }

@@ -77,7 +77,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="categoryId">Optional category ID to filter products by category.</param>
         /// <returns>A collection of products that match the criteria.</returns>
         /// <exception cref="ProductNotFoundException">Thrown when the products is null.</exception>
-        public async Task<IReadOnlyList<Product>> GetProductsAsync(CancellationToken cancellationToken,
+        public async Task<(IReadOnlyList<Product>, int)> GetProductsAsync(CancellationToken cancellationToken,
                                                                  string? filter = null,
                                                                  string? sortField = "Rating", 
                                                                  string sortOrder = "asc",
@@ -140,12 +140,16 @@ namespace CosmeticShop.Domain.Services
                         : q => q.OrderByDescending(p => p.Rating)
                 };
             }
-            
-            return await _unitOfWork.ProductRepository.GetAllSorted(cancellationToken,
+
+            var (products,totalProducts)  = await _unitOfWork.ProductRepository.GetAllSorted(cancellationToken,
                 filter: filterExpression,
                 sorter: sortExpression,
                 pageNumber: pageNumber,
                 pageSize: pageSize);
+
+            
+
+            return (products, totalProducts);
         }
 
         /// <summary>
@@ -184,7 +188,7 @@ namespace CosmeticShop.Domain.Services
         private async Task ValidateCategoryAsync(Guid categoryId, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.CategoryRepository.GetById(categoryId, cancellationToken);
-            if (category == null)
+            if (category == null) 
                 throw new CategoryNotFoundException("Category not found");
         }
     }

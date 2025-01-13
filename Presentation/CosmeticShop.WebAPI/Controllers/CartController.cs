@@ -24,8 +24,7 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<CartResponseDto>> GetCart(CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            var guid = GetCurrentCustomerId();
 
             var cart = await _cartService.GetCartByCustomerIdAsync(guid, cancellationToken);
             var cartDto = _mapper.Map<CartResponseDto>(cart);
@@ -33,11 +32,10 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(cartDto);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<CartResponseDto>> AddOrUpdateCartItem([FromBody] CartItemRequestDto cartItemRequestDto, CancellationToken cancellationToken)
+        [HttpPost("add_item")]
+        public async Task<ActionResult<CartResponseDto>> AddCartItem([FromBody] CartItemRequestDto cartItemRequestDto, CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            var guid = GetCurrentCustomerId();
 
             await _cartService.AddItemToCartAsync(guid, cartItemRequestDto.ProductId, cartItemRequestDto.Quantity, cancellationToken);
 
@@ -47,11 +45,23 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(cartDto);
         }
 
-        [HttpDelete("{productId}")]
-        public async Task<IActionResult> RemoveCartItem(Guid productId, CancellationToken cancellationToken)
+        [HttpPost("update_item_quantity")]
+        public async Task<ActionResult<CartResponseDto>> UpdateItemQuantity([FromBody] CartItemRequestDto cartItemRequestDto, CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            var guid = GetCurrentCustomerId();
+
+            await _cartService.UpdateCartItemQuantityAsync(guid, cartItemRequestDto.ProductId, cartItemRequestDto.Quantity, cancellationToken);
+
+            var cart = await _cartService.GetCartByCustomerIdAsync(guid, cancellationToken);
+            var cartDto = _mapper.Map<CartResponseDto>(cart);
+
+            return Ok(cartDto);
+        }
+
+        [HttpDelete("{productId}")]
+        public async Task<IActionResult> RemoveCartItem([FromRoute] Guid productId, CancellationToken cancellationToken)
+        {
+            var guid = GetCurrentCustomerId();
 
             await _cartService.RemoveItemFromCartAsync(guid, productId, cancellationToken);
 
@@ -61,12 +71,22 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpDelete]
         public async Task<IActionResult> ClearCart(CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            var guid = GetCurrentCustomerId();
 
             await _cartService.ClearCartAsync(guid, cancellationToken);
 
             return NoContent();
+        }
+
+        private Guid GetCurrentCustomerId()
+        {
+            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (strId == null)
+            {
+                return Guid.Empty;
+            }
+            var guid = Guid.Parse(strId);
+            return guid;
         }
     }
 }

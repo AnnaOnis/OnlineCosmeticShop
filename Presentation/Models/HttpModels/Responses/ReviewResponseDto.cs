@@ -13,6 +13,7 @@ namespace HttpModels.Responses
         public Guid ProductId { get; set; }
 
         public Guid CustomerId { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
 
         public string ReviewText { get; set; }
 

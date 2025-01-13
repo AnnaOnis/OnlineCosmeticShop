@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HttpModels.Responses
 {
-    public class CustomerResponseDto
+    public class CustomerResponseDto : AuthResponseDto
     {
         public Guid Id { get; set; }
 

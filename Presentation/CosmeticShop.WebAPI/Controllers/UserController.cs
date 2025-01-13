@@ -25,7 +25,7 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetAllUsers([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
         {
-            var users = await _userService.GetAllSortedUsers(cancellationToken,
+            var (users, totalUsers) = await _userService.GetAllSortedUsers(cancellationToken,
                                                              filterDto.Filter,
                                                              filterDto.SortField,
                                                              filterDto.SortOrder ? "asc" : "desc",
@@ -33,11 +33,12 @@ namespace CosmeticShop.WebAPI.Controllers
                                                              filterDto.PageSize);
 
             var responseDtos = _mapper.Map<UserResponseDto[]>(users);
-            return Ok(responseDtos);
+            var response = new PagedResponse<UserResponseDto> {Items = responseDtos, TotalItems = totalUsers };
+            return Ok(response);
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpGet("{Id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<UserResponseDto>> GetUserInfo([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var user = await _userService.GetUserInfo(id, cancellationToken);
@@ -46,7 +47,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpDelete("{Id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _userService.DeleteUser(id, cancellationToken);

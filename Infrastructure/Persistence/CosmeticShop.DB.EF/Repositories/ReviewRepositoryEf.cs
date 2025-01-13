@@ -19,6 +19,7 @@ namespace CosmeticShop.DB.EF.Repositories
         public async Task<IReadOnlyList<Review>> GetAllNotApprovedReviews(CancellationToken cancellationToken)
         {
             return await Entities
+                .Include(e => e.Customer)
                 .Where(e => e.IsApproved == false)
                 .OrderBy(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);

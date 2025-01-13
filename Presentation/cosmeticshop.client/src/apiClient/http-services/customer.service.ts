@@ -1,5 +1,5 @@
 import HttpClient from '../httpClient';
-import { CustomerUpdateRequestDto, CustomerResponseDto, FilterDto } from '../models';
+import { CustomerUpdateRequestDto, CustomerResponseDto, FilterDto, PagedResponse } from '../models';
 
 export class CustomerService {
   private httpClient: HttpClient;
@@ -9,14 +9,14 @@ export class CustomerService {
   }
 
   // Получение всех клиентов с фильтрацией, сортировкой и пагинацией
-  public async getAllCustomers(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<CustomerResponseDto[]> {
+  public async getAllCustomers(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<PagedResponse<CustomerResponseDto>> {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(filterDto)) {
       if (value !== undefined && value !== null) {
         params.append(key, String(value));
       }
     }
-    const response = await this.httpClient.get<CustomerResponseDto[]>('/customer', {params, signal: cancellationToken,});
+    const response = await this.httpClient.get<PagedResponse<CustomerResponseDto>>('/customer', {params, signal: cancellationToken,});
     return response;
   }
 

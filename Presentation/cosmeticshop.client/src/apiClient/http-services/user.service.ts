@@ -1,5 +1,5 @@
 import HttpClient from '../httpClient';
-import { PasswordResetRequestDto, UserAddRequestDto, UserUpdateRequestDto, FilterDto, UserResponseDto } from '../models';
+import { PasswordResetRequestDto, UserAddRequestDto, UserUpdateRequestDto, FilterDto, UserResponseDto, PagedResponse } from '../models';
 
 export class UserService {
   private httpClient: HttpClient;
@@ -9,14 +9,14 @@ export class UserService {
   }
 
   // Получение всех пользователей с фильтрацией, сортировкой и пагинацией
-  public async getAllUsers(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<UserResponseDto[]> {
+  public async getAllUsers(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<PagedResponse<UserResponseDto>> {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(filterDto)) {
       if (value !== undefined && value !== null) {
         params.append(key, String(value));
       }
     }
-    const response = await this.httpClient.get<UserResponseDto[]>('/user', { params, signal: cancellationToken });
+    const response = await this.httpClient.get<PagedResponse<UserResponseDto>>('/user', { params, signal: cancellationToken });
     return response;
   }
 

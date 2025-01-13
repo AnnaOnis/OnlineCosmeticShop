@@ -1,5 +1,5 @@
 import HttpClient from '../httpClient';
-import { OrderCreateRequestDto, OrderUpdateRequestDto, OrderResponseDto, FilterDto } from '../models';
+import { OrderCreateRequestDto, OrderUpdateRequestDto, OrderResponseDto, FilterDto, PagedResponse } from '../models';
 
 export class OrderService {
   private httpClient: HttpClient;
@@ -9,14 +9,14 @@ export class OrderService {
   }
 
  // Получение всех заказов с фильтрацией, сортировкой и пагинацией
- async getAllOrdersAsync(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<OrderResponseDto[]> {
+ async getAllOrdersAsync(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<PagedResponse<OrderResponseDto>> {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(filterDto)) {
     if (value !== undefined && value !== null) {
       params.append(key, String(value));
     }
   }
-  const response = await this.httpClient.get<OrderResponseDto[]>('/order', { params, signal: cancellationToken });
+  const response = await this.httpClient.get<PagedResponse<OrderResponseDto>>('/order', { params, signal: cancellationToken });
   return response;
 }
 

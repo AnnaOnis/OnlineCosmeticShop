@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const UserProfile: React.FC = () => {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+const CustomerProfile: React.FC = () => {
+  const [customer, setUser] = useState<{ name: string; email: string } | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -17,19 +17,19 @@ const UserProfile: React.FC = () => {
     fetchUser();
   }, []);
 
-  if (!user) {
+  if (!customer) {
     return <div>Загрузка...</div>;
   }
 
   return (
     <div>
       <h1>Профиль пользователя</h1>
-      <p>Имя: {user.name}</p>
-      <p>Email: {user.email}</p>
+      <p>Имя: {customer.name}</p>
+      <p>Email: {customer.email}</p>
       {/* Возможность редактирования профиля */}
       {/* История заказов */}
     </div>
   );
 };
 
-export default UserProfile;
+export default CustomerProfile;

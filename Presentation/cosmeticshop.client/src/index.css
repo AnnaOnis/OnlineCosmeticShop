@@ -161,11 +161,42 @@ nav ul li a:hover {
   border-radius: 0.5rem;
   max-width: 200px;
   text-align: center;
+  text-decoration: none;
+  color: inherit;
+  display: block; /* Добавьте display: block, если нужно, чтобы весь элемент был кликабельным */
+  transition: background-color 0.3s; 
 }
 
 .product-item img {
   max-width: 100%;
   height: auto;
+}
+
+.product-item:hover {
+  background-color: #333; /* Измените цвет фона при наведении */
+}
+
+.success-message, .error-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 5px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 .cart-item {

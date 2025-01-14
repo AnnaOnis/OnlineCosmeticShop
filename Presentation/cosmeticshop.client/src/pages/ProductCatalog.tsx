@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { ProductsService } from '../apiClient/http-services/products.service';
 import { ProductResponseDto, FilterDto } from '../apiClient/models';
 import { Pagination } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { CartService } from '../apiClient/http-services/cart.service';
+import { CartItemRequestDto } from '../apiClient/models';
 
 const ProductCatalog: React.FC = () => {
   const [products, setProducts] = useState<ProductResponseDto[]>([]);
@@ -13,7 +16,10 @@ const ProductCatalog: React.FC = () => {
     pageSize: 10
   });
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const productsService = new ProductsService('/api');
+  const cartService = new CartService('/api');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -68,6 +74,27 @@ const ProductCatalog: React.FC = () => {
     });
   };
 
+  const handleAddToCartClick = async (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation(); // Предотвращаем распространение события клика
+    const body: CartItemRequestDto = {
+      productId: productId,
+      quantity: 1
+    };
+
+    try {
+      const response = await cartService.addItemToCart(body, new AbortController().signal);
+      console.log('Товар добавлен в корзину:', response);
+      setSuccessMessage('Товар успешно добавлен в корзину! Перейти в <Link to="/cart">корзину</Link> для просмотра.');
+      setErrorMessage(null);
+      setTimeout(() => setSuccessMessage(null), 3000); // Сообщение исчезнет через 3 секунды
+    } catch (error) {
+      console.error('Ошибка при добавлении товара в корзину:', error);
+      setErrorMessage('Ошибка при добавлении товара в корзину. Пожалуйста, попробуйте снова.');
+      setSuccessMessage(null);
+      setTimeout(() => setErrorMessage(null), 3000); // Сообщение исчезнет через 3 секунды
+    }
+  };
+
   return (
     <div>
       <h1>Каталог товаров</h1>
@@ -104,15 +131,18 @@ const ProductCatalog: React.FC = () => {
         </div>
       </div>
 
+      {successMessage && <div className="success-message" dangerouslySetInnerHTML={{ __html: successMessage }} />}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+
       <div className="product-list">
         {products.map((product) => (
-          <div key={product.id} className="product-item">
+          <Link key={product.id} to={`/product/${product.id}`} className="product-item">
             <img src={product.imageUrl} alt={product.name} />
             <h2>{product.name}</h2>
             <p>{product.description}</p>
             <p>Цена: {product.price} руб.</p>
-            <button>Добавить в корзину</button>
-          </div>
+            <button onClick={(e) => handleAddToCartClick(e, product.id)}>Добавить в корзину</button>
+          </Link>
         ))}
       </div>
 

@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import UserProfile from './pages/UserProfile';
+import CustomerProfile from './pages/CustomerProfile';
 import ProductCatalog from './pages/ProductCatalog';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
@@ -21,7 +21,7 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/profile" element={<CustomerProfile />} />
         <Route path="/catalog" element={<ProductCatalog />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />

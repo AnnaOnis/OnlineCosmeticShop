@@ -12,8 +12,8 @@ export class CartService {
     return this.httpClient.get<CartResponseDto>('/cart', { signal: cancellationToken });
   }
 
-  public async addItemToCart(body: CartItemRequestDto, cancellationToken: AbortSignal): Promise<CartResponseDto> {
-    return this.httpClient.post<CartResponseDto>('/cart/add_item', body, { signal: cancellationToken });
+  public async addItemToCart(body: CartItemRequestDto, cancellationToken: AbortSignal): Promise<void> {
+    return this.httpClient.post<void>('/cart/add_item', body, { signal: cancellationToken });
   }
 
   public async updateItemQuantity(body: CartItemRequestDto, cancellationToken: AbortSignal): Promise<CartResponseDto> {

@@ -1,6 +1,10 @@
 // src/services/auth.service.ts
 import HttpClient from '../httpClient';
-import { CustomerRegisterRequestDto, CustomerResponseDto, UserResponseDto } from '../models';
+import { CustomerRegisterRequestDto, 
+        CustomerResponseDto, 
+        LoginRequest, 
+        LogoutRequest, 
+        UserResponseDto } from '../models';
 
 export class AuthService {
   private httpClient: HttpClient;
@@ -15,14 +19,14 @@ export class AuthService {
     return response;
   }
 
-  public async login(body: any, cancellationToken: AbortSignal): Promise<CustomerResponseDto | UserResponseDto> {
+  public async login(body: LoginRequest, cancellationToken: AbortSignal): Promise<CustomerResponseDto | UserResponseDto> {
     const response = await this.httpClient.post('/auth/login', body, { signal: cancellationToken });
     localStorage.setItem('jwtToken', response.token); // Сохраняем токен в localStorage
     return response;
   }
 
-  public async logout(cancellationToken: AbortSignal): Promise<void> {
-    await this.httpClient.post('/auth/logout', { signal: cancellationToken });
+  public async logout(body: LogoutRequest, cancellationToken: AbortSignal): Promise<void> {
+    await this.httpClient.post('/auth/logout', body, { signal: cancellationToken });
     localStorage.removeItem('jwtToken'); // Удаляем токен из localStorage
   }
 

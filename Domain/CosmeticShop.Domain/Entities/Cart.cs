@@ -136,7 +136,7 @@ namespace CosmeticShop.Domain.Entities
                 throw new ProductNotFoundException("Product not found in cart");
             }
 
-            UpdateTotalAmount();
+            //UpdateTotalAmount();
             return Task.CompletedTask;
         }
 

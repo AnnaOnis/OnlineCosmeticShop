@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('/api/login', { email, password });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
+    await login(email, password);
+    navigate('/'); // Перенаправляем пользователя на главную страницу после успешного входа
   };
 
   return (

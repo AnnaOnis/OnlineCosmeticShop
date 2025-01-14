@@ -33,16 +33,13 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpPost("add_item")]
-        public async Task<ActionResult<CartResponseDto>> AddCartItem([FromBody] CartItemRequestDto cartItemRequestDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddCartItem([FromBody] CartItemRequestDto cartItemRequestDto, CancellationToken cancellationToken)
         {
             var guid = GetCurrentCustomerId();
 
             await _cartService.AddItemToCartAsync(guid, cartItemRequestDto.ProductId, cartItemRequestDto.Quantity, cancellationToken);
 
-            var cart = await _cartService.GetCartByCustomerIdAsync(guid, cancellationToken);
-            var cartDto = _mapper.Map<CartResponseDto>(cart);
-
-            return Ok(cartDto);
+            return NoContent();
         }
 
         [HttpPost("update_item_quantity")]

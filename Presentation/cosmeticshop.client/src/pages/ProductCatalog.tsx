@@ -74,8 +74,9 @@ const ProductCatalog: React.FC = () => {
     });
   };
 
-  const handleAddToCartClick = async (e: React.MouseEvent, productId: string) => {
+  const handleAddToCartClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation(); // Предотвращаем распространение события клика
+    const productId = e.currentTarget.getAttribute('data-product-id')!;
     const body: CartItemRequestDto = {
       productId: productId,
       quantity: 1
@@ -86,12 +87,12 @@ const ProductCatalog: React.FC = () => {
       console.log('Товар добавлен в корзину:', response);
       setSuccessMessage('Товар успешно добавлен в корзину! Перейти в <Link to="/cart">корзину</Link> для просмотра.');
       setErrorMessage(null);
-      setTimeout(() => setSuccessMessage(null), 3000); // Сообщение исчезнет через 3 секунды
+      setTimeout(() => setSuccessMessage(null), 2000); // Сообщение исчезнет через 3 секунды
     } catch (error) {
       console.error('Ошибка при добавлении товара в корзину:', error);
       setErrorMessage('Ошибка при добавлении товара в корзину. Пожалуйста, попробуйте снова.');
       setSuccessMessage(null);
-      setTimeout(() => setErrorMessage(null), 3000); // Сообщение исчезнет через 3 секунды
+      setTimeout(() => setErrorMessage(null), 2000); // Сообщение исчезнет через 3 секунды
     }
   };
 
@@ -108,9 +109,9 @@ const ProductCatalog: React.FC = () => {
         <div>
           <label>Сортировка по:</label>
           <select value={filterDto.sortField} onChange={handleSortFieldChange}>
+            <option value="Rating">Рейтингу</option>
             <option value="Name">Названию</option>
             <option value="Price">Цене</option>
-            <option value="Rating">Рейтингу</option>
           </select>
         </div>
         <div>
@@ -136,13 +137,17 @@ const ProductCatalog: React.FC = () => {
 
       <div className="product-list">
         {products.map((product) => (
-          <Link key={product.id} to={`/product/${product.id}`} className="product-item">
-            <img src={product.imageUrl} alt={product.name} />
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <p>Цена: {product.price} руб.</p>
-            <button onClick={(e) => handleAddToCartClick(e, product.id)}>Добавить в корзину</button>
-          </Link>
+          <div key={product.id} className="product-item">
+            <Link to={`/product/${product.id}`} className="productLink">
+              <img src={product.imageUrl} alt={product.name} />
+              <h2>{product.name}</h2>
+              <p>{product.description}</p>
+              <p>Цена: {product.price} руб.</p>
+            </Link>
+              <button onClick={handleAddToCartClick} data-product-id={product.id}>
+                Добавить в корзину
+              </button>             
+          </div>        
         ))}
       </div>
 

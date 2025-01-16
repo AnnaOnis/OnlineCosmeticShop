@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
         {isAuthenticated ? (
           <>
             <li><Link to="/profile">Профиль</Link></li>
-            <li><button onClick={handleLogout}>Выход</button></li>
+            <li><Link to="/login" onClick={handleLogout}>Выход</Link></li>
           </>
         ) : (
           <>

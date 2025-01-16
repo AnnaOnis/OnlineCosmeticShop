@@ -12,7 +12,7 @@ namespace CosmeticShop.DB.EF.Repositories
 {
     public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
-        private readonly AppDbContext _dbContext;
+        protected readonly AppDbContext _dbContext;
         public EfRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
@@ -36,7 +36,7 @@ namespace CosmeticShop.DB.EF.Repositories
             await Entities.AddAsync(entity, cancellationToken);
 
         }
-        public virtual async Task Update(TEntity entity, CancellationToken cancellationToken)
+        public virtual Task Update(TEntity entity, CancellationToken cancellationToken)
         {
             if (entity is null)
             {
@@ -44,6 +44,7 @@ namespace CosmeticShop.DB.EF.Repositories
             }
 
             _dbContext.Entry(entity).State = EntityState.Modified;
+            return Task.CompletedTask;
         }
         public virtual async Task Delete(Guid Id, CancellationToken cancellationToken)
         {

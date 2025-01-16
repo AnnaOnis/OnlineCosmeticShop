@@ -48,6 +48,12 @@ namespace CosmeticShop.Domain.Entities
         public ICollection<CartItem> CartItems { get; set; }
 
         /// <summary>
+        /// Row version for optimistic concurrency.
+        /// </summary>       
+        [ConcurrencyCheck]
+        public uint xmin { get; set; }// Поле для контроля версии (транзакция)
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Cart"/> class.
         /// </summary>
         /// <param name="customerId">The unique identifier of the customer.</param>
@@ -68,24 +74,24 @@ namespace CosmeticShop.Domain.Entities
         /// <returns>A completed task representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the quantity is less than or equal to zero.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the CartItems collection is null.</exception>
-        public Task AddItem(Guid productId, int quantity)
-        {
-            if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
-            if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
+        // public Task AddItem(Guid productId, int quantity, decimal productPrice)
+        // {
+        //     if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+        //     if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
 
-            var existedCartItem = CartItems.SingleOrDefault(item => item.ProductId == productId);
-            if (existedCartItem is null)
-            {
-                CartItems.Add(new CartItem(Id, productId, quantity));
-            }
-            else
-            {
-                existedCartItem.Quantity += quantity;
-            }
+        //     var existedCartItem = CartItems.SingleOrDefault(item => item.ProductId == productId);
+        //     if (existedCartItem is null)
+        //     {
+        //         CartItems.Add(new CartItem(Id, productId, quantity, productPrice));
+        //     }
+        //     else
+        //     {
+        //         existedCartItem.Quantity += quantity;
+        //     }
 
-            UpdateTotalAmount();
-            return Task.CompletedTask;
-        }
+        //     UpdateTotalAmount();
+        //     return Task.CompletedTask;
+        // }
 
         /// <summary>
         /// Updates the quantity of an item in the user's cart.
@@ -96,24 +102,24 @@ namespace CosmeticShop.Domain.Entities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the quantity is less than or equal to zero.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the CartItems collection is null.</exception>
         /// <exception cref="ProductNotFoundException">Thrown when the Product not found in cart.</exception>
-        public Task UpdateItemQuantity(Guid productId, int quantity)
-        {
-            if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
-            if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
+        // public Task UpdateItemQuantity(Guid productId, int quantity)
+        // {
+        //     if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+        //     if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
 
-            var existedCartItem = CartItems.SingleOrDefault(item => item.ProductId == productId);
-            if (existedCartItem is null)
-            {
-                throw new ProductNotFoundException("Product not found in cart");
-            }
-            else
-            {
-                existedCartItem.Quantity = quantity;
-            }
+        //     var existedCartItem = CartItems.SingleOrDefault(item => item.ProductId == productId);
+        //     if (existedCartItem is null)
+        //     {
+        //         throw new ProductNotFoundException("Product not found in cart");
+        //     }
+        //     else
+        //     {
+        //         existedCartItem.Quantity = quantity;
+        //     }
 
-            UpdateTotalAmount();
-            return Task.CompletedTask;
-        }
+        //     UpdateTotalAmount();
+        //     return Task.CompletedTask;
+        // }
 
         /// <summary>
         /// Removes an item from the cart by its product ID.
@@ -122,49 +128,50 @@ namespace CosmeticShop.Domain.Entities
         /// <returns>A completed task representing the asynchronous operation.</returns>
         /// <exception cref="InvalidOperationException">Thrown when the CartItems collection is null.</exception>
         /// <exception cref="ProductNotFoundException">Thrown when the Product not found in cart.</exception>
-        public Task RemoveItem(Guid productId)
-        {
-            if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
+        // public Task RemoveItem(Guid productId)
+        // {
+        //     if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
 
-            var item = CartItems.SingleOrDefault(item => item.ProductId == productId);
-            if (item is not null)
-            {
-                CartItems.Remove(item);
-            }
-            else
-            {
-                throw new ProductNotFoundException("Product not found in cart");
-            }
+        //     var item = CartItems.SingleOrDefault(item => item.ProductId == productId);
+        //     if (item is not null)
+        //     {
+        //         CartItems.Remove(item);
+        //     }
+        //     else
+        //     {
+        //         throw new ProductNotFoundException("Product not found in cart");
+        //     }
 
-            //UpdateTotalAmount();
-            return Task.CompletedTask;
-        }
+        //     //UpdateTotalAmount();
+        //     return Task.CompletedTask;
+        // }
 
 
 
-        /// <summary>
-        /// Clears all items from the cart.
-        /// </summary>
-        /// <returns>A completed task representing the asynchronous operation.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when the CartItems collection is null.</exception>
-        public Task ClearItems()
-        {
-            if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
+        // /// <summary>
+        // /// Clears all items from the cart.
+        // /// </summary>
+        // /// <returns>A completed task representing the asynchronous operation.</returns>
+        // /// <exception cref="InvalidOperationException">Thrown when the CartItems collection is null.</exception>
+        // public Task ClearItems()
+        // {
+        //     if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
 
-            CartItems.Clear();
-            TotalAmount = 0;
+        //     CartItems.Clear();
+        //     TotalAmount = 0;
 
-            return Task.CompletedTask;
-        }
+        //     return Task.CompletedTask;
+        // }
 
         /// <summary>
         /// Updates the total amount of the cart.
         /// </summary>
-        private Task UpdateTotalAmount()
-        {
-            TotalAmount = CartItems.Sum(item => item.Product.Price * item.Quantity);
-            return Task.CompletedTask;
-        }
+        // private Task UpdateTotalAmount()
+        // {
+        //     if (CartItems == null) throw new InvalidOperationException(message: "Cart items is null");
+        //     TotalAmount = CartItems.Sum(item => item.ProductPrice * item.Quantity);
+        //     return Task.CompletedTask;
+        // }
 
     }
 }

@@ -20,6 +20,6 @@ namespace CosmeticShop.Domain.Services
         IUserRepository UserRepository { get; }
         IJwtTokenRepository JwtTokenRepository { get; }
 
-        Task SaveChangesAsync(CancellationToken cancellationToken);
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

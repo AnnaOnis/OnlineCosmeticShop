@@ -149,6 +149,16 @@ nav ul li a:hover {
   background-color: #555;
 }
 
+.exit {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  cursor: 'pointer'
+}
+.exit:hover {
+  background-color: #555;
+}
+
 .product-list {
   display: flex;
   flex-wrap: wrap;
@@ -174,6 +184,12 @@ nav ul li a:hover {
 
 .product-item:hover {
   background-color: #333; /* Измените цвет фона при наведении */
+}
+
+.productLink {
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
 }
 
 .success-message, .error-message {
@@ -216,4 +232,25 @@ nav ul li a:hover {
   padding: 1rem;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination ul {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pagination li {
+  list-style-type: none;
+  margin: 0 5px; /* Добавляем отступы между кнопками */
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 0.5rem;
 }

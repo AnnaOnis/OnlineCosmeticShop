@@ -49,7 +49,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         await authService.logout(logoutRequest, new AbortController().signal);
         setIsAuthenticated(false);
-        window.location.href = '/login';
       } catch (error) {
         console.error('Ошибка при выходе:', error);
         alert('Ошибка при выходе. Попробуйте снова.');

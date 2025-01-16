@@ -38,6 +38,13 @@ namespace CosmeticShop.Domain.Entities
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
         public int Quantity { get; set; }
 
+        /// <summary>
+        /// Price of the product in the cart.
+        /// </summary>
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Quantity must be at least 0.")]
+        public decimal ProductPrice { get; set; }
+
         // Navigation properties
 
         /// <summary>
@@ -56,13 +63,13 @@ namespace CosmeticShop.Domain.Entities
         /// <param name="cartId">The ID of the shopping cart.</param>
         /// <param name="productId">The ID of the product.</param>
         /// <param name="quantity">The quantity of the product.</param>
-        public CartItem(Guid cartId, Guid productId, int quantity)
-        {
-            
+        public CartItem(Guid cartId, Guid productId, int quantity, decimal productPrice)
+        {       
             Id = Guid.NewGuid();
             CartId = cartId;
             ProductId = productId;
             Quantity = quantity > 0 ? quantity : throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be at least 1.");
+            ProductPrice = productPrice >= 0 ? productPrice :  throw new ArgumentOutOfRangeException(nameof(productPrice), "Product price must be at least 0.");
         }
     }
 }

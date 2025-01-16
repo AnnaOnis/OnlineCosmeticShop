@@ -3,6 +3,7 @@ using CosmeticShop.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace CosmeticShop.DB.EF.Repositories
 
         public IJwtTokenRepository JwtTokenRepository { get; }
 
-        private readonly AppDbContext _dbContext;
+        public AppDbContext dbContext;
 
         public UnitOfWorkEf(ICartRepository cartRepository, 
                             ICategoryRepository categoryRepository, 
@@ -47,10 +48,20 @@ namespace CosmeticShop.DB.EF.Repositories
             UserActionRepository = userActionRepository ?? throw new ArgumentNullException(nameof(userActionRepository));
             UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             JwtTokenRepository = jwtTokenRepository ?? throw new ArgumentNullException(nameof(jwtTokenRepository));
-            _dbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
+            dbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
         }
 
-        public Task SaveChangesAsync(CancellationToken cancellationToken)
-                => _dbContext.SaveChangesAsync(cancellationToken);
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await dbContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new Exception("The cart has been modified by another transaction.");
+            }
+        }
+
     }
 }

@@ -8,13 +8,14 @@ const CartComponent: React.FC = () => {
   const [cart, setCart] = useState<CartResponseDto | null>(null);
   const [error, setError] = useState<string | null>(null);
   const abortController = new AbortController();
-  const { signal } = abortController;
+  
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const cartData = await cartService.getCart(signal);
+        const cartData = await cartService.getCart(new AbortController().signal);
         setCart(cartData);
+        console.log(cartData);
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
           console.error('Failed to fetch cart:', error);
@@ -34,7 +35,7 @@ const CartComponent: React.FC = () => {
   const handleUpdateItem = async (productId: string, quantity: number) => {
     try {
       const item: CartItemRequestDto =  {productId, quantity};
-      const updatedCart = await cartService.updateItemQuantity(item, signal);
+      const updatedCart = await cartService.updateItemQuantity(item, new AbortController().signal);
       setCart(updatedCart);
     } catch (error) {
       console.error('Failed to add item to cart:', error);
@@ -44,8 +45,8 @@ const CartComponent: React.FC = () => {
 
   const handleRemoveItem = async (productId: string) => {
     try {
-      await cartService.removeItemFromCart(productId, signal);
-      const updatedCart = await cartService.getCart(signal);
+      await cartService.removeItemFromCart(productId, new AbortController().signal);
+      const updatedCart = await cartService.getCart(new AbortController().signal);
       setCart(updatedCart);
     } catch (error) {
       console.error('Failed to remove item from cart:', error);
@@ -55,7 +56,7 @@ const CartComponent: React.FC = () => {
 
   const handleClearCart = async () => {
     try {
-      await cartService.clearCart(signal);
+      await cartService.clearCart(new AbortController().signal);
       setCart(null);
     } catch (error) {
       console.error('Failed to clear cart:', error);

@@ -38,10 +38,11 @@ namespace CosmeticShop.DB.EF
                 .OnDelete(DeleteBehavior.Restrict); // Prevent cascade deletion
 
             // Product - ProductImage relationship (One-to-Many)
-            modelBuilder.Entity<ProductImage>()
-                .HasOne(pi => pi.Product)
-                .WithMany(p => p.ProductImages)
-                .HasForeignKey(pi => pi.ProductId);
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.ProductImages)
+                .WithOne(pi => pi.Product)
+                .HasForeignKey(pi => pi.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Customer - Favorite relationship (Many-to-Many)
             modelBuilder.Entity<Favorite>()
@@ -55,7 +56,8 @@ namespace CosmeticShop.DB.EF
             modelBuilder.Entity<Favorite>()
                 .HasOne(f => f.Product)
                 .WithMany()
-                .HasForeignKey(f => f.ProductId);
+                .HasForeignKey(f => f.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Customer - Order relationship (One-to-Many)
             modelBuilder.Entity<Order>()
@@ -79,13 +81,20 @@ namespace CosmeticShop.DB.EF
             modelBuilder.Entity<Cart>()
                 .HasOne(c => c.Customer)
                 .WithOne()
-                .HasForeignKey<Cart>(c => c.CustomerId);
+                .HasForeignKey<Cart>(c => c.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Cart - CartItem relationship (One-to-Many)
-            modelBuilder.Entity<CartItem>()
-                .HasOne(ci => ci.Cart)
-                .WithMany(c => c.CartItems)
+            modelBuilder.Entity<Cart>()
+                .HasMany(c => c.CartItems)
+                .WithOne(ci => ci.Cart)
                 .HasForeignKey(ci => ci.CartId);
+
+            modelBuilder.Entity<Cart>()
+            .Property(с => с.xmin)
+            .HasColumnName("xmin")
+            .IsConcurrencyToken()
+            .ValueGeneratedOnAddOrUpdate();
 
             // CartItem - Product relationship (Many-to-One)
             modelBuilder.Entity<CartItem>()
@@ -97,20 +106,14 @@ namespace CosmeticShop.DB.EF
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Order)
                 .WithOne()
-                .HasForeignKey<Payment>(p => p.OrderId);
+                .HasForeignKey<Payment>(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Customer - Payment relationship (One-to-Many)
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Customer)
                 .WithMany(c => c.Payments) 
                 .HasForeignKey(p => p.CustomerId);
-
-            // Customer - ProductImage relationship (One-to-Many) 
-            modelBuilder.Entity<Product>()
-                .HasMany(p => p.ProductImages) 
-                .WithOne(pi => pi.Product)     
-                .HasForeignKey(pi => pi.ProductId) 
-                .OnDelete(DeleteBehavior.Cascade);
 
             // Product - Review relationship (One-to-Many)
             modelBuilder.Entity<Review>()

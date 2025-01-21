@@ -14,6 +14,9 @@ namespace Mappers
         public OrderMappingProfile()
         {
             CreateMap<Order, OrderResponseDto>();
+            CreateMap<OrderItem, OrderItemResponseDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product.Price));
         }
     }
 }

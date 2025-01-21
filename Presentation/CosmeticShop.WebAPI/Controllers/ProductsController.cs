@@ -34,7 +34,7 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedResponse<ProductResponseDto>>> GetProducts([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Received filterDto: {@FilterDto}", filterDto); // Логирование для отладки
+            _logger.LogInformation("Received filterDto: " + filterDto.Filter); // Логирование для отладки
 
             var (products, totalProducts) = await _productService.GetProductsAsync(cancellationToken, 
                                                                   filterDto.Filter, 

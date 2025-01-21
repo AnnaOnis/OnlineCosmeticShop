@@ -36,5 +36,8 @@ namespace HttpModels.Responses
         [Required]
         [MaxLength(100)]
         public PaymentMethod OrderPaymentMethod { get; set; }
+
+        [Required]
+        public List<OrderItemResponseDto> orderItems { get; set; } = new List<OrderItemResponseDto>();
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Order
 {
     [Serializable]
-    internal class OrderNotFoundException : DomainException
+    public class OrderNotFoundException : DomainException
     {
         public OrderNotFoundException()
         {

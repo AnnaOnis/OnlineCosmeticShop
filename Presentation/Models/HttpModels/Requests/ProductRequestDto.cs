@@ -12,7 +12,7 @@ namespace HttpModels.Requests
         [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
         public string Description { get; set; }
 
-         [Range(0.01, 10000.00, ErrorMessage = "Price must be between 0.01 and 10,000.00.")]
+        [Range(0.01, 10000.00, ErrorMessage = "Price must be between 0.01 and 10,000.00.")]
         public decimal Price { get; set; }
 
         [Required]

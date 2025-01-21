@@ -62,18 +62,15 @@ namespace CosmeticShop.Domain.Entities
         /// <param name="orderId">The identifier of the order.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the quantity is less than 1.</exception>
-        public OrderItem(CartItem item, Guid orderId)
+        public OrderItem(Guid productId, int quantity, Guid orderId)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item), "The cart item cannot be null.");
-
-            if (item.Quantity < 1)
-                throw new ArgumentOutOfRangeException(nameof(item.Quantity), "Quantity must be greater than 0.");
+            if (quantity < 1)
+                throw new ArgumentOutOfRangeException(nameof(quantity), "Quantity must be greater than 0.");
 
             Id = Guid.NewGuid();
             OrderId = orderId;
-            ProductId = item.ProductId;
-            Quantity = item.Quantity;
+            ProductId = productId;
+            Quantity = quantity;
         }
 
 

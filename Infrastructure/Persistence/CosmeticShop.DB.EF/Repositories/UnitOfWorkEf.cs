@@ -53,14 +53,8 @@ namespace CosmeticShop.DB.EF.Repositories
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                return await dbContext.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new Exception("The cart has been modified by another transaction.");
-            }
+
+            return await dbContext.SaveChangesAsync(cancellationToken);
         }
 
     }

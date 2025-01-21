@@ -73,14 +73,13 @@ namespace CosmeticShop.Domain.Entities
         /// <summary>
         /// Gets or sets the collection of items included in the order.
         /// </summary>
-        public ICollection<OrderItem> OrderItems { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
         /// <summary>
         /// Parameterless constructor for Entity Framework.
         /// </summary>
         protected Order() 
         {
-            OrderItems = new List<OrderItem>();
         }
 
         /// <summary>
@@ -91,7 +90,9 @@ namespace CosmeticShop.Domain.Entities
         /// <param name="shippingMethod">The shipping method for the order. Must be a valid value of <see cref="ShippingMethod"/>.</param>
         /// <param name="paymentMethod">The payment method for the order. Must be a valid value of <see cref="PaymentMethod"/>.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the provided shipping or payment method is invalid.</exception>
-        public Order(Cart cart,
+        public Order(Guid customerId,
+                     int totalQuatity,
+                     decimal totalEmount,
                      ShippingMethod shippingMethod,
                      PaymentMethod paymentMethod)
         {
@@ -103,14 +104,14 @@ namespace CosmeticShop.Domain.Entities
 
 
             Id = Guid.NewGuid();
-            CustomerId = cart.CustomerId;
+            CustomerId = customerId;
             OrderDate = DateTime.UtcNow;
             Status = OrderStatus.Pending;
-            TotalQuantity = cart.CartItems.Count;
-            TotalAmount = cart.TotalAmount;
+            TotalQuantity = totalQuatity;
+            TotalAmount = totalEmount;
             OrderShippingMethod = shippingMethod;
             OrderPaymentMethod = paymentMethod;
-            OrderItems = cart.CartItems.Select(item => new OrderItem(item, Id)).ToList();
+            OrderItems = new List<OrderItem>();
         }
 
     }

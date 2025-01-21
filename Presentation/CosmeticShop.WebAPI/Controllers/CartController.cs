@@ -43,7 +43,7 @@ namespace CosmeticShop.WebAPI.Controllers
         }
 
         [HttpPost("update_item_quantity")]
-        public async Task<ActionResult<CartResponseDto>> UpdateItemQuantity([FromBody] CartItemRequestDto cartItemRequestDto, CancellationToken cancellationToken)
+        public async Task<ActionResult<CartResponseDto>> UpdateItemQuantity([FromBody]  CartItemRequestDto cartItemRequestDto, CancellationToken cancellationToken)
         {
             var guid = GetCurrentCustomerId();
 

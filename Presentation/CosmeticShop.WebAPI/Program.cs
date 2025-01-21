@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using PaymentGateway;
 using System.Globalization;
 using CosmeticShop.WebAPI.Controllers;
+using Microsoft.AspNetCore.Hosting;
+using System.Text;
 
 namespace CosmeticShop.WebAPI
 {
@@ -124,6 +126,22 @@ namespace CosmeticShop.WebAPI
             app.UseAuthentication();
             app.UseMiddleware<TokenValidationMiddleware>();
             app.UseAuthorization();
+
+            app.Use(async (context, next) =>
+            {
+                context.Request.EnableBuffering();
+
+                var buffer = new byte[Convert.ToInt32(context.Request.ContentLength)];
+
+                await context.Request.Body.ReadAsync(buffer);
+                var bodyAsText = Encoding.UTF8.GetString(buffer);
+                context.Request.Body.Position = 0;
+
+                var logger = context.RequestServices.GetService<ILogger<Program>>();
+                logger.LogInformation("Received request body: {RequestBody}", bodyAsText);
+
+                await next();
+            });
 
             app.MapControllers();
 

@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { CartItemRequestDto } from './cart-item-request-dto';
 import { PaymentMethod } from './payment-method';
 import { ShippingMethod } from './shipping-method';
  /**
@@ -29,6 +30,18 @@ export interface OrderCreateRequestDto {
     customerId: string;
 
     /**
+     * @type {number}
+     * @memberof OrderCreateRequestDto
+     */
+    totalQuantity: number;
+
+    /**
+     * @type {number}
+     * @memberof OrderCreateRequestDto
+     */
+    totalAmount: number;
+
+    /**
      * @type {ShippingMethod}
      * @memberof OrderCreateRequestDto
      */
@@ -39,4 +52,10 @@ export interface OrderCreateRequestDto {
      * @memberof OrderCreateRequestDto
      */
     orderPaymentMethod: PaymentMethod;
+
+    /**
+     * @type {Array<CartItemRequestDto>}
+     * @memberof OrderCreateRequestDto
+     */
+    cartItems: Array<CartItemRequestDto>;
 }

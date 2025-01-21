@@ -9,6 +9,7 @@ namespace HttpModels.Responses
 {
     public class CustomerResponseDto : AuthResponseDto
     {
+        [Required]
         public Guid Id { get; set; }
 
         [Required]

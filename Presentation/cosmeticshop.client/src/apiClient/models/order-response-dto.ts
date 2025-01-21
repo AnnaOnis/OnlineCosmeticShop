@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+import { OrderItemResponseDto } from './order-item-response-dto';
 import { OrderStatus } from './order-status';
 import { PaymentMethod } from './payment-method';
 import { ShippingMethod } from './shipping-method';
@@ -70,4 +71,10 @@ export interface OrderResponseDto {
      * @memberof OrderResponseDto
      */
     orderPaymentMethod: PaymentMethod;
+
+    /**
+     * @type {Array<OrderItemResponseDto>}
+     * @memberof CartResponseDto
+     */
+    orderItems: Array<OrderItemResponseDto>;
 }

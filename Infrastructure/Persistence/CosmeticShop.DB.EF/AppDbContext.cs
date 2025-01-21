@@ -66,10 +66,11 @@ namespace CosmeticShop.DB.EF
                 .HasForeignKey(o => o.CustomerId);
 
             // Order - OrderItem relationship (One-to-Many)
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Order)
-                .WithMany(o => o.OrderItems)
-                .HasForeignKey(oi => oi.OrderId);
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.OrderItems)
+                .WithOne(oi => oi.Order)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // OrderItem - Product relationship (Many-to-One)
             modelBuilder.Entity<OrderItem>()

@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using CosmeticShop.Domain.Services;
+using CosmeticShop.Domain.Entities;
 using HttpModels;
 using HttpModels.Requests;
 using HttpModels.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CosmeticShop.WebAPI.Controllers
 {
@@ -14,12 +17,17 @@ namespace CosmeticShop.WebAPI.Controllers
     public class OrderController : ControllerBase
     {
         private readonly OrderService _orderService;
+        private readonly CartService _cartService;
         private readonly IMapper _mapper;
+        private readonly ILogger<OrderController> _logger;
+        
 
-        public OrderController(OrderService orderService, IMapper mapper)
+        public OrderController(OrderService orderService, CartService cartService, IMapper mapper, ILogger<OrderController> logger)
         {
             _orderService = orderService;
             _mapper = mapper;
+            _cartService = cartService;
+            _logger = logger;
         }
 
         //[Authorize(Roles = "Admin")]
@@ -51,8 +59,7 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpGet("customer")]
         public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GerCustomerOrders(CancellationToken cancellationToken)
         {
-            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var guid = Guid.Parse(strId);
+            var guid = GetCurrentCustomerId();
 
             var orders = await _orderService.GetCustomerOrdersAsync(guid, cancellationToken);
 
@@ -64,9 +71,36 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderResponseDto>> CreateOrder([FromBody] OrderCreateRequestDto orderRequestDto, CancellationToken cancellationToken)
         {
+             string orderRequestDtoJson = JsonSerializer.Serialize(orderRequestDto, new JsonSerializerOptions { WriteIndented = true });
+            _logger.LogInformation("Received OrderCreateRequestDto: {@OrderCreateRequestDto}", orderRequestDtoJson);
+
+            var currentCustomerId = GetCurrentCustomerId();
+
+            var cart = await _cartService.GetCartByCustomerIdAsync(currentCustomerId, cancellationToken);
+
+            List<CartItem> cartItems = new List<CartItem>();
+
+            foreach (var orderItem in orderRequestDto.CartItems)
+            {
+                var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == orderItem.ProductId);
+                if (cartItem != null)
+                {
+                    cartItems.Add(cartItem);
+                    _logger.LogInformation(cartItem.ProductId + " - " + cartItem.Quantity);
+                }
+                else
+                {
+                    _logger.LogWarning($"Product with ID {orderItem.ProductId} not found in the cart.");
+                    return BadRequest($"Product with ID {orderItem.ProductId} not found in the cart.");
+                }
+            }
+
             var order = await _orderService.CreateOrderAsync(orderRequestDto.CustomerId,
+                                                             orderRequestDto.TotalQuantity,
+                                                             orderRequestDto.TotalAmount,
                                                              orderRequestDto.OrderShippingMethod,
                                                              orderRequestDto.OrderPaymentMethod,
+                                                             cartItems,
                                                              cancellationToken);
 
             var responseDto = _mapper.Map<OrderResponseDto>(order);
@@ -89,6 +123,17 @@ namespace CosmeticShop.WebAPI.Controllers
         {
             await _orderService.DeleteOrder(id, cancellationToken);
             return NoContent();
+        }
+
+        private Guid GetCurrentCustomerId()
+        {
+            var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (strId == null)
+            {
+                return Guid.Empty;
+            }
+            var guid = Guid.Parse(strId);
+            return guid;
         }
     }
 }

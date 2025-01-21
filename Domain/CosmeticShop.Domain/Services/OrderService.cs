@@ -37,22 +37,31 @@ namespace CosmeticShop.Domain.Services
         /// <param name="paymentMethod">The selected payment method for the order.</param>
         /// <returns>The created Order object.</returns>
         /// <exception cref="InvalidOperationException">Thrown when the cart is empty or not found.</exception>
-        public async Task<Order> CreateOrderAsync(Guid customerId, 
+        public async Task<Order> CreateOrderAsync(Guid customerId,
+                                                  int totalQuatity,
+                                                  decimal totalAmount,
                                                   ShippingMethod shippingMethod, 
                                                   PaymentMethod paymentMethod,
+                                                  List<CartItem> cartItems,
                                                   CancellationToken cancellationToken)
         {
-            var cart = await _unitOfWork.CartRepository.GetCartByCustomerId(customerId, cancellationToken);
-            if (cart == null || cart.CartItems.Count == 0)
-            {
-                throw new InvalidOperationException("Cart is empty or not found.");
-            }
+            if( totalAmount < 0 ) throw new ArgumentOutOfRangeException(nameof(totalAmount));
+            if( totalQuatity <= 0 ) throw new ArgumentOutOfRangeException(nameof( totalQuatity));
 
-            var order = new Order(cart, shippingMethod, paymentMethod);
-            await _unitOfWork.OrderRepository.Add(order, cancellationToken);
+            _logger.LogInformation("Gлучены элементы корзины количеством - " + cartItems.Count());
+
+            var addingOrder = new Order(customerId, totalQuatity, totalAmount, shippingMethod, paymentMethod);
+
+            var orderItems = cartItems.Select(cartItem =>
+                new OrderItem(cartItem.ProductId, cartItem.Quantity, addingOrder.Id)).ToList();
+
+            addingOrder.OrderItems = orderItems;
+
+            await _unitOfWork.OrderRepository.Add(addingOrder, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Добавлен заказ " + addingOrder.Id);
 
-            return order;
+            return addingOrder;
         }
 
         /// <summary>

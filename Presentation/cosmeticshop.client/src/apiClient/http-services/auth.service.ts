@@ -14,19 +14,28 @@ export class AuthService {
   }
 
   public async register(body: CustomerRegisterRequestDto, cancellationToken: AbortSignal): Promise<CustomerResponseDto> {
-    const response = await this.httpClient.post('/auth/register', body, { signal: cancellationToken });
-    localStorage.setItem('jwtToken', response.token); // Сохраняем токен в localStorage
+    const response = await this.httpClient.post<CustomerResponseDto>('/auth/register', body, { signal: cancellationToken });
+    if (response.token) {
+      localStorage.setItem('jwtToken', response.token); // Сохраняем токен в localStorage
+    }
     return response;
   }
 
   public async login(body: LoginRequest, cancellationToken: AbortSignal): Promise<CustomerResponseDto | UserResponseDto> {
-    const response = await this.httpClient.post('/auth/login', body, { signal: cancellationToken });
-    localStorage.setItem('jwtToken', response.token); // Сохраняем токен в localStorage
+    const response = await this.httpClient.post<CustomerResponseDto | UserResponseDto>('/auth/login', body, { signal: cancellationToken });
+    if (response.token) {
+      localStorage.setItem('jwtToken', response.token); // Сохраняем токен в localStorage
+      console.log(response.token);
+    }
+    if (response.id) {
+      localStorage.setItem('customerId', response.id);
+      console.log(response.id);
+    }
     return response;
   }
 
   public async logout(body: LogoutRequest, cancellationToken: AbortSignal): Promise<void> {
-    await this.httpClient.post('/auth/logout', body, { signal: cancellationToken });
+    await this.httpClient.post<void>('/auth/logout', body, { signal: cancellationToken });
     localStorage.removeItem('jwtToken'); // Удаляем токен из localStorage
   }
 

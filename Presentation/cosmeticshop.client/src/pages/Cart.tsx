@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { CartService } from '../apiClient/http-services/cart.service';
 import { CartItemRequestDto, CartResponseDto } from '../apiClient/models';
+import { Link } from 'react-router-dom';
 
 const cartService = new CartService('/api'); // Базовый путь соответствует префиксу проксирования
 
 const CartComponent: React.FC = () => {
   const [cart, setCart] = useState<CartResponseDto | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const abortController = new AbortController();
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   
-
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -28,7 +28,7 @@ const CartComponent: React.FC = () => {
 
     // Отмена запроса при размонтировании компонента
     return () => {
-      abortController.abort();
+      new AbortController().abort();
     };
   }, []);
 
@@ -64,6 +64,14 @@ const CartComponent: React.FC = () => {
     }
   };
 
+  const toggleSelectItem = (productId: string) => {
+    setSelectedItems(prev => prev.includes(productId)
+      ? prev.filter(id => id !== productId)
+      : [...prev, productId]);
+  };
+
+  const filteredCartItems = cart?.cartItems.filter(item => selectedItems.includes(item.productId)) ?? [];
+
   return (
     <div>
       <h1>Shopping Cart</h1>
@@ -73,15 +81,25 @@ const CartComponent: React.FC = () => {
           <ul>
             {cart.cartItems.map((item) => (
               <li key={item.productId}>
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(item.productId)}
+                  onChange={() => toggleSelectItem(item.productId)}
+                />
                 {item.productName} - {item.quantity} x {item.productPrice} = {item.quantity * item.productPrice}
                 <button onClick={() => handleRemoveItem(item.productId)}>Remove</button>
-                <button onClick={() => handleUpdateItem(item.productId, item.quantity + 1 )}>+</button>
-                <button onClick={() => handleUpdateItem(item.productId, item.quantity - 1 )}>-</button>
+                <button onClick={() => handleUpdateItem(item.productId, item.quantity + 1)}>+</button>
+                <button onClick={() => handleUpdateItem(item.productId, item.quantity - 1)}>-</button>
               </li>
             ))}
           </ul>
-          <p>Total Amount: {cart.totalAmount}</p>
+          <p>Total Amount: {filteredCartItems.reduce((total, item) => total + item.quantity * item.productPrice, 0)}</p>
           <button onClick={handleClearCart}>Clear Cart</button>
+          <div>
+            <Link to="/checkout" state={{ selectedItems: filteredCartItems }}>
+              Перейти к оформлению заказа
+            </Link>
+          </div>
         </div>
       ) : (
         <p>Cart is empty</p>

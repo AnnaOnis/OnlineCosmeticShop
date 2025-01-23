@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { AuthService } from './apiClient/http-services/auth.service';
-import { CustomerRegisterRequestDto, LogoutRequest } from './apiClient/models';
+import { CustomerRegisterRequestDto, LoginRequest, LogoutRequest } from './apiClient/models';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -30,14 +30,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const token = localStorage.getItem('jwtToken');
     const storedCustomerId = localStorage.getItem('customerId');
     if (token) {
-      setIsAuthenticated(true);
+      setIsAuthenticated(true);   
+    }
+    if (storedCustomerId){
       setCustomerId(storedCustomerId);
     }
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      await authService.login({ email, password }, new AbortController().signal);
+      const loginRequest: LoginRequest = {
+        email: email,
+        password: password
+      };
+      await authService.login(loginRequest, new AbortController().signal);
       const token = localStorage.getItem('jwtToken');
       const storedCustomerId = localStorage.getItem('customerId');
       if (token) {

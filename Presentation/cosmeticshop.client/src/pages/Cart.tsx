@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { CartService } from '../apiClient/http-services/cart.service';
 import { CartItemRequestDto, CartResponseDto } from '../apiClient/models';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const cartService = new CartService('/api'); // Базовый путь соответствует префиксу проксирования
 
@@ -9,18 +10,26 @@ const CartComponent: React.FC = () => {
   const [cart, setCart] = useState<CartResponseDto | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectAllText, setSelectAllText] = useState<string>('Выделить все');  
+  const navigate = useNavigate();
+  const { isAuthenticated} = useAuth();
   
   useEffect(() => {
     const fetchCart = async () => {
-      try {
-        const cartData = await cartService.getCart(new AbortController().signal);
-        setCart(cartData);
-        console.log(cartData);
-      } catch (error) {
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('Failed to fetch cart:', error);
-          setError('Failed to fetch cart. Please try again later.');
-        }
+      if(!isAuthenticated){
+        setError('Чтобы добавить товары в корзину ВОЙДИТЕ или ЗАРЕГИСТРИРУЙТЕСЬ!');
+      }
+      else{
+        try {
+          const cartData = await cartService.getCart(new AbortController().signal);
+          setCart(cartData);
+          console.log(cartData);
+        } catch (error) {
+          if (error instanceof Error && error.name !== 'AbortError') {
+            console.error('Failed to fetch cart:', error);
+            setError('Failed to fetch cart. Please try again later.');
+          }
+        }        
       }
     };
 
@@ -58,6 +67,8 @@ const CartComponent: React.FC = () => {
     try {
       await cartService.clearCart(new AbortController().signal);
       setCart(null);
+      setSelectedItems([]); // Снимаем выделение всех товаров при очистке корзины
+      setSelectAllText('Выделить все'); // Возвращаем текст кнопки к исходному
     } catch (error) {
       console.error('Failed to clear cart:', error);
       setError('Failed to clear cart. Please try again later.');
@@ -70,7 +81,29 @@ const CartComponent: React.FC = () => {
       : [...prev, productId]);
   };
 
+  const toggleSelectAll = () => {
+    if (cart?.cartItems) {
+      if (selectedItems.length === cart.cartItems.length) {
+        setSelectedItems([]);
+        setSelectAllText('Выделить все');
+      } else {
+        setSelectedItems(cart.cartItems.map(item => item.productId));
+        setSelectAllText('Отменить выделение');
+      }
+    } else {
+      setSelectedItems([]);
+      setSelectAllText('Выделить все');
+    }
+  };
+
   const filteredCartItems = cart?.cartItems.filter(item => selectedItems.includes(item.productId)) ?? [];
+  const isDisabled = filteredCartItems.length === 0;
+
+  const handleCheckout = () => {
+    if (!isDisabled) {
+      navigate("/checkout", { state: { selectedItems: filteredCartItems } });
+    }
+  };
 
   return (
     <div>
@@ -78,27 +111,31 @@ const CartComponent: React.FC = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {cart ? (
         <div>
+          <button onClick={toggleSelectAll}>{selectAllText}</button>
           <ul>
-            {cart.cartItems.map((item) => (
-              <li key={item.productId}>
-                <input
-                  type="checkbox"
-                  checked={selectedItems.includes(item.productId)}
-                  onChange={() => toggleSelectItem(item.productId)}
-                />
-                {item.productName} - {item.quantity} x {item.productPrice} = {item.quantity * item.productPrice}
-                <button onClick={() => handleRemoveItem(item.productId)}>Remove</button>
-                <button onClick={() => handleUpdateItem(item.productId, item.quantity + 1)}>+</button>
-                <button onClick={() => handleUpdateItem(item.productId, item.quantity - 1)}>-</button>
-              </li>
-            ))}
+            {cart.cartItems
+              .slice() // Создаем копию массива для сортировки
+              .sort((a, b) => a.productName.localeCompare(b.productName)) // Сортируем по названию
+              .map((item) => (
+                <li key={item.productId}>
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(item.productId)}
+                    onChange={() => toggleSelectItem(item.productId)}
+                  />
+                  {item.productName} - {item.quantity} x {item.productPrice} = {item.quantity * item.productPrice}
+                  <button onClick={() => handleRemoveItem(item.productId)}>Remove</button>
+                  <button onClick={() => handleUpdateItem(item.productId, item.quantity + 1)}>+</button>
+                  <button onClick={() => handleUpdateItem(item.productId, item.quantity - 1)}>-</button>
+                </li>
+              ))}
           </ul>
           <p>Total Amount: {filteredCartItems.reduce((total, item) => total + item.quantity * item.productPrice, 0)}</p>
           <button onClick={handleClearCart}>Clear Cart</button>
           <div>
-            <Link to="/checkout" state={{ selectedItems: filteredCartItems }}>
-              Перейти к оформлению заказа
-            </Link>
+          <button onClick={handleCheckout} disabled={isDisabled}>
+              {isDisabled ? 'Выберите товары для оформления заказа' : 'Перейти к оформлению заказа'}
+            </button>
           </div>
         </div>
       ) : (

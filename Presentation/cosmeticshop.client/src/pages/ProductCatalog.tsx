@@ -5,6 +5,7 @@ import { Pagination } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { CartService } from '../apiClient/http-services/cart.service';
 import { CartItemRequestDto } from '../apiClient/models';
+import { useAuth } from '../AuthContext';
 
 const ProductCatalog: React.FC = () => {
   const [products, setProducts] = useState<ProductResponseDto[]>([]);
@@ -20,6 +21,7 @@ const ProductCatalog: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const productsService = new ProductsService('/api');
   const cartService = new CartService('/api');
+  const { isAuthenticated} = useAuth();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -76,23 +78,30 @@ const ProductCatalog: React.FC = () => {
 
   const handleAddToCartClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation(); // Предотвращаем распространение события клика
-    const productId = e.currentTarget.getAttribute('data-product-id')!;
-    const body: CartItemRequestDto = {
-      productId: productId,
-      quantity: 1
-    };
-
-    try {
-      const response = await cartService.addItemToCart(body, new AbortController().signal);
-      console.log('Товар добавлен в корзину:', response);
-      setSuccessMessage('Товар успешно добавлен в корзину! Перейти в <Link to="/cart">корзину</Link> для просмотра.');
-      setErrorMessage(null);
-      setTimeout(() => setSuccessMessage(null), 2000); // Сообщение исчезнет через 3 секунды
-    } catch (error) {
-      console.error('Ошибка при добавлении товара в корзину:', error);
-      setErrorMessage('Ошибка при добавлении товара в корзину. Пожалуйста, попробуйте снова.');
+    if(!isAuthenticated){
+      setErrorMessage('Чтобы добавить товары в корзину ВОЙДИТЕ или ЗАРЕГИСТРИРУЙТЕСЬ!');
       setSuccessMessage(null);
       setTimeout(() => setErrorMessage(null), 2000); // Сообщение исчезнет через 3 секунды
+    }
+    else{
+      const productId = e.currentTarget.getAttribute('data-product-id')!;
+      const body: CartItemRequestDto = {
+        productId: productId,
+        quantity: 1
+      };
+
+      try {
+        const response = await cartService.addItemToCart(body, new AbortController().signal);
+        console.log('Товар добавлен в корзину:', response);
+        setSuccessMessage('Товар успешно добавлен в корзину!' + <Link to="/cart">Перейти в корзину для просмотра.</Link>);
+        setErrorMessage(null);
+        setTimeout(() => setSuccessMessage(null), 2000); // Сообщение исчезнет через 3 секунды
+      } catch (error) {
+        console.error('Ошибка при добавлении товара в корзину:', error);
+        setErrorMessage('Ошибка при добавлении товара в корзину. Пожалуйста, попробуйте снова.');
+        setSuccessMessage(null);
+        setTimeout(() => setErrorMessage(null), 2000); // Сообщение исчезнет через 3 секунды
+      }      
     }
   };
 
@@ -143,6 +152,7 @@ const ProductCatalog: React.FC = () => {
               <h2>{product.name}</h2>
               <p>{product.description}</p>
               <p>Цена: {product.price} руб.</p>
+              <p>Рейтинг: {product.rating}</p>
             </Link>
               <button onClick={handleAddToCartClick} data-product-id={product.id}>
                 Добавить в корзину

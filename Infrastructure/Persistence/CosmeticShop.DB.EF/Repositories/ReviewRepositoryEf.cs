@@ -28,6 +28,7 @@ namespace CosmeticShop.DB.EF.Repositories
         public async Task<IReadOnlyList<Review>> GetApprovedReviewsByProductId(Guid productId, CancellationToken cancellationToken)
         {
             return await Entities
+                .Include(e => e.Customer)
                 .Where(e => e.ProductId == productId && e.IsApproved == true)
                 .OrderByDescending(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);

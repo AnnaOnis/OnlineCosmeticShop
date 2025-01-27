@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CustomerService } from '../apiClient/http-services/customer.service';
 import { OrderService } from '../apiClient/http-services/order.service'
 import { CustomerResponseDto, OrderResponseDto } from '../apiClient/models';
+import '../styles/Profile.css'
 
 const CustomerProfile: React.FC = () => {
   const [customer, setCustomer] = useState<CustomerResponseDto | null>(null);
@@ -89,83 +90,135 @@ const CustomerProfile: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>Профиль пользователя</h1>
-      <p>Имя: {customer.firstName} {customer.lastName}</p>
-      <p>Email: {customer.email}</p>
-      <p>Номер телефона: {customer.phoneNumber}</p>
-      <p>Адрес доставки: {customer.shippingAddress}</p>
-      <button onClick={() => setIsEditProfile(true)}>Редактировать профиль</button>
-      <button onClick={() => setIsResetPassword(true)}>Сбросить пароль</button>
+    <div className="profile-container">
+      <div className="profile-card">
+        <h1 className="profile-title">Мой профиль</h1>
+        
+        <div className="profile-info">
+          <div className="profile-picture">
+            <img src={'../../images/foto.jpg'} alt="Фото профиля" />
+          </div>
+          <div className="info-group">
+            <span className="info-label">Имя:</span>
+            <span className="info-value">{customer.firstName} {customer.lastName}</span>
+          </div>
+          <div className="info-group">
+            <span className="info-label">Email:</span>
+            <span className="info-value">{customer.email}</span>
+          </div>
+          <div className="info-group">
+            <span className="info-label">Телефон:</span>
+            <span className="info-value">{customer.phoneNumber || 'Не указан'}</span>
+          </div>
+          <div className="info-group">
+            <span className="info-label">Адрес доставки:</span>
+            <span className="info-value">{customer.shippingAddress || 'Не указан'}</span>
+          </div>
+        </div>
 
-      {/* Возможность редактирования профиля */}
-      {isEditProfile && (
-        <form onSubmit={handleEditProfile}>
-          <div>
-            <label>Имя: </label>
-            <input type="text" name="firstName" defaultValue={customer.firstName} required />
-          </div>
-          <div>
-            <label>Фамилия: </label>
-            <input type="text" name="lastName" defaultValue={customer.lastName} required />
-          </div>
-          <div>
-            <label>Email: </label>
-            <input type="email" name="email" defaultValue={customer.email} required />
-          </div>
-          <div>
-            <label>Номер телефона: </label>
-            <input type="text" name="phoneNumber" defaultValue={customer.phoneNumber || ''} />
-          </div>
-          <div>
-            <label>Адрес доставки: </label>
-            <input type="text" name="shippingAddress" defaultValue={customer.shippingAddress || ''} />
-          </div>
-          <button type="submit">Обновить профиль</button>
-          <button type="button" onClick={() => setIsEditProfile(false)}>Отмена</button>
-        </form>
-      )}
+        <div className="profile-actions">
+          <button 
+            className="action-btn edit-btn"
+            onClick={() => setIsEditProfile(true)}
+          >
+            Редактировать профиль
+          </button>
+          <button 
+            className="action-btn reset-btn"
+            onClick={() => setIsResetPassword(true)}
+          >
+            Сменить пароль
+          </button>
+        </div>
 
-      {isResetPassword && (
-        <form onSubmit={handleResetPassword}>
-          <div>
-            <label>Новый пароль: </label>
-            <input type="password" name="newPassword" required />
-          </div>
-          <div>
-            <label>Подтвердите новый пароль: </label>
-            <input type="password" name="confirmPassword" required />
-          </div>
-          <button type="submit">Сбросить пароль</button>
-          <button type="button" onClick={() => setIsResetPassword(false)}>Отмена</button>
-        </form>
-      )}
+        {isEditProfile && (
+          <form className="edit-form" onSubmit={handleEditProfile}>
+            <h3 className="form-title">Редактирование профиля</h3>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Имя</label>
+                <input type="text" name="firstName" defaultValue={customer.firstName} required />
+              </div>
+              <div className="form-group">
+                <label>Фамилия</label>
+                <input type="text" name="lastName" defaultValue={customer.lastName} required />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input type="email" name="email" defaultValue={customer.email} required />
+              </div>
+              <div className="form-group">
+                <label>Телефон</label>
+                <input type="text" name="phoneNumber" defaultValue={customer.phoneNumber || ''} />
+              </div>
+              <div className="form-group full-width">
+                <label>Адрес доставки</label>
+                <input type="text" name="shippingAddress" defaultValue={customer.shippingAddress || ''} />
+              </div>
+            </div>
+            <div className="form-buttons">
+              <button type="submit" className="save-btn">Сохранить</button>
+              <button type="button" className="cancel-btn" onClick={() => setIsEditProfile(false)}>
+                Отмена
+              </button>
+            </div>
+          </form>
+        )}
 
-      {/* История заказов */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <h2>История заказов</h2>
-        <button onClick={() => setIsOrdersExpanded(!isOrdersExpanded)} style={{ marginLeft: '10px' }}>
-          {isOrdersExpanded ? '\u25B2' : '\u25BC'}
-        </button>
-      </div>
-      {isOrdersExpanded && (
-        <>
-          {orders.length === 0 ? (
-            <p>У вас пока нет заказов.</p>
-          ) : (
-            <ul>
-              {orders.map(order => (
-                <li key={order.id}>
-                  <strong>Заказ №{order.id}</strong>
-                  <p>Дата: {new Date(order.orderDate).toLocaleDateString()}</p>
-                  <p>Статус: {order.status}</p>
-                  <p>Сумма: {order.totalAmount} руб.</p>
-                </li>
-              ))}
-            </ul>
+        {isResetPassword && (
+          <form className="password-form" onSubmit={handleResetPassword}>
+            <h3 className="form-title">Смена пароля</h3>
+            <div className="form-group">
+              <label>Новый пароль</label>
+              <input type="password" name="newPassword" required />
+            </div>
+            <div className="form-group">
+              <label>Подтвердите пароль</label>
+              <input type="password" name="confirmPassword" required />
+            </div>
+            <div className="form-buttons">
+              <button type="submit" className="save-btn">Сохранить</button>
+              <button type="button" className="cancel-btn" onClick={() => setIsResetPassword(false)}>
+                Отмена
+              </button>
+            </div>
+          </form>
+        )}
+
+        <div className="orders-section">
+          <div className="orders-header" onClick={() => setIsOrdersExpanded(!isOrdersExpanded)}>
+            <h2>История заказов</h2>
+            <span className={`arrow ${isOrdersExpanded ? 'up' : 'down'}`}></span>
+          </div>
+          
+          {isOrdersExpanded && (
+            <div className="orders-list">
+              {orders.length === 0 ? (
+                <p className="no-orders">У вас пока нет заказов</p>
+              ) : (
+                orders.map(order => (
+                  <div key={order.id} className="order-card">
+                    <div className="order-header">
+                      <span className="order-number">Заказ №{order.id}</span>
+                      <span className={`order-status ${order.status}`}>
+                        {order.status}
+                      </span>
+                    </div>
+                    <div className="order-details">
+                      <div className="order-date">
+                        Дата: {new Date(order.orderDate).toLocaleDateString('ru-RU')}
+                      </div>
+                      <div className="order-amount">
+                        Сумма: {order.totalAmount} ₽
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 };

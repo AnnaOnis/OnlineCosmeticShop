@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AuthService } from './apiClient/http-services/auth.service';
-import { CustomerRegisterRequestDto, LoginRequest, LogoutRequest } from './apiClient/models';
+import { AuthService } from '../apiClient/http-services/auth.service';
+import { CustomerRegisterRequestDto, LoginRequest, LogoutRequest } from '../apiClient/models';
 
 interface AuthContextType {
   isAuthenticated: boolean;

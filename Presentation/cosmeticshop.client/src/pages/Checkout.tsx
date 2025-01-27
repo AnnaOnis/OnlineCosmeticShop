@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { OrderService } from '../apiClient/http-services/order.service';
 import { OrderCreateRequestDto, CartItemRequestDto, ShippingMethod, PaymentMethod, CartItemResponseDto } from '../apiClient/models';
 import { useNavigate, useLocation } from 'react-router-dom';

@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,13 +11,16 @@ import OrderConfirmation from './pages/OrderConfirmation';
 import Search from './pages/Search';
 import Contacts from './pages/Contacts';
 import Help from './pages/Help';
+import Header from './components/Header';
+import AboutPage from './pages/AboutPage';
 
 function AppRoutes() {
   return (
     <Router>
-        <Navbar />
+        <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<AboutPage/>}/>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<CustomerProfile />} />

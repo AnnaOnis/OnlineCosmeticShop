@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { CartService } from '../apiClient/http-services/cart.service';
-import { CartItemRequestDto, CartResponseDto } from '../apiClient/models';
+import { CartItemRequestDto} from '../apiClient/models';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import '../styles/Cart.css';
 
 const cartService = new CartService('/api'); // Базовый путь соответствует префиксу проксирования
 
 const CartComponent: React.FC = () => {
-  const [cart, setCart] = useState<CartResponseDto | null>(null);
+  const { cart, dispatch } = useCart();
   const [error, setError] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectAllText, setSelectAllText] = useState<string>('Выделить все');  
   const navigate = useNavigate();
   const { isAuthenticated} = useAuth();
+  
   
   useEffect(() => {
     const fetchCart = async () => {
@@ -22,7 +25,7 @@ const CartComponent: React.FC = () => {
       else{
         try {
           const cartData = await cartService.getCart(new AbortController().signal);
-          setCart(cartData);
+          dispatch({ type: 'SET_CART', payload: cartData });
           console.log(cartData);
         } catch (error) {
           if (error instanceof Error && error.name !== 'AbortError') {
@@ -45,7 +48,7 @@ const CartComponent: React.FC = () => {
     try {
       const item: CartItemRequestDto =  {productId, quantity};
       const updatedCart = await cartService.updateItemQuantity(item, new AbortController().signal);
-      setCart(updatedCart);
+      dispatch({ type: 'SET_CART', payload: updatedCart });
     } catch (error) {
       console.error('Failed to add item to cart:', error);
       setError('Failed to add item to cart. Please try again later.');
@@ -56,7 +59,7 @@ const CartComponent: React.FC = () => {
     try {
       await cartService.removeItemFromCart(productId, new AbortController().signal);
       const updatedCart = await cartService.getCart(new AbortController().signal);
-      setCart(updatedCart);
+      dispatch({ type: 'SET_CART', payload: updatedCart });
     } catch (error) {
       console.error('Failed to remove item from cart:', error);
       setError('Failed to remove item from cart. Please try again later.');
@@ -66,7 +69,7 @@ const CartComponent: React.FC = () => {
   const handleClearCart = async () => {
     try {
       await cartService.clearCart(new AbortController().signal);
-      setCart(null);
+      dispatch({ type: 'SET_CART', payload: null });
       setSelectedItems([]); // Снимаем выделение всех товаров при очистке корзины
       setSelectAllText('Выделить все'); // Возвращаем текст кнопки к исходному
     } catch (error) {
@@ -106,43 +109,112 @@ const CartComponent: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Shopping Cart</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="cart-container">
+      <div className="cart-header">
+        <h1 className="cart-title">Корзина</h1>
+        {cart && (
+          <button 
+            className="select-all-button"
+            onClick={toggleSelectAll}
+          >
+            {selectAllText}
+          </button>
+        )}
+      </div>
+
+      {error && <p className="error-message">{error}</p>}
+
       {cart ? (
-        <div>
-          <button onClick={toggleSelectAll}>{selectAllText}</button>
-          <ul>
+        <>
+          <div className="cart-items-list">
             {cart.cartItems
-              .slice() // Создаем копию массива для сортировки
-              .sort((a, b) => a.productName.localeCompare(b.productName)) // Сортируем по названию
+              .slice()
+              .sort((a, b) => a.productName.localeCompare(b.productName))
               .map((item) => (
-                <li key={item.productId}>
+                <div className="cart-item" key={item.productId}>
                   <input
                     type="checkbox"
                     checked={selectedItems.includes(item.productId)}
                     onChange={() => toggleSelectItem(item.productId)}
+                    className="item-checkbox"
                   />
-                  {item.productName} - {item.quantity} x {item.productPrice} = {item.quantity * item.productPrice}
-                  <button onClick={() => handleRemoveItem(item.productId)}>Remove</button>
-                  <button onClick={() => handleUpdateItem(item.productId, item.quantity + 1)}>+</button>
-                  <button onClick={() => handleUpdateItem(item.productId, item.quantity - 1)}>-</button>
-                </li>
+                  
+                  {/* <div className="product-image-container">
+                    <img 
+                      src={item.imageUrl || '/placeholder-image.jpg'} 
+                      alt={item.productName} 
+                      className="product-image"
+                    />
+                  </div> */}
+
+                  <div className="item-details">
+                    <h3 className="product-name">{item.productName}</h3>
+                    <p className="product-price">{item.productPrice} руб.</p>
+
+                    <div className="quantity-controls">
+                      <button 
+                        className="quantity-button"
+                        onClick={() => handleUpdateItem(item.productId, item.quantity - 1)}
+                        disabled={item.quantity <= 1}
+                      >-</button>
+                      
+                      <span>{item.quantity}</span>
+                      
+                      <button 
+                        className="quantity-button"
+                        onClick={() => handleUpdateItem(item.productId, item.quantity + 1)}
+                      >+</button>
+                    </div>
+
+                    <div className="item-actions">
+                      <button 
+                        className="favorite-button"
+                        onClick={() => {/* Добавить логику для избранного */}}
+                      >
+                        В избранное
+                      </button>
+                      <button 
+                        className="remove-button"
+                        onClick={() => handleRemoveItem(item.productId)}
+                      >
+                        Удалить
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ))}
-          </ul>
-          <p>Total Amount: {filteredCartItems.reduce((total, item) => total + item.quantity * item.productPrice, 0)}</p>
-          <button onClick={handleClearCart}>Clear Cart</button>
-          <div>
-          <button onClick={handleCheckout} disabled={isDisabled}>
-              {isDisabled ? 'Выберите товары для оформления заказа' : 'Перейти к оформлению заказа'}
-            </button>
           </div>
-        </div>
+
+          <div className="checkout-section">
+            <div className="cart-actions">
+              <button 
+                className="clear-cart-button"
+                onClick={handleClearCart}
+                disabled={!cart || cart.cartItems.length === 0}
+              >
+                Очистить корзину
+              </button>
+            </div>
+            
+            <div className="total-block">
+              <p className="total-amount">
+                Итого: {filteredCartItems.reduce((total, item) => 
+                  total + item.quantity * item.productPrice, 0)} руб.
+              </p>
+              <button 
+                className="checkout-button"
+                onClick={handleCheckout} 
+                disabled={isDisabled}
+              >
+                Оформить заказ
+              </button>
+            </div>
+          </div>
+        </>
       ) : (
-        <p>Cart is empty</p>
+        !error && <p className="empty-cart">Корзина пуста</p>
       )}
     </div>
   );
 };
-
 export default CartComponent;

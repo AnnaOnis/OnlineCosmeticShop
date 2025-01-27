@@ -1,0 +1,52 @@
+/* Основные переменные */
+:root {
+    --primary-bg: #F8F5F0;
+    --accent-color: #A67F6F;
+    --dark-text: #3A2E28;
+    --light-text: #FFFFFF;
+    --section-padding: 4rem 0;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+  }
+  
+  /* Сброс стилей */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Comfortaa', serif;
+    background: var(--primary-bg);
+    color: var(--dark-text);
+    line-height: 1.6;
+  }
+  
+  /* Контейнер для контента */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Кнопки */
+  .btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1rem;
+  }
+  
+  .btn-primary {
+    background: var(--accent-color);
+    color: var(--light-text);
+  }
+  
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+  }

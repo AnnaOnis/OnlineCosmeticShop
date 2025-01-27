@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { CustomerRegisterRequestDto } from '../apiClient/models/customer-register-request-dto';
 import InputMask from 'react-input-mask';
+import '../styles/Auth.css';
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -46,120 +47,149 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Регистрация</h1>
-      {showSuccessMessage ? (
-        <div>
-          <p>Регистрация успешно завершена! <a href="/login">Войти?</a>.</p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Имя:</label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
+    <div className="auth-container">
+      <div className="auth-card">
+        {showSuccessMessage ? (
+          <div className="success-message">
+            <p>Регистрация успешно завершена!</p>
+            <p>Перенаправление на страницу входа...</p>
           </div>
-          <div>
-            <label>Фамилия:</label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Телефон:</label>
-            <InputMask
-              mask="+7(999)-999-99-99"
-              maskChar={null}
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            >
-              {(inputProps) => <input {...inputProps} type="tel" required />}
-            </InputMask>
-          </div>
-          <div>
-            <p>Адрес доставки:</p>
-            <div>
-              <label>Улица:</label>
-              <input
-                type="text"
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-                required
-              />
+        ) : (
+          <>
+            <h1 className="auth-title">Регистрация</h1>
+            <form className="auth-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="form-label">Имя</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Фамилия</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  className="form-input"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Телефон</label>
+                <InputMask
+                  mask="+7(999)-999-99-99"
+                  maskChar={null}
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                >
+                  {(inputProps) => <input {...inputProps} className="form-input" required />}
+                </InputMask>
+              </div>
+
+              <div className="address-group">
+                <div className="form-group">
+                  <label className="form-label">Город</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Улица</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Дом</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={house}
+                    onChange={(e) => setHouse(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Квартира</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={apartment}
+                    onChange={(e) => setApartment(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Индекс</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Пароль</label>
+                <input
+                  type="password"
+                  className="form-input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Подтвердите пароль</label>
+                <input
+                  type="password"
+                  className="form-input"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button type="submit" className="auth-button">Зарегистрироваться</button>
+            </form>
+
+            <div className="auth-links">
+              <Link to="/login" className="auth-link">Уже есть аккаунт? Войти</Link>
             </div>
-            <div>
-              <label>Дом:</label>
-              <input
-                type="text"
-                value={house}
-                onChange={(e) => setHouse(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label>Квартира:</label>
-              <input
-                type="text"
-                value={apartment}
-                onChange={(e) => setApartment(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>Город:</label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label>Индекс:</label>
-              <input
-                type="text"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label>Пароль:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Подтвердите пароль:</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit">Зарегистрироваться</button>
-        </form>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

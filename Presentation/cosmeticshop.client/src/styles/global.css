@@ -15,14 +15,28 @@
     padding: 0;
     box-sizing: border-box;
   }
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
   
   body {
     font-family: 'Comfortaa', serif;
     background: var(--primary-bg);
     color: var(--dark-text);
     line-height: 1.6;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
   
+  .main-content {
+    flex: 1;
+  }
+
   /* Контейнер для контента */
   .container {
     max-width: 1200px;

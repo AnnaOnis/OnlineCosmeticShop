@@ -1,0 +1,93 @@
+.help-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+    color: var(--dark-text);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .help-section {
+    margin-bottom: 3rem;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    color: var(--dark-text);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+  }
+  
+  .faq-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .faq-question {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .faq-answer {
+    line-height: 1.6;
+    color: rgba(58, 46, 40, 0.8);
+  }
+  
+  .contact-link {
+    color: var(--accent-color);
+    text-decoration: none;
+  }
+  
+  .contact-link:hover {
+    text-decoration: underline;
+  }
+  
+  .payment-section {
+    margin-bottom: 3rem;
+  }
+
+  .payment-section-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;    
+  }
+  
+  .info-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .info-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .info-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  @media (max-width: 768px) {
+    .payment-section {
+      grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+    }
+  }

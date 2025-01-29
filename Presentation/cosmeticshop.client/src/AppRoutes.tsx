@@ -12,28 +12,35 @@ import Search from './pages/Search';
 import Contacts from './pages/Contacts';
 import Help from './pages/Help';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import AboutPage from './pages/AboutPage';
 
 function AppRoutes() {
   return (
-    <Router>
-        <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutPage/>}/>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<CustomerProfile />} />
-        <Route path="/catalog" element={<ProductCatalog />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/order-confirmation" element={<OrderConfirmation />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/contacts" element={<Contacts />} />
-        <Route path="/help" element={<Help />} />
-      </Routes>
-    </Router>
+    <div className="app-wrapper">
+      <Router>        
+          <Header />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<AboutPage/>}/>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/profile" element={<CustomerProfile />} />
+              <Route path="/catalog" element={<ProductCatalog />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/contacts" element={<Contacts />} />
+              <Route path="/help" element={<Help />} />
+            </Routes>
+          </main>
+          <Footer />
+      </Router>
+    </div>
+
   );
 }
 

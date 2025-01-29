@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CosmeticShop.WebAPI.Filters;
 
 namespace CosmeticShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExceptionHandlingFilter]
     public class OrderController : ControllerBase
     {
         private readonly OrderService _orderService;

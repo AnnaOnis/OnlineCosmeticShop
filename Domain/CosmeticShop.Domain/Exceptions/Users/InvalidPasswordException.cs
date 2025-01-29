@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Customer
 {
     [Serializable]
-    internal class InvalidPasswordException : DomainException
+    public class InvalidPasswordException : DomainException
     {
         public InvalidPasswordException()
         {

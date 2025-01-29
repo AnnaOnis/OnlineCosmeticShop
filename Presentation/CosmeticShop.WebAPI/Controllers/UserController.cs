@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CosmeticShop.Domain.Services;
+using CosmeticShop.WebAPI.Filters;
 using HttpModels;
 using HttpModels.Requests;
 using HttpModels.Responses;
@@ -10,6 +11,7 @@ namespace CosmeticShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExceptionHandlingFilter]
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;

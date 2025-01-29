@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Payment
 {
     [Serializable]
-    internal class PaymentNotFoundException : DomainException
+    public class PaymentNotFoundException : DomainException
     {
         public PaymentNotFoundException()
         {

@@ -114,7 +114,7 @@ const CartComponent: React.FC = () => {
         <h1 className="cart-title">Корзина</h1>
         {cart && (
           <button 
-            className="select-all-button"
+            className="btn btn-outline"
             onClick={toggleSelectAll}
           >
             {selectAllText}
@@ -148,9 +148,10 @@ const CartComponent: React.FC = () => {
                   </div> */}
 
                   <div className="item-details">
-                    <h3 className="product-name">{item.productName}</h3>
-                    <p className="product-price">{item.productPrice} руб.</p>
-
+                    <div className='cart-item-info'>
+                      <h3 className="cart-product-name">{item.productName}</h3>
+                      <p className="cart-product-price">{item.productPrice} руб.</p>                      
+                    </div>
                     <div className="quantity-controls">
                       <button 
                         className="quantity-button"
@@ -168,16 +169,16 @@ const CartComponent: React.FC = () => {
 
                     <div className="item-actions">
                       <button 
-                        className="favorite-button"
+                        className="btn btn-outline"
                         onClick={() => {/* Добавить логику для избранного */}}
                       >
-                        В избранное
+                        <i className="fas fa-heart"></i>
                       </button>
                       <button 
-                        className="remove-button"
+                        className="btn btn-outline"
                         onClick={() => handleRemoveItem(item.productId)}
                       >
-                        Удалить
+                        <i className="fas fa-trash-alt"></i>
                       </button>
                     </div>
                   </div>
@@ -188,7 +189,7 @@ const CartComponent: React.FC = () => {
           <div className="checkout-section">
             <div className="cart-actions">
               <button 
-                className="clear-cart-button"
+                className="btn btn-outline"
                 onClick={handleClearCart}
                 disabled={!cart || cart.cartItems.length === 0}
               >
@@ -202,7 +203,7 @@ const CartComponent: React.FC = () => {
                   total + item.quantity * item.productPrice, 0)} руб.
               </p>
               <button 
-                className="checkout-button"
+                className="btn btn-primary"
                 onClick={handleCheckout} 
                 disabled={isDisabled}
               >

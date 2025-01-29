@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Customer
 {
     [Serializable]
-    internal class CustomerNotFoundException : DomainException
+    public class CustomerNotFoundException : DomainException
     {
         public CustomerNotFoundException()
         {

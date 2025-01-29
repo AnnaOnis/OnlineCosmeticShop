@@ -21,7 +21,7 @@ namespace CosmeticShop.Domain.Exceptions
         {
         }
 
-        protected DomainException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected DomainException(SerializationInfo info, StreamingContext context) : base(info: info, context: context)
         {
         }
     }

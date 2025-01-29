@@ -5,11 +5,13 @@ using HttpModels.Requests;
 using HttpModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using CosmeticShop.WebAPI.Filters;
 
 namespace CosmeticShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExceptionHandlingFilter]
     public class CustomerController : ControllerBase
     {
         private readonly CustomerService _customerService;

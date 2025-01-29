@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Review
 {
     [Serializable]
-    internal class ReviewAlreadyApprovedException : DomainException
+    public class ReviewAlreadyApprovedException : DomainException
     {
         public ReviewAlreadyApprovedException()
         {

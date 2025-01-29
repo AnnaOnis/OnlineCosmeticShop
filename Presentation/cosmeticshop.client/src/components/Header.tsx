@@ -32,7 +32,7 @@ const Header = () => {
           )}
           
           <Link to="/cart" className="cart-link">
-            {'\u{1F6D2}'}
+            <i className="fa-solid fa-cart-shopping"></i>
             <span className="cart-counter">{cartItemCount}</span> {/* Динамическое значение из контекста */}
           </Link>
         </div>

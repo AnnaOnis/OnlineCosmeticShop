@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Payment
 {
     [Serializable]
-    internal class InvalidPaymentMethodException : DomainException
+    public class InvalidPaymentMethodException : DomainException
     {
         public string PaymentMethod { get; }
 

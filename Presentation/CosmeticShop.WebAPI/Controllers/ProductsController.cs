@@ -13,11 +13,13 @@ using HttpModels.Responses;
 using HttpModels.Requests;
 using Mappers;
 using AutoMapper;
+using CosmeticShop.WebAPI.Filters;
 
 namespace CosmeticShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExceptionHandlingFilter]
     public class ProductsController : ControllerBase
     {
         private readonly ProductService _productService;

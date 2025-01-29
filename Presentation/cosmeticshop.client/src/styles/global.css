@@ -44,9 +44,17 @@
     background: var(--accent-color);
     color: var(--light-text);
   }
+
+  .btn-primary:hover {
+    opacity: 0.8;
+  }
   
   .btn-outline {
     background: transparent;
     border: 1px solid var(--accent-color);
     color: var(--accent-color);
+  }
+
+  .btn-outline:hover {
+    backdrop-filter: brightness(0.9);
   }

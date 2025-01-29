@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Customer
 {
     [Serializable]
-    internal class EmailAlreadyExistsException : DomainException
+    public class EmailAlreadyExistsException : DomainException
     {
         public EmailAlreadyExistsException()
         {

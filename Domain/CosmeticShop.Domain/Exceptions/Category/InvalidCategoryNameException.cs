@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Category
 {
     [Serializable]
-    internal class InvalidCategoryNameException : DomainException
+    public class InvalidCategoryNameException : DomainException
     {
         public InvalidCategoryNameException()
         {

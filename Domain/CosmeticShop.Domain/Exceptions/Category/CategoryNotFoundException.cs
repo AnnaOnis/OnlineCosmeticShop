@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Category
 {
     [Serializable]
-    internal class CategoryNotFoundException : DomainException
+    public class CategoryNotFoundException : DomainException
     {
         public CategoryNotFoundException()
         {

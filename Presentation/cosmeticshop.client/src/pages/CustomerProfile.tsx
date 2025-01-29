@@ -118,13 +118,13 @@ const CustomerProfile: React.FC = () => {
 
         <div className="profile-actions">
           <button 
-            className="action-btn edit-btn"
+            className="btn btn-primary"
             onClick={() => setIsEditProfile(true)}
           >
             Редактировать профиль
           </button>
           <button 
-            className="action-btn reset-btn"
+            className="btn btn-outline"
             onClick={() => setIsResetPassword(true)}
           >
             Сменить пароль
@@ -157,8 +157,8 @@ const CustomerProfile: React.FC = () => {
               </div>
             </div>
             <div className="form-buttons">
-              <button type="submit" className="save-btn">Сохранить</button>
-              <button type="button" className="cancel-btn" onClick={() => setIsEditProfile(false)}>
+              <button type="submit" className="btn btn-primary">Сохранить</button>
+              <button type="button" className="btn btn-outline" onClick={() => setIsEditProfile(false)}>
                 Отмена
               </button>
             </div>
@@ -177,8 +177,8 @@ const CustomerProfile: React.FC = () => {
               <input type="password" name="confirmPassword" required />
             </div>
             <div className="form-buttons">
-              <button type="submit" className="save-btn">Сохранить</button>
-              <button type="button" className="cancel-btn" onClick={() => setIsResetPassword(false)}>
+              <button type="submit" className="btn btn-primary">Сохранить</button>
+              <button type="button" className="btn btn-outline" onClick={() => setIsResetPassword(false)}>
                 Отмена
               </button>
             </div>
@@ -188,7 +188,7 @@ const CustomerProfile: React.FC = () => {
         <div className="orders-section">
           <div className="orders-header" onClick={() => setIsOrdersExpanded(!isOrdersExpanded)}>
             <h2>История заказов</h2>
-            <span className={`arrow ${isOrdersExpanded ? 'up' : 'down'}`}></span>
+            <i className={`fas fa-${isOrdersExpanded ? 'angle-up' : 'angle-down'}`}></i>
           </div>
           
           {isOrdersExpanded && (

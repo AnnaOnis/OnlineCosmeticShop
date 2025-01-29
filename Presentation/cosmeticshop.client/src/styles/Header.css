@@ -72,6 +72,7 @@
   padding: 0.5rem 1rem;
   background: #F8F5F0;
   border-radius: 20px;
+  color: var(--accent-color);
 }
 
 .cart-counter {

@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Product
 {
     [Serializable]
-    internal class ProductAlreadyInFavoritesException : DomainException
+    public class ProductAlreadyInFavoritesException : DomainException
     {
         public ProductAlreadyInFavoritesException()
         {

@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions.Users
 {
     [Serializable]
-    internal class UserNotFoundException : DomainException
+    public class UserNotFoundException : DomainException
     {
         public UserNotFoundException()
         {

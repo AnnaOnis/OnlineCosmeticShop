@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CosmeticShop.Domain.Entities;
 using CosmeticShop.Domain.Services;
+using CosmeticShop.WebAPI.Filters;
 using HttpModels.Requests;
 using HttpModels.Responses;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ namespace CosmeticShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExceptionHandlingFilter]
     public class AuthController : ControllerBase
     {
         private readonly CustomerService _customerService;

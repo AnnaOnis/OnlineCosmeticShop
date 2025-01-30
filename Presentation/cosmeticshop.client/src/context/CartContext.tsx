@@ -52,9 +52,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Отмена запроса при размонтировании компонента
     return () => {
-      new AbortController().abort();
+      setCart({ type: 'SET_CART', payload: null });
     };
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <CartContext.Provider value={{ ...cartState, dispatch: setCart }}>

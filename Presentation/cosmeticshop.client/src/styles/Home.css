@@ -63,3 +63,6 @@
     color: var(--medium-text);
   }
 
+.home-catalog-link{
+  text-decoration: none;
+}

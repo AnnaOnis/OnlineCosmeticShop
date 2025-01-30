@@ -3,11 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { OrderService } from '../apiClient/http-services/order.service';
 import { OrderCreateRequestDto, CartItemRequestDto, ShippingMethod, PaymentMethod, CartItemResponseDto } from '../apiClient/models';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { CartService } from '../apiClient/http-services/cart.service';
+import '../styles/Checkout.css'
 
 const orderService = new OrderService('/api'); // Базовый путь соответствует префиксу проксирования
 
 const CheckoutComponent: React.FC = () => {
   const { isAuthenticated, customerId } = useAuth();
+  const { dispatch } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const [cartItems, setCartItems] = useState<CartItemResponseDto[]>([]);
@@ -16,6 +20,7 @@ const CheckoutComponent: React.FC = () => {
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>(ShippingMethod.NUMBER_0);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.NUMBER_0);
   const [error, setError] = useState<string | null>(null);
+  const cartService = new CartService('/api');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -80,6 +85,8 @@ const CheckoutComponent: React.FC = () => {
       console.log("createdOrder:");
       console.log(createdOrder);
       alert('Заказ успешно создан!');
+      dispatch({ type: 'SET_CART', payload: null });
+      await cartService.clearCart(new AbortController().signal);
       navigate('/order-confirmation', { state: { order: createdOrder } });
     } catch (error) {
       console.error('Ошибка при создании заказа:', error);
@@ -88,37 +95,71 @@ const CheckoutComponent: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Оформление заказа</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        <h2>Выбранные товары</h2>
-        <ul>
+    <div className="checkout-container">
+      <h1 className="checkout-title">Оформление заказа</h1>
+      
+      {error && <div className="error-message">{error}</div>}
+  
+      <div className="checkout-section">
+        <h2 className="section-title">Выбранные товары</h2>
+        <div className="checkout-items-list">
           {cartItems.map((item) => (
-            <li key={item.productId}>
-              {item.productName} - {item.quantity} x {item.productPrice} = {item.quantity * item.productPrice}
-            </li>
+            <div key={item.productId} className="checkout-item">
+              <span className="checkout-item-name">{item.productName}</span>
+              <span className="checkout-item-quantity">
+                <span>{item.quantity} </span> 
+                <span>x</span> 
+                <span>{item.productPrice}</span>  
+                <span>₽</span>
+              </span>
+              <span className="checkout-item-total">{(item.quantity * item.productPrice).toLocaleString()} ₽</span>
+            </div>
           ))}
-        </ul>
-        <p>Общая сумма: {totalAmount}</p>
-        <p>Общее количество: {totalQuantity}</p>
+        </div>
+        
+        <div className="totals-box">
+          <div className="total-row">
+            <span>Количество товаров: </span>
+            <span>{totalQuantity}</span>
+          </div>
+          <div className="total-row main-total">
+            <span>Сумма: </span>
+            <span>{totalAmount.toLocaleString()} ₽</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <h2>Метод доставки</h2>
-        <select value={shippingMethod} onChange={(e) => setShippingMethod(Number(e.target.value) as ShippingMethod)}>
-          <option value={ShippingMethod.NUMBER_0}>Почта</option>
-          <option value={ShippingMethod.NUMBER_1}>Курьер</option>
-          <option value={ShippingMethod.NUMBER_2}>Самовывоз</option>
+  
+      <div className="checkout-section">
+        <h2 className="section-title">Способ доставки</h2>
+        <select 
+          className="method-select"
+          value={shippingMethod} 
+          onChange={(e) => setShippingMethod(Number(e.target.value) as ShippingMethod)}
+        >
+          <option value={ShippingMethod.NUMBER_0}>Почта России</option>
+          <option value={ShippingMethod.NUMBER_1}>Курьерская доставка</option>
+          <option value={ShippingMethod.NUMBER_2}>Самовывоз из магазина</option>
         </select>
       </div>
-      <div>
-        <h2>Метод оплаты</h2>
-        <select value={paymentMethod} onChange={(e) => setPaymentMethod(Number(e.target.value) as PaymentMethod)}>
-          <option value={PaymentMethod.NUMBER_0}>Перевод на карту</option>
+  
+      <div className="checkout-section">
+        <h2 className="section-title">Способ оплаты</h2>
+        <select 
+          className="method-select"
+          value={paymentMethod} 
+          onChange={(e) => setPaymentMethod(Number(e.target.value) as PaymentMethod)}
+        >
+          <option value={PaymentMethod.NUMBER_0}>Банковской картой онлайн</option>
           <option value={PaymentMethod.NUMBER_1}>Наличными при получении</option>
         </select>
       </div>
-      <button onClick={handleCreateOrder}>Создать заказ</button>
+  
+      <button 
+        className="confirm-button"
+        onClick={handleCreateOrder}
+      >
+        Подтвердить заказ
+      </button>
     </div>
   );
 };

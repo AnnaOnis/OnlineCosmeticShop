@@ -186,7 +186,7 @@ const CartComponent: React.FC = () => {
               ))}
           </div>
 
-          <div className="checkout-section">
+          <div className="cart-checkout-section">
             <div className="cart-actions">
               <button 
                 className="btn btn-outline"

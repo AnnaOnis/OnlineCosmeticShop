@@ -2,6 +2,7 @@ import '../styles/ProductCard.css';
 import '../apiClient/models/product-response-dto'
 import { ProductResponseDto } from '../apiClient/models/product-response-dto';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 interface ProductCardProps {
     product: ProductResponseDto;
@@ -11,6 +12,7 @@ interface ProductCardProps {
   const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
 
     const navigate = useNavigate();
+    const {isAuthenticated} = useAuth();
 
     const handleNavigateToProductDetails = () => {
         navigate(`/product/${product.id}`);
@@ -24,7 +26,7 @@ interface ProductCardProps {
             alt={product.name} 
             className="product-image"
           />
-          <button className="favorite-btn">♥</button>
+          <button className="favorite-btn" disabled={!isAuthenticated}>♥</button>
         </div>
         
         <div className="product-info">

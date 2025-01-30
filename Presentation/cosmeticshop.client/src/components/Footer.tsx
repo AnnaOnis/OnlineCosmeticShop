@@ -30,7 +30,7 @@ const Footer = () => {
           <ul className="footer-links">
             <li><Link to="/help">Помощь</Link></li>
             <li><Link to="/contacts">Контакты</Link></li>
-            <li><Link to="/help">Обратная связь</Link></li>
+            <li><Link to="/contacts">Обратная связь</Link></li>
           </ul>
         </div>
 

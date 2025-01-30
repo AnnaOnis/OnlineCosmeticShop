@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import '../styles/Home.css';
 
 const Home = () => {
@@ -8,7 +9,7 @@ const Home = () => {
           <div className="hero-content-home">
             <h1 className="hero-title-home">Только качественная и натуральная косметика по доступным ценам</h1>
             <p className="hero-subtitle-home">Самые популярные и любимые бренды</p>
-            <button className="btn btn-primary">Каталог</button>
+            <Link className="btn btn-primary home-catalog-link" to="/catalog">Каталог</Link>
           </div>
         </div>
       </section>

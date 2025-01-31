@@ -26,4 +26,5 @@ export * from './shipping-method';
 export * from './user-add-request-dto';
 export * from './user-response-dto';
 export * from './user-update-request-dto';
-export * from './weather-forecast';
+export * from './favoirte-request-dto';
+export * from './favorite-response-dto';

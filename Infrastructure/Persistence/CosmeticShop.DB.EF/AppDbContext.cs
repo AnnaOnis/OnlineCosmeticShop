@@ -51,7 +51,8 @@ namespace CosmeticShop.DB.EF
             modelBuilder.Entity<Favorite>()
                 .HasOne(f => f.Customer)
                 .WithMany(c => c.Favorites)
-                .HasForeignKey(f => f.CustomerId);
+                .HasForeignKey(f => f.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade); ;
 
             modelBuilder.Entity<Favorite>()
                 .HasOne(f => f.Product)

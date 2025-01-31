@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { CustomerService } from '../apiClient/http-services/customer.service';
 import { OrderService } from '../apiClient/http-services/order.service'
-import { CustomerResponseDto, OrderResponseDto } from '../apiClient/models';
+import { FavoriteService } from '../apiClient/http-services/favorite.service';
+import { CustomerResponseDto, ProductResponseDto, OrderResponseDto, CartItemRequestDto } from '../apiClient/models';
+import { useCart } from '../context/CartContext'; 
+import { CartService } from '../apiClient/http-services/cart.service';
+import ProductCard from '../components/ProductCard';
 import '../styles/Profile.css'
 
 const CustomerProfile: React.FC = () => {
+  const [favorites, setFavorites] = useState<ProductResponseDto[]>([]);
+  const [totalFavorites, setTotalFavorites] = useState<number>(0);
+  const [isFavoritesExpanded, setIsFavoritesExpanded] = useState<boolean>(false);
   const [customer, setCustomer] = useState<CustomerResponseDto | null>(null);
   const [orders, setOrders] = useState<OrderResponseDto[]>([]);
   const [isOrdersExpanded, setIsOrdersExpanded] = useState<boolean>(false);
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
   const [isResetPassword, setIsResetPassword] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const customerService = new CustomerService('/api');
+  const favoriteService = new FavoriteService('/api');
   const orderService = new OrderService('/api');
+  const cartService = new CartService('/api');
+  const { dispatch } = useCart();
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 12; // Размер страницы
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -31,10 +46,29 @@ const CustomerProfile: React.FC = () => {
         console.error(error);
       }
     };
-
+    
     fetchUser();
     fetchOrders();
+
   }, []);
+
+  useEffect(() => {
+    if (customer) {
+      fetchFavorites();
+    }
+  }, [customer, currentPage]);
+
+  const fetchFavorites = async () => {
+    try {
+      if (customer) {
+        const response = await favoriteService.getFavoritesByCustomerIdPaginations(customer.id, currentPage, pageSize, new AbortController().signal);
+        setFavorites(response.items);
+        setTotalFavorites(response.totalItems);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleEditProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +122,37 @@ const CustomerProfile: React.FC = () => {
   if (!customer) {
     return <div>Загрузка...</div>;
   }
+
+  const handleAddToCart = async (productId: string) => {
+    try {
+      const body: CartItemRequestDto = {
+      productId: productId,
+      quantity: 1};
+      
+      await cartService.addItemToCart(body, new AbortController().signal);
+      setSuccessMessage('Товар успешно добавлен в корзину!');
+      setTimeout(() => setSuccessMessage(null), 2000);
+
+      const updatedCart = await cartService.getCart(new AbortController().signal);
+      // Обновляем состояние корзины
+      dispatch({ type: 'SET_CART', payload: updatedCart });
+    } catch (error) {
+      setErrorMessage('Ошибка при добавлении товара в корзину');
+      setTimeout(() => setErrorMessage(null), 2000);
+    }
+  };
+
+  const handleRemoveFromFavorites = async (event: React.MouseEvent<HTMLButtonElement>, productId: string) => {
+    event.stopPropagation();
+    try{
+      await favoriteService.removeFromFavorites(productId, customer.id, new AbortController().signal); 
+      fetchFavorites(); 
+    }catch (error){
+      console.error(error);
+    }
+  }
+
+  const totalPages = Math.ceil(totalFavorites / pageSize);
 
   return (
     <div className="profile-container">
@@ -165,6 +230,9 @@ const CustomerProfile: React.FC = () => {
           </form>
         )}
 
+        {errorMessage && <div className="message error">{errorMessage}</div>}
+        {successMessage && <div className="message success">{successMessage}</div>}
+
         {isResetPassword && (
           <form className="password-form" onSubmit={handleResetPassword}>
             <h3 className="form-title">Смена пароля</h3>
@@ -184,41 +252,90 @@ const CustomerProfile: React.FC = () => {
             </div>
           </form>
         )}
-
-        <div className="orders-section">
-          <div className="orders-header" onClick={() => setIsOrdersExpanded(!isOrdersExpanded)}>
-            <h2>История заказов</h2>
-            <i className={`fas fa-${isOrdersExpanded ? 'angle-up' : 'angle-down'}`}></i>
-          </div>
-          
-          {isOrdersExpanded && (
-            <div className="orders-list">
-              {orders.length === 0 ? (
-                <p className="no-orders">У вас пока нет заказов</p>
-              ) : (
-                orders.map(order => (
-                  <div key={order.id} className="order-card">
-                    <div className="order-header">
-                      <span className="order-number">Заказ №{order.id}</span>
-                      <span className={`order-status ${order.status}`}>
-                        {order.status}
-                      </span>
-                    </div>
-                    <div className="order-details">
-                      <div className="order-date">
-                        Дата: {new Date(order.orderDate).toLocaleDateString('ru-RU')}
-                      </div>
-                      <div className="order-amount">
-                        Сумма: {order.totalAmount} ₽
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-        </div>
       </div>
+
+      <div className="sidebar">
+          <div className="favorites-section">
+              <div className="favorites-header" onClick={() => setIsFavoritesExpanded(!isFavoritesExpanded)}>
+                  <h2>Избранные товары</h2>
+                  <i className={`fas fa-${isFavoritesExpanded ? 'angle-up' : 'angle-down'}`}></i>
+              </div>
+                    
+              {isFavoritesExpanded && (
+                <div>
+                  <div className="favorites-grid">
+                      {favorites.length === 0 ? (
+                        <p className="favorites-no-items">У вас пока нет избранных товаров</p>
+                        ) : (
+                        favorites.map(product => (
+                        <ProductCard 
+                          key={product.id}
+                          product={product}
+                          isAuthenticated={true}
+                          isFavorited={true}
+                          onAddOrRemoveProductToFavorites={handleRemoveFromFavorites}
+                          onAddToCart={() => handleAddToCart(product.id)}
+                          />
+                        ))
+                      )}
+                  </div> 
+
+                  <div className="pagination">
+                    <button 
+                      className="btn btn-outline"
+                      onClick={() => setCurrentPage(prevPage => Math.max(prevPage - 1, 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Назад
+                    </button>
+                    <span>Страница {currentPage} из {totalPages}</span>
+                    <button 
+                      className="btn btn-outline"
+                      onClick={() => setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Вперед
+                    </button>
+                  </div>                 
+                </div>            
+              )}
+          </div>
+
+              <div className="orders-section">
+                <div className="orders-header" onClick={() => setIsOrdersExpanded(!isOrdersExpanded)}>
+                  <h2>История заказов</h2>
+                  <i className={`fas fa-${isOrdersExpanded ? 'angle-up' : 'angle-down'}`}></i>
+                </div>
+                
+                {isOrdersExpanded && (
+                  <div className="orders-list">
+                    {orders.length === 0 ? (
+                      <p className="no-orders">У вас пока нет заказов</p>
+                    ) : (
+                      orders.map(order => (
+                        <div key={order.id} className="order-card">
+                          <div className="order-header">
+                            <span className="order-number">Заказ №{order.id}</span>
+                            <span className={`order-status ${order.status}`}>
+                              {order.status}
+                            </span>
+                          </div>
+                          <div className="order-details">
+                            <div className="order-date">
+                              Дата: {new Date(order.orderDate).toLocaleDateString('ru-RU')}
+                            </div>
+                            <div className="order-amount">
+                              Сумма: {order.totalAmount} ₽
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+            </div>
+        </div>
+
     </div>
   );
 };

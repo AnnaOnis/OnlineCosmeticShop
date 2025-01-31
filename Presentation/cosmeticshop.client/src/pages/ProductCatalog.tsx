@@ -6,6 +6,8 @@ import { CartItemRequestDto } from '../apiClient/models';
 import { useAuth } from '../context/AuthContext';
 import ProductCard from '../components/ProductCard';
 import { useCart } from '../context/CartContext'; 
+import { FavoriteService } from '../apiClient/http-services/favorite.service';
+import { FavoriteRequestDto} from '../apiClient/models';
 import '../styles/ProductCatalog.css';
 
 const ProductCatalog: React.FC = () => {
@@ -20,9 +22,11 @@ const ProductCatalog: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [favoriteProducts, setFavoriteProducts] = useState<Set<string>>(new Set());
   const productsService = new ProductsService('/api');
   const cartService = new CartService('/api');
-  const { isAuthenticated} = useAuth();
+  const favoriteService = new FavoriteService('/api');
+  const { isAuthenticated, customerId} = useAuth();
   const { dispatch } = useCart();
 
   useEffect(() => {
@@ -40,7 +44,20 @@ const ProductCatalog: React.FC = () => {
       }
     };
 
+    const fetchFavorites = async () => {
+      try {
+        if(customerId){
+          const response = await favoriteService.getAllFavoritesByCustomerId(customerId, new AbortController().signal);
+          setFavoriteProducts(new Set(response.map((product: ProductResponseDto) => product.id)));          
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFavorites();
     fetchProducts();
+    
   }, [filterDto]);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,6 +116,36 @@ const ProductCatalog: React.FC = () => {
       dispatch({ type: 'SET_CART', payload: updatedCart });
     } catch (error) {
       setErrorMessage('Ошибка при добавлении товара в корзину');
+      setTimeout(() => setErrorMessage(null), 2000);
+    }
+  };
+
+  const handleAddOrRemoveProductToFavorites = async (event: React.MouseEvent<HTMLButtonElement>, productId: string) => {
+    event.stopPropagation(); // Предотвращаем распространение клика
+    if (!customerId) {
+      setErrorMessage('Чтобы добавить товары в избранное ВОЙДИТЕ или ЗАРЕГИСТРИРУЙТЕСЬ!');
+      setTimeout(() => setErrorMessage(null), 2000);
+      return;
+    }
+
+    try {
+      const request: FavoriteRequestDto = {
+        productId: productId,
+        customerId: customerId
+      };
+
+      if (favoriteProducts.has(productId)) {
+        // Удаляем товар из избранного
+        await favoriteService.removeFromFavorites(productId, customerId, new AbortController().signal);
+        setFavoriteProducts(prev => new Set([...prev].filter(id => id !== productId)));
+      } else {
+        // Добавляем товар в избранное
+        await favoriteService.addToFavorites(request, new AbortController().signal);
+        setFavoriteProducts(prev => new Set([...prev, productId]));
+      }
+    } catch (error) {
+      console.error("Ошибка при добавлении/удалении товара из избранного", error);
+      setErrorMessage('Ошибка при добавлении/удалении товара из избранного');
       setTimeout(() => setErrorMessage(null), 2000);
     }
   };
@@ -172,6 +219,9 @@ const ProductCatalog: React.FC = () => {
               rating: product.rating
             }}
             onAddToCart={() => handleAddToCart(product.id)}
+            isAuthenticated={isAuthenticated}
+            onAddOrRemoveProductToFavorites={handleAddOrRemoveProductToFavorites}
+            isFavorited={favoriteProducts.has(product.id)}
           />
         ))}
       </div>

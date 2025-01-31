@@ -91,10 +91,12 @@ namespace CosmeticShop.WebAPI
             builder.Services.AddScoped<IReviewRepository, ReviewRepositoryEf>();
             builder.Services.AddScoped<IUserActionRepository, UserActionRepositoryEf>();
             builder.Services.AddScoped<IUserRepository, UserRepositoryEf>();
+            builder.Services.AddScoped<IFavoriteRepository, FavoriteRepositoryEf>();
 
             builder.Services.AddScoped<CartService> ();
             builder.Services.AddScoped<CategoryService> ();
             builder.Services.AddScoped<CustomerService> ();
+            builder.Services.AddScoped<FavoriteService> ();
             builder.Services.AddScoped<OrderService> ();
             builder.Services.AddScoped<PaymentService> ();
             builder.Services.AddScoped<ProductService> ();
@@ -133,7 +135,7 @@ namespace CosmeticShop.WebAPI
 
                 var buffer = new byte[Convert.ToInt32(context.Request.ContentLength)];
 
-                await context.Request.Body.ReadAsync(buffer);
+                await context.Request.Body.ReadExactlyAsync(buffer);
                 var bodyAsText = Encoding.UTF8.GetString(buffer);
                 context.Request.Body.Position = 0;
 

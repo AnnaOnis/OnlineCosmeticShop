@@ -11,8 +11,9 @@ namespace CosmeticShop.Domain.Entities
     /// <summary>
     /// Represents a favorite product for a customer.
     /// </summary>
-    public class Favorite
+    public class Favorite : IEntity
     {
+        public Guid Id { get; init; }
         /// <summary>
         /// Gets or sets the unique identifier for the customer.
         /// </summary>
@@ -46,6 +47,7 @@ namespace CosmeticShop.Domain.Entities
         /// <param name="productId">The unique identifier for the product.</param>
         public Favorite(Guid customerId, Guid productId)
         {
+            Id = Guid.NewGuid();
             CustomerId = customerId;
             ProductId = productId;
             DateAdded = DateTime.UtcNow;

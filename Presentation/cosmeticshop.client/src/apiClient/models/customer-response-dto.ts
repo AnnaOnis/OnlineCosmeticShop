@@ -30,7 +30,7 @@ export interface CustomerResponseDto {
      * @type {string}
      * @memberof CustomerResponseDto
      */
-    id?: string;
+    id: string;
 
     /**
      * @type {string}

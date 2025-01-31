@@ -12,6 +12,7 @@ namespace CosmeticShop.Domain.Services
         ICartRepository CartRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         ICustomerRepository CustomerRepository { get; }
+        IFavoriteRepository FavoriteRepository { get; }
         IOrderRepository OrderRepository { get; }
         IPaymentRepository PaymentRepository { get; }
         IProductRepository ProductRepository { get; }

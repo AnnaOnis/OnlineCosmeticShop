@@ -44,7 +44,7 @@ const ProductDetails: React.FC = () => {
     if (!isAuthenticated) {
       setErrorMessage('Чтобы добавить товары в корзину ВОЙДИТЕ или ЗАРЕГИСТРИРУЙТЕСЬ!');
       setSuccessMessage(null);
-      setTimeout(() => setErrorMessage(null), 2000); // Сообщение исчезнет через 3 секунды
+      setTimeout(() => setErrorMessage(null), 2000);
     } else {
       if (!product) return;
 
@@ -58,7 +58,7 @@ const ProductDetails: React.FC = () => {
         console.log('Товар добавлен в корзину:', response);
         setSuccessMessage('Товар успешно добавлен в корзину!');
         setErrorMessage(null);
-        setTimeout(() => setSuccessMessage(null), 2000); // Сообщение исчезнет через 3 секунды
+        setTimeout(() => setSuccessMessage(null), 2000);
 
         const updatedCart = await cartService.getCart(new AbortController().signal);
         // Обновляем состояние корзины
@@ -68,7 +68,7 @@ const ProductDetails: React.FC = () => {
         console.error('Ошибка при добавлении товара в корзину:', error);
         setErrorMessage('Ошибка при добавлении товара в корзину. Пожалуйста, попробуйте снова.');
         setSuccessMessage(null);
-        setTimeout(() => setErrorMessage(null), 2000); // Сообщение исчезнет через 3 секунды
+        setTimeout(() => setErrorMessage(null), 2000);
       }
     }
   };

@@ -9,6 +9,7 @@ using CosmeticShop.Domain.Exceptions.Review;
 using CosmeticShop.Domain.Exceptions.Customer;
 using CosmeticShop.Domain.Exceptions.Users;
 using Microsoft.AspNetCore.Mvc;
+using CosmeticShop.Domain.Exceptions.Favorites;
 
 namespace CosmeticShop.WebAPI.Filters
 {
@@ -39,6 +40,7 @@ namespace CosmeticShop.WebAPI.Filters
                 OrderNotFoundException => new ErrorResponse("Заказ не найден.", StatusCodes.Status404NotFound),
                 InvalidPaymentMethodException => new ErrorResponse("Неверный способ оплаты.", StatusCodes.Status409Conflict),
                 PaymentNotFoundException => new ErrorResponse("Платеж не найден.", StatusCodes.Status404NotFound),
+                FavoriteNotFoundException => new ErrorResponse("Товар не найден в избранном", StatusCodes.Status404NotFound),
                 ProductAlreadyInFavoritesException => new ErrorResponse("Товар уже есть в избранном", StatusCodes.Status409Conflict),
                 ProductNotFoundException => new ErrorResponse("Товар не найден.", StatusCodes.Status404NotFound),
                 ReviewAlreadyApprovedException => new ErrorResponse("Отзыв уже одобрен.", StatusCodes.Status409Conflict),

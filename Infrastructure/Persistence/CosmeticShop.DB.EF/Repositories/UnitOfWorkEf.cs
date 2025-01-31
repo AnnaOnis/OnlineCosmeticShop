@@ -24,6 +24,8 @@ namespace CosmeticShop.DB.EF.Repositories
 
         public IJwtTokenRepository JwtTokenRepository { get; }
 
+        public IFavoriteRepository FavoriteRepository { get; }
+
         public AppDbContext dbContext;
 
         public UnitOfWorkEf(ICartRepository cartRepository, 
@@ -36,6 +38,7 @@ namespace CosmeticShop.DB.EF.Repositories
                             IUserActionRepository userActionRepository, 
                             IUserRepository userRepository,
                             IJwtTokenRepository jwtTokenRepository,
+                            IFavoriteRepository favoriteRepository,
                             AppDbContext appDbContext)
         {
             CartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
@@ -48,6 +51,7 @@ namespace CosmeticShop.DB.EF.Repositories
             UserActionRepository = userActionRepository ?? throw new ArgumentNullException(nameof(userActionRepository));
             UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             JwtTokenRepository = jwtTokenRepository ?? throw new ArgumentNullException(nameof(jwtTokenRepository));
+            FavoriteRepository = favoriteRepository ?? throw new ArgumentNullException(nameof(favoriteRepository));
             dbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
         }
 

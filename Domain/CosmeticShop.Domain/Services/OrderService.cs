@@ -84,7 +84,7 @@ namespace CosmeticShop.Domain.Services
         /// <exception cref="OrderNotFoundException">Thrown when the order not found.</exception>
         public async Task<Order> GetOrderDetailsAsync(Guid orderId, CancellationToken cancellationToken)
         {
-            var order = await _unitOfWork.OrderRepository.GetById(orderId, cancellationToken);
+            var order = await _unitOfWork.OrderRepository.GetOrderById(orderId, cancellationToken);
             if (order == null)
             {
                 throw new OrderNotFoundException("Order not found.");

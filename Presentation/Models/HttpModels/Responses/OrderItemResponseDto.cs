@@ -10,7 +10,7 @@ namespace HttpModels.Responses
     public class OrderItemResponseDto
     {
         [Required]
-        public Guid OrdertId { get; set; }
+        public Guid OrderId { get; set; }
 
         [Required]
         public Guid ProductId { get; set; }
@@ -25,5 +25,10 @@ namespace HttpModels.Responses
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
         public int Quantity { get; set; }
+
+        [Required]
+        public string ProductImageUrl { get; set; } = string.Empty;
+
+        public ReviewResponseDto Review { get; set; } 
     }
 }

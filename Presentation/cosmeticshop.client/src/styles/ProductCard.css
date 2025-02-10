@@ -51,6 +51,15 @@
   .product-info {
     padding: 1.5rem;
   }
+
+  .product-rating-star{
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #ffd700;
+    transition: color 0.3s;
+    padding: 0;
+  }
    
   .product-card-title {
     font-size: 1.2rem;

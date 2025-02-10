@@ -20,15 +20,17 @@ namespace CosmeticShop.WebAPI.Controllers
     {
         private readonly OrderService _orderService;
         private readonly CartService _cartService;
+        private readonly ReviewService _reviewService;
         private readonly IMapper _mapper;
         private readonly ILogger<OrderController> _logger;
         
 
-        public OrderController(OrderService orderService, CartService cartService, IMapper mapper, ILogger<OrderController> logger)
+        public OrderController(OrderService orderService, CartService cartService, ReviewService reviewService, IMapper mapper, ILogger<OrderController> logger)
         {
             _orderService = orderService;
-            _mapper = mapper;
             _cartService = cartService;
+            _reviewService = reviewService;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -54,6 +56,19 @@ namespace CosmeticShop.WebAPI.Controllers
         {
             var order = await _orderService.GetOrderDetailsAsync(id, cancellationToken);
             var responseDto = _mapper.Map<OrderResponseDto>(order);
+
+            var guid = GetCurrentCustomerId();
+            var reviews = await _reviewService.GetReviewsByCustomerIdAsync(guid, cancellationToken);
+            foreach (var item in responseDto.OrderItems)
+            {
+                var review = reviews.FirstOrDefault(r => r.ProductId == item.ProductId);
+                if (review != null)
+                {
+                    item.Review = _mapper.Map<ReviewResponseDto>(review);
+                    _logger.LogInformation(review.ReviewText);
+                }
+            }
+
             return Ok(responseDto);
         }
 

@@ -41,7 +41,7 @@ interface ProductCardProps {
         <div className="product-info">
           <h3 className="product-card-title" onClick={handleNavigateToProductDetails}>{product.name}</h3>
           <p className="product-card-description">{product.description}</p>
-          <p className="product-rating">★ {product.rating}</p>
+          <p> <span className="product-rating-star">★</span> {product.rating}</p>
           <div className="product-card-footer">
             <span className="product-card-price">{product.price} руб.</span>
             <button className="btn btn-outline" onClick={onAddToCart}>В корзину</button>

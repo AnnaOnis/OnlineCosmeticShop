@@ -14,6 +14,7 @@ import Help from './pages/Help';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AboutPage from './pages/AboutPage';
+import OrderDetails from './pages/OrderDetails';
 
 function AppRoutes() {
   return (
@@ -35,6 +36,7 @@ function AppRoutes() {
               <Route path="/search" element={<Search />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/order/:orderId" element={<OrderDetails />} />
             </Routes>
           </main>
           <Footer />

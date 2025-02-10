@@ -38,6 +38,6 @@ namespace HttpModels.Responses
         public PaymentMethod OrderPaymentMethod { get; set; }
 
         [Required]
-        public List<OrderItemResponseDto> orderItems { get; set; } = new List<OrderItemResponseDto>();
+        public List<OrderItemResponseDto> OrderItems { get; set; } = new List<OrderItemResponseDto>();
     }
 }

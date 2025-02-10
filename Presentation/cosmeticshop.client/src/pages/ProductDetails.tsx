@@ -91,7 +91,7 @@ const ProductDetails: React.FC = () => {
         <div className="product-info">
           <h1 className="product-title">{product.name}</h1>
           <div className="product-meta">
-            <span className="product-rating">★ {product.rating}</span>
+            <span><span className="product-rating-star">★ </span>{product.rating}</span>
             <span className="product-sku">Артикул: {product.id}</span>
           </div>
 
@@ -120,7 +120,7 @@ const ProductDetails: React.FC = () => {
                 <div className="user-info">
                   <h4>{review.customerName}</h4>
                   <div className="review-meta">
-                    <span className="review-rating">★ {review.rating}</span>
+                    <span className="review-rating"><span className="product-rating-star">★ </span>{review.rating}</span>
                     <span className="review-date">
                       {new Date(review.reviewDate).toLocaleDateString('ru-RU')}
                     </span>

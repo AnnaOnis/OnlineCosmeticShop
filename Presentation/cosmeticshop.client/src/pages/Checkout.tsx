@@ -26,12 +26,8 @@ const CheckoutComponent: React.FC = () => {
     if (!isAuthenticated) {
       navigate('/login');
     } else {
-      console.log("customerId:");
-      console.log(customerId);
       const selectedItems = location.state?.selectedItems as CartItemResponseDto[];
       if (selectedItems) {
-        console.log("selectedItems:");
-        console.log(selectedItems);
         setCartItems(selectedItems);
         const totalAmount = selectedItems.reduce((total, item) => total + item.quantity * item.productPrice, 0);
         const totalQuantity = selectedItems.length;

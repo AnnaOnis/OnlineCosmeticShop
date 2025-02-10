@@ -71,7 +71,14 @@ namespace CosmeticShop.Domain.Services
                 throw new ProductNotFoundException("Product not found.");
             }
 
-            return await _unitOfWork.ReviewRepository.GetByProductId(productId, cancellationToken);
+            return await _unitOfWork.ReviewRepository.GetReviewsByProductId(productId, cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<Review>> GetReviewsByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
+        {
+            var reviews = await _unitOfWork.ReviewRepository.GetReviewsByCustomerIdAsync(customerId, cancellationToken);
+
+            return reviews ?? new List<Review>();
         }
 
         /// <summary>

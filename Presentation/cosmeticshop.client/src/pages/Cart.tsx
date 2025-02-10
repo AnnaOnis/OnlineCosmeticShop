@@ -220,7 +220,6 @@ const CartComponent: React.FC = () => {
                     <div className="item-actions">
                       {(() => {
                         const isFavorite = favoriteProducts.has(item.productId);
-                        console.log(`cart-favorite-btn -- ${isFavorite ? 'true' : 'false'}`);
                         return (
                           <button 
                             className={`btn btn-outline ${isFavorite ? 'cart-favorite-btn' : ''}`}

@@ -5,10 +5,20 @@ import { FavoriteService } from '../apiClient/http-services/favorite.service';
 import { CustomerResponseDto, ProductResponseDto, OrderResponseDto, CartItemRequestDto } from '../apiClient/models';
 import { useCart } from '../context/CartContext'; 
 import { CartService } from '../apiClient/http-services/cart.service';
+import { useNavigate} from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import '../styles/Profile.css'
 
 const CustomerProfile: React.FC = () => {
+  const orderStatusMap: { [key: number]: string } = {
+    0: 'В ожидании',
+    1: 'В обработке',
+    2: 'Отправлен',
+    3: 'Доставлен',
+    4: 'Отменен',
+    5: 'Возвращен'
+  };
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState<ProductResponseDto[]>([]);
   const [totalFavorites, setTotalFavorites] = useState<number>(0);
   const [isFavoritesExpanded, setIsFavoritesExpanded] = useState<boolean>(false);
@@ -153,6 +163,10 @@ const CustomerProfile: React.FC = () => {
   }
 
   const totalPages = Math.ceil(totalFavorites / pageSize);
+
+  const handleOrderClick = (orderId: string) => {
+    navigate(`/order/${orderId}`);
+  };
 
   return (
     <div className="profile-container">
@@ -313,11 +327,13 @@ const CustomerProfile: React.FC = () => {
                       <p className="no-orders">У вас пока нет заказов</p>
                     ) : (
                       orders.map(order => (
-                        <div key={order.id} className="order-card">
+                        <div key={order.id} 
+                             className="order-card"
+                             onClick={() => handleOrderClick(order.id as string)}>
                           <div className="order-header">
                             <span className="order-number">Заказ №{order.id}</span>
                             <span className={`order-status ${order.status}`}>
-                              {order.status}
+                              {orderStatusMap[order.status]}
                             </span>
                           </div>
                           <div className="order-details">

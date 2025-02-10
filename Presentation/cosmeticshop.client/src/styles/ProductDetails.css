@@ -28,6 +28,15 @@
   .product-info {
     padding: 1rem;
   }
+
+  .product-rating-star{
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #ffd700;
+    transition: color 0.3s;
+    padding: 0;
+  }
   
   .product-title {
     font-size: 2.5rem;
@@ -38,6 +47,7 @@
   
   .product-meta {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
     margin-bottom: 1.5rem;
     color: rgba(58, 46, 40, 0.7);
@@ -120,7 +130,8 @@
   
   .review-meta {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    gap: 2rem;
     color: rgba(58, 46, 40, 0.7);
     font-size: 0.9rem;
   }

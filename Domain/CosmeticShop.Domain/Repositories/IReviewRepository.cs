@@ -11,6 +11,7 @@ namespace CosmeticShop.Domain.Repositories
     {
         Task<IReadOnlyList<Review>> GetAllNotApprovedReviews(CancellationToken cancellationToken);
         Task<IReadOnlyList<Review>> GetApprovedReviewsByProductId(Guid productId, CancellationToken cancellationToken);
-        Task<IReadOnlyList<Review>> GetByProductId(Guid productId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<Review>> GetReviewsByProductId(Guid productId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<Review>> GetReviewsByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken);
     }
 }

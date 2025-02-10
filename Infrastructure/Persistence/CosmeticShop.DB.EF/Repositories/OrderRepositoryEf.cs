@@ -28,7 +28,10 @@ namespace CosmeticShop.DB.EF.Repositories
 
         public async Task<Order> GetOrderById(Guid id, CancellationToken cancellationToken)
         {
-            var order = await Entities.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.Id == id);
+            var order = await Entities.Include(order => order.OrderItems)
+                                        .ThenInclude(orderItem => orderItem.Product)
+                                        .ThenInclude(product => product.Reviews)
+                                      .FirstOrDefaultAsync(o => o.Id == id);
             if (order == null) throw new OrderNotFoundException("Order not found");
             return order;
         }

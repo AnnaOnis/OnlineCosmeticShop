@@ -1,4 +1,4 @@
-
+import { ReviewResponseDto } from "./review-response-dto";
 
 /**
  * 
@@ -18,6 +18,12 @@ export interface OrderItemResponseDto {
      */
     productId: string;
 
+     /**
+     * @type {string}
+     * @memberof OrderItemResponseDto
+     */
+    productImageUrl: string;
+
     /**
      * @type {string}
      * @memberof OrderItemResponseDto
@@ -35,4 +41,10 @@ export interface OrderItemResponseDto {
      * @memberof OrderItemResponseDto
      */
     quantity: number;
+
+    /**
+     * @type {ReviewResponseDto}
+     * @memberof OrderItemResponseDto
+     */
+    review: ReviewResponseDto;
 }

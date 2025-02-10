@@ -106,6 +106,10 @@
     gap: 10px;
     align-items: flex-end;
 }
+.cart-item .item-actions .btn.btn-outline.cart-favorite-btn {
+    color: #f32637;
+    background-color: #f5cace;
+}
 
 .cart-checkout-section {
     margin-top: 30px;

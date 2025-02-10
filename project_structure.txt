@@ -3,6 +3,8 @@
 ├───Application
 ├───Domain
 │   ├───CosmeticShop.Domain
+│   │   ├───DTOs
+│   │   │   │   JwtTokenDto.cs
 │   │   ├───Entities
 │   │   │   │   Cart.cs
 │   │   │   │   CartItem.cs
@@ -31,6 +33,8 @@
 │   │   │   ├───Category
 │   │   │   │   │   CategoryNotFoundException.cs
 │   │   │   │   │   InvalidCategoryNameException.cs
+│   │   │   ├───Favorites
+│   │   │   │   │   FavoriteNotFoundException.cs
 │   │   │   ├───Order
 │   │   │   │   │   OrderNotFoundException.cs
 │   │   │   ├───Payment
@@ -47,23 +51,26 @@
 │   │   │   │   │   EmailAlreadyExistsException.cs
 │   │   │   │   │   InvalidPasswordException.cs
 │   │   │   │   │   UserNotFoundException.cs
+│   │   │   │   CartNotFoundException.cs
 │   │   │   │   DomainException.cs
 │   │   ├───Repositories
 │   │   │   │   ICartRepository.cs
 │   │   │   │   ICategoryRepository.cs
 │   │   │   │   ICustomerRepository.cs
+│   │   │   │   IFavoriteRepository.cs
 │   │   │   │   IJwtTokenRepository.cs
 │   │   │   │   IOrderRepository.cs
 │   │   │   │   IPaymentRepository.cs
 │   │   │   │   IProductRepository.cs
 │   │   │   │   IRepository.cs
-│   │   │   │   IRewiewRepository.cs
+│   │   │   │   IReviewRepository.cs
 │   │   │   │   IUserActionRepository.cs
 │   │   │   │   IUserRepository.cs
 │   │   ├───Services
 │   │   │   │   CartService.cs
 │   │   │   │   CategoryService.cs
 │   │   │   │   CustomerService.cs
+│   │   │   │   FavoriteService.cs
 │   │   │   │   IAppPasswordHasher.cs
 │   │   │   │   IPaymentGateway.cs
 │   │   │   │   ITokenGenerationService.cs
@@ -92,28 +99,40 @@
 │   ├───Persistence
 │   │   ├───CosmeticShop.DB.EF
 │   │   │   ├───Migrations
-│   │   │   │   │   20240925145422_InitialCreate.cs
-│   │   │   │   │   20240925145422_InitialCreate.Designer.cs
-│   │   │   │   │   20241014125923_AddingDateAddedToFavorite.cs
-│   │   │   │   │   20241014125923_AddingDateAddedToFavorite.Designer.cs
-│   │   │   │   │   20241016145450_AddingJwtTokensTable.cs
-│   │   │   │   │   20241016145450_AddingJwtTokensTable.Designer.cs
+│   │   │   │   │   20241126132647_InitialCreate.cs
+│   │   │   │   │   20241126132647_InitialCreate.Designer.cs
+│   │   │   │   │   20241126172306_UpdateCategoryModel.cs
+│   │   │   │   │   20241126172306_UpdateCategoryModel.Designer.cs
+│   │   │   │   │   20250114153403_UpdateCartItemModel.cs
+│   │   │   │   │   20250114153403_UpdateCartItemModel.Designer.cs
+│   │   │   │   │   20250114231159_AddRowVersionAndFixRelationships.cs
+│   │   │   │   │   20250114231159_AddRowVersionAndFixRelationships.Designer.cs
+│   │   │   │   │   20250114233630_UpdateRowVersionByXmin.cs
+│   │   │   │   │   20250114233630_UpdateRowVersionByXmin.Designer.cs
+│   │   │   │   │   20250117114149_UpdateOrderConnection.cs
+│   │   │   │   │   20250117114149_UpdateOrderConnection.Designer.cs
+│   │   │   │   │   20250130183622_AddColumnIdInFavorite.cs
+│   │   │   │   │   20250130183622_AddColumnIdInFavorite.Designer.cs
 │   │   │   │   │   AppDbContextModelSnapshot.cs
+│   │   │   ├───Properties
 │   │   │   ├───Repositories
 │   │   │   │   │   CartRepositoryEf.cs
 │   │   │   │   │   CategoryRepositoryEf.cs
 │   │   │   │   │   CustomerRepositoryEf.cs
 │   │   │   │   │   EfRepository.cs
+│   │   │   │   │   FavoriteRepositoryEf.cs
 │   │   │   │   │   JwtTokenRepositoryEf.cs
 │   │   │   │   │   OrderRepositoryEf.cs
 │   │   │   │   │   PaymentRepositoryEf.cs
 │   │   │   │   │   ProductRepositoryEf.cs
-│   │   │   │   │   RewiewRepositoryEf.cs
+│   │   │   │   │   ReviewRepositoryEf.cs
 │   │   │   │   │   UnitOfWorkEf.cs
 │   │   │   │   │   UserActionRepositoryEf.cs
 │   │   │   │   │   UserRepositoryEf.cs
 │   │   │   │   AppDbContext.cs
 │   │   │   │   CosmeticShop.DB.EF.csproj
+│   ├───Presentation
+│   │   ├───CosmeticShop.WebAPI
 ├───Presentation
 │   ├───cosmeticshop.client
 │   │   ├───.vscode
@@ -122,14 +141,136 @@
 │   │   │   │   cosmeticshop.client.key
 │   │   │   │   cosmeticshop.client.pem
 │   │   ├───public
+│   │   │   ├───images
+│   │   │   │   │   foto.jpg
+│   │   │   │   │   волосы.jpg
+│   │   │   │   │   дизайнер.jpg
+│   │   │   │   │   кремы.jpg
+│   │   │   │   │   макияж.jpg
+│   │   │   │   │   маски.jpg
+│   │   │   │   │   масла.jpg
+│   │   │   │   │   основатель.jpg
+│   │   │   │   │   помады.jpg
+│   │   │   │   │   сыворотки.jpg
+│   │   │   │   │   тени.jpg
+│   │   │   │   │   технолог.jpg
+│   │   │   │   │   тоник.jpg
+│   │   │   │   │   тушь.jpg
+│   │   │   │   │   уход за лицом.jpg
+│   │   │   │   │   фон.jpg
+│   │   │   │   │   фон_1.jpg
+│   │   │   │   │   фон_2.jpg
+│   │   │   │   │   фото пока нет.jpg
+│   │   │   │   │   цитата.jpg
+│   │   │   │   │   шампуни.jpg
 │   │   │   │   vite.svg
 │   │   ├───src
+│   │   │   ├───apiClient
+│   │   │   │   ├───.swagger-codegen
+│   │   │   │   │   │   VERSION
+│   │   │   │   ├───apis
+│   │   │   │   │   │   auth-api.ts
+│   │   │   │   │   │   cart-api.ts
+│   │   │   │   │   │   category-api.ts
+│   │   │   │   │   │   customer-api.ts
+│   │   │   │   │   │   order-api.ts
+│   │   │   │   │   │   products-api.ts
+│   │   │   │   │   │   reviews-api.ts
+│   │   │   │   │   │   user-api.ts
+│   │   │   │   │   │   weather-forecast-api.ts
+│   │   │   │   ├───http-services
+│   │   │   │   │   │   auth.service.ts
+│   │   │   │   │   │   cart.service.ts
+│   │   │   │   │   │   category.service.ts
+│   │   │   │   │   │   customer.service.ts
+│   │   │   │   │   │   favorite.service.ts
+│   │   │   │   │   │   order.service.ts
+│   │   │   │   │   │   products.service.ts
+│   │   │   │   │   │   reviews.service.ts
+│   │   │   │   │   │   user.service.ts
+│   │   │   │   ├───models
+│   │   │   │   │   │   auth-response-dto.ts
+│   │   │   │   │   │   cart-item-request-dto.ts
+│   │   │   │   │   │   cart-item-response-dto.ts
+│   │   │   │   │   │   cart-response-dto.ts
+│   │   │   │   │   │   category-request-dto.ts
+│   │   │   │   │   │   category-response-dto.ts
+│   │   │   │   │   │   customer-register-request-dto.ts
+│   │   │   │   │   │   customer-response-dto.ts
+│   │   │   │   │   │   customer-update-request-dto.ts
+│   │   │   │   │   │   favoirte-request-dto.ts
+│   │   │   │   │   │   favorite-response-dto.ts
+│   │   │   │   │   │   filter-dto.ts
+│   │   │   │   │   │   index.ts
+│   │   │   │   │   │   login-request.ts
+│   │   │   │   │   │   logout-request.ts
+│   │   │   │   │   │   order-create-request-dto.ts
+│   │   │   │   │   │   order-item-response-dto.ts
+│   │   │   │   │   │   order-response-dto.ts
+│   │   │   │   │   │   order-status.ts
+│   │   │   │   │   │   order-update-request-dto.ts
+│   │   │   │   │   │   paged-response.ts
+│   │   │   │   │   │   password-reset-request-dto.ts
+│   │   │   │   │   │   payment-method.ts
+│   │   │   │   │   │   product-request-dto.ts
+│   │   │   │   │   │   product-response-dto.ts
+│   │   │   │   │   │   review-create-request-dto.ts
+│   │   │   │   │   │   review-response-dto.ts
+│   │   │   │   │   │   role-type.ts
+│   │   │   │   │   │   shipping-method.ts
+│   │   │   │   │   │   user-add-request-dto.ts
+│   │   │   │   │   │   user-response-dto.ts
+│   │   │   │   │   │   user-update-request-dto.ts
+│   │   │   │   │   │   weather-forecast.ts
+│   │   │   │   │   .swagger-codegen-ignore
+│   │   │   │   │   api.ts
+│   │   │   │   │   base.ts
+│   │   │   │   │   configuration.ts
+│   │   │   │   │   httpClient.ts
+│   │   │   │   │   index.ts
 │   │   │   ├───assets
 │   │   │   │   │   react.svg
-│   │   │   │   App.css
+│   │   │   ├───components
+│   │   │   │   │   Footer.tsx
+│   │   │   │   │   Header.tsx
+│   │   │   │   │   Navbar.tsx
+│   │   │   │   │   ProductCard.tsx
+│   │   │   ├───context
+│   │   │   │   │   AuthContext.tsx
+│   │   │   │   │   CartContext.tsx
+│   │   │   ├───pages
+│   │   │   │   │   AboutPage.tsx
+│   │   │   │   │   Cart.tsx
+│   │   │   │   │   Checkout.tsx
+│   │   │   │   │   Contacts.tsx
+│   │   │   │   │   CustomerProfile.tsx
+│   │   │   │   │   Help.tsx
+│   │   │   │   │   Home.tsx
+│   │   │   │   │   Login.tsx
+│   │   │   │   │   OrderConfirmation.tsx
+│   │   │   │   │   ProductCatalog.tsx
+│   │   │   │   │   ProductDetails.tsx
+│   │   │   │   │   Register.tsx
+│   │   │   │   │   Search.tsx
+│   │   │   ├───styles
+│   │   │   │   │   AboutPage.css
+│   │   │   │   │   Auth.css
+│   │   │   │   │   Cart.css
+│   │   │   │   │   Checkout.css
+│   │   │   │   │   Contacts.css
+│   │   │   │   │   Footer.css
+│   │   │   │   │   global.css
+│   │   │   │   │   Header.css
+│   │   │   │   │   Help.css
+│   │   │   │   │   Home.css
+│   │   │   │   │   OrderConfirmation.css
+│   │   │   │   │   ProductCard.css
+│   │   │   │   │   ProductCatalog.css
+│   │   │   │   │   ProductDetails.css
+│   │   │   │   │   Profile.css
 │   │   │   │   App.tsx
+│   │   │   │   AppRoutes.tsx
 │   │   │   │   index.css
-│   │   │   │   main.tsx
 │   │   │   │   vite-env.d.ts
 │   │   │   .gitignore
 │   │   │   CHANGELOG.md
@@ -146,12 +287,25 @@
 │   │   │   vite.config.ts
 │   ├───CosmeticShop.WebAPI
 │   │   ├───Controllers
+│   │   │   │   AuthController.cs
+│   │   │   │   CartController.cs
+│   │   │   │   CategoryController.cs
+│   │   │   │   CustomerController.cs
+│   │   │   │   FavoritesController.cs
+│   │   │   │   OrderController.cs
 │   │   │   │   ProductsController.cs
+│   │   │   │   ReviewsController.cs
+│   │   │   │   UserController.cs
 │   │   │   │   WeatherForecastController.cs
+│   │   ├───Filters
+│   │   │   │   ExceptionHandlingFilter.cs
 │   │   ├───Middlewares
 │   │   │   │   TokenValidationMiddleware.cs
 │   │   ├───Properties
 │   │   │   │   launchSettings.json
+│   │   │   │   serviceDependencies.json
+│   │   │   │   serviceDependencies.local.json
+│   │   │   │   serviceDependencies.local.json.user
 │   │   ├───wwwroot
 │   │   │   appsettings.Development.json
 │   │   │   appsettings.json
@@ -161,10 +315,50 @@
 │   │   │   CosmeticShop.WebAPI.csproj.user
 │   │   │   Program.cs
 │   │   │   WeatherForecast.cs
+│   ├───Mappers
+│   │   ├───Mappers
+│   │   │   │   AssemblyMarker.cs
+│   │   │   │   CartMappingProfile.cs
+│   │   │   │   CategoryMappingProfile.cs
+│   │   │   │   CustomerMappingProfile.cs
+│   │   │   │   FavoriteMapperProfile.cs
+│   │   │   │   Mappers.csproj
+│   │   │   │   OrderMappingProfile.cs
+│   │   │   │   ProductMappingProfile.cs
+│   │   │   │   ReviewMappingProfile.cs
+│   │   │   │   UserMappingProfile.cs
 │   ├───Models
 │   │   ├───HttpModels
 │   │   │   ├───Requests
+│   │   │   │   │   CartItemRequestDto.cs
+│   │   │   │   │   CategoryRequestDto.cs
+│   │   │   │   │   CustomerRegisterRequestDto.cs
+│   │   │   │   │   CustomerUpdateRequestDto.cs
+│   │   │   │   │   FavoritesRequestDto.cs
+│   │   │   │   │   LoginRequest.cs
+│   │   │   │   │   LogoutRequest.cs
+│   │   │   │   │   OrderCreateRequestDto.cs
+│   │   │   │   │   OrderUpdateRequestDto.cs
+│   │   │   │   │   PasswordResetRequestDto.cs
+│   │   │   │   │   ProductRequestDto.cs
+│   │   │   │   │   ReviewCreateRequestDto.cs
+│   │   │   │   │   ReviewUpdateRequestDto.cs
+│   │   │   │   │   UserAddRequestDto.cs
+│   │   │   │   │   UserUpdateRequestDto.cs
 │   │   │   ├───Responses
+│   │   │   │   │   AuthResponseDto.cs
+│   │   │   │   │   CartItemResponseDto.cs
+│   │   │   │   │   CartResponseDto.cs
+│   │   │   │   │   CategoryResponseDto.cs
+│   │   │   │   │   CustomerResponseDto.cs
+│   │   │   │   │   ErrorResponse.cs
+│   │   │   │   │   FavoriteResponseDto.cs
+│   │   │   │   │   OrderItemResponseDto.cs
+│   │   │   │   │   OrderResponseDto.cs
+│   │   │   │   │   PagedResponse.cs
+│   │   │   │   │   ProductResponseDto.cs
+│   │   │   │   │   ReviewResponseDto.cs
+│   │   │   │   │   UserResponseDto.cs
 │   │   │   │   FilterDto.cs
 │   │   │   │   HttpModels.csproj
 │   .gitattributes
@@ -173,4 +367,3 @@
 │   docker-compose.yml
 │   Dockerfile
 │   project_structure.txt
-│   структура_проекта.txt

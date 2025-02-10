@@ -17,7 +17,8 @@ namespace Mappers
             CreateMap<Cart, CartResponseDto>();
             CreateMap<CartItem, CartItemResponseDto>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
-                .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product.Price));
+                .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product.Price))
+                .ForMember(dest => dest.ProductImageUrl, opt => opt.MapFrom(src => src.Product.ImageUrl)); ;
             CreateMap<CartItemRequestDto, CartItem>();
         }
     }

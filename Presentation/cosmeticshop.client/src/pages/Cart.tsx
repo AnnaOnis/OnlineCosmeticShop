@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { CartService } from '../apiClient/http-services/cart.service';
-import { CartItemRequestDto} from '../apiClient/models';
+import { FavoriteService } from '../apiClient/http-services/favorite.service';
+import { CartItemRequestDto, FavoriteRequestDto, ProductResponseDto} from '../apiClient/models';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import '../styles/Cart.css';
 
+
 const cartService = new CartService('/api'); // Базовый путь соответствует префиксу проксирования
+const favoriteService = new FavoriteService('/api');
 
 const CartComponent: React.FC = () => {
   const { cart, dispatch } = useCart();
   const [error, setError] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectAllText, setSelectAllText] = useState<string>('Выделить все');  
+  const [favoriteProducts, setFavoriteProducts] = useState<Set<string>>(new Set());
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { isAuthenticated} = useAuth();
+  const { isAuthenticated, customerId} = useAuth();
   
   
   useEffect(() => {
@@ -35,6 +40,20 @@ const CartComponent: React.FC = () => {
         }        
       }
     };
+
+    const fetchFavorites = async () => {
+      try {
+        if(customerId){
+          const response = await favoriteService.getAllFavoritesByCustomerId(customerId, new AbortController().signal);
+          setFavoriteProducts(new Set(response.map((product: ProductResponseDto) => product.id)));  
+          console.log(response);        
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFavorites();
 
     fetchCart();
 
@@ -108,6 +127,36 @@ const CartComponent: React.FC = () => {
     }
   };
 
+  const handleAddOrRemoveProductToFavorites = async (productId: string) => {
+
+    if (!customerId) {
+      setErrorMessage('Чтобы добавить товары в избранное ВОЙДИТЕ или ЗАРЕГИСТРИРУЙТЕСЬ!');
+      setTimeout(() => setErrorMessage(null), 2000);
+      return;
+    }
+
+    try {
+      const request: FavoriteRequestDto = {
+        productId: productId,
+        customerId: customerId
+      };
+
+      if (favoriteProducts.has(productId)) {
+        // Удаляем товар из избранного
+        await favoriteService.removeFromFavorites(productId, customerId, new AbortController().signal);
+        setFavoriteProducts(prev => new Set([...prev].filter(id => id !== productId)));
+      } else {
+        // Добавляем товар в избранное
+        await favoriteService.addToFavorites(request, new AbortController().signal);
+        setFavoriteProducts(prev => new Set([...prev, productId]));
+      }
+    } catch (error) {
+      console.error("Ошибка при добавлении/удалении товара из избранного", error);
+      setErrorMessage('Ошибка при добавлении/удалении товара из избранного');
+      setTimeout(() => setErrorMessage(null), 2000);
+    }
+  };
+
   return (
     <div className="cart-container">
       <div className="cart-header">
@@ -123,6 +172,7 @@ const CartComponent: React.FC = () => {
       </div>
 
       {error && <p className="error-message">{error}</p>}
+      {errorMessage && <div className="message error">{errorMessage}</div>}
 
       {cart ? (
         <>
@@ -139,13 +189,13 @@ const CartComponent: React.FC = () => {
                     className="item-checkbox"
                   />
                   
-                  {/* <div className="product-image-container">
+                  <div className="product-image-container">
                     <img 
-                      src={item.imageUrl || '/placeholder-image.jpg'} 
+                      src={item.productImageUrl || '/images/фото пока нет.jpg'} 
                       alt={item.productName} 
                       className="product-image"
                     />
-                  </div> */}
+                  </div>
 
                   <div className="item-details">
                     <div className='cart-item-info'>
@@ -168,12 +218,18 @@ const CartComponent: React.FC = () => {
                     </div>
 
                     <div className="item-actions">
-                      <button 
-                        className="btn btn-outline"
-                        onClick={() => {/* Добавить логику для избранного */}}
-                      >
-                        <i className="fas fa-heart"></i>
-                      </button>
+                      {(() => {
+                        const isFavorite = favoriteProducts.has(item.productId);
+                        console.log(`cart-favorite-btn -- ${isFavorite ? 'true' : 'false'}`);
+                        return (
+                          <button 
+                            className={`btn btn-outline ${isFavorite ? 'cart-favorite-btn' : ''}`}
+                            onClick={() => handleAddOrRemoveProductToFavorites(item.productId)}
+                            >
+                            <i className="fas fa-heart"></i>
+                          </button>
+                                );
+                      })()}
                       <button 
                         className="btn btn-outline"
                         onClick={() => handleRemoveItem(item.productId)}

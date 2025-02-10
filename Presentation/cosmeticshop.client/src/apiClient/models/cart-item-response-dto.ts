@@ -38,13 +38,13 @@ export interface CartItemResponseDto {
      */
     productId: string;
 
-        /**
+    /**
      * @type {string}
      * @memberof CartItemResponseDto
      */
     productName: string;
 
-        /**
+    /**
      * @type {number}
      * @memberof CartItemResponseDto
      */
@@ -55,4 +55,10 @@ export interface CartItemResponseDto {
      * @memberof CartItemResponseDto
      */
     quantity: number;
+
+    /**
+     * @type {string}
+     * @memberof CartItemResponseDto
+     */
+    productImageUrl: string;
 }

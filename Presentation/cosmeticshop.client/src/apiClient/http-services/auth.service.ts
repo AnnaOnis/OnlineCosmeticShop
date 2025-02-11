@@ -28,15 +28,18 @@ export class AuthService {
       console.log(response.token);
     }
     if (response.id) {
-      localStorage.setItem('customerId', response.id);
-      console.log(response.id);
+      localStorage.setItem('id', response.id);
+    }
+    if('role' in response){
+      localStorage.setItem('userRole', response.role.toString());
     }
     return response;
   }
 
   public async logout(body: LogoutRequest, cancellationToken: AbortSignal): Promise<void> {
     await this.httpClient.post<void>('/auth/logout', body, { signal: cancellationToken });
-    localStorage.removeItem('jwtToken'); // Удаляем токен из localStorage
+    //localStorage.removeItem('jwtToken'); // Удаляем токен из localStorage
+    localStorage.clear();//очищаем localStorage от сохраненных данных
   }
 
 }

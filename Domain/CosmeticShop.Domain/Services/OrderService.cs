@@ -180,5 +180,7 @@ namespace CosmeticShop.Domain.Services
             await _unitOfWork.OrderRepository.Delete(orderId, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
+
+       
     }   
 }

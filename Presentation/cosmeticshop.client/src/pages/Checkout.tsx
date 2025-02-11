@@ -10,7 +10,7 @@ import '../styles/Checkout.css'
 const orderService = new OrderService('/api'); // Базовый путь соответствует префиксу проксирования
 
 const CheckoutComponent: React.FC = () => {
-  const { isAuthenticated, customerId } = useAuth();
+  const { isAuthenticated, id: customerId } = useAuth();
   const { dispatch } = useCart();
   const navigate = useNavigate();
   const location = useLocation();

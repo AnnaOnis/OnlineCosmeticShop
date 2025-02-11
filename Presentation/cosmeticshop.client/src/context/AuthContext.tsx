@@ -4,7 +4,8 @@ import { CustomerRegisterRequestDto, LoginRequest, LogoutRequest } from '../apiC
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  customerId: string | null;
+  id: string | null;
+  role: number | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (customer: CustomerRegisterRequestDto) => Promise<void>;
@@ -12,7 +13,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  customerId: null,
+  id: null,
+  role: null,
   login: async () => {},
   logout: () => {},
   register: async () => {},
@@ -22,18 +24,23 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [customerId, setCustomerId] = useState<string | null>(null);
+  const [customerOrUserId, setCustomerOrUserId] = useState<string | null>(null);
+  const [role, setRole] = useState<number | null>(null);
   const authService = new AuthService('/api');
 
   useEffect(() => {
     // Проверяем наличие токена в localStorage при загрузке приложения
     const token = localStorage.getItem('jwtToken');
-    const storedCustomerId = localStorage.getItem('customerId');
+    const storedCustomerOrUserId = localStorage.getItem('id');
+    const storedRole = localStorage.getItem('userRole');
     if (token) {
       setIsAuthenticated(true);   
     }
-    if (storedCustomerId){
-      setCustomerId(storedCustomerId);
+    if (storedCustomerOrUserId){
+      setCustomerOrUserId(storedCustomerOrUserId);
+    }
+    if (storedRole) {
+      setRole(Number(storedRole));
     }
   }, []);
 
@@ -45,11 +52,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       await authService.login(loginRequest, new AbortController().signal);
       const token = localStorage.getItem('jwtToken');
-      const storedCustomerId = localStorage.getItem('customerId');
+      const storedCustomerOrUserId = localStorage.getItem('id');
+      const storedRole = localStorage.getItem('userRole');
       if (token) {
         setIsAuthenticated(true);
-        setCustomerId(storedCustomerId);
       }  
+      if (storedCustomerOrUserId){
+        setCustomerOrUserId(storedCustomerOrUserId);
+      }
+      if (storedRole) {
+        setRole(Number(storedRole));
+      }
     } catch (error) {
       console.error('Ошибка при входе:', error);
       alert('Неверный email или пароль');
@@ -65,7 +78,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         await authService.logout(logoutRequest, new AbortController().signal);
         setIsAuthenticated(false);
-        setCustomerId(null);
+        setCustomerOrUserId(null);
+        setRole(null);
       } catch (error) {
         console.error('Ошибка при выходе:', error);
         alert('Ошибка при выходе. Попробуйте снова.');
@@ -73,6 +87,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       localStorage.removeItem('jwtToken');
       setIsAuthenticated(false);
+      setCustomerOrUserId(null);
+      setRole(null);
       window.location.href = '/login';
     }
   };
@@ -81,7 +97,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await authService.register(customer, new AbortController().signal);
       if(localStorage.getItem('jwtToken')) setIsAuthenticated(true);
-      setIsAuthenticated(true);
     } catch (error) {
       console.error('Ошибка при регистрации:', error);
       alert('Ошибка при регистрации. Попробуйте снова.');
@@ -89,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, customerId, login, logout, register }}>
+    <AuthContext.Provider value={{ isAuthenticated, id: customerOrUserId, role, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

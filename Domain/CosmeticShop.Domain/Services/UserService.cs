@@ -47,10 +47,9 @@ namespace CosmeticShop.Domain.Services
             ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
             ArgumentNullException.ThrowIfNull(role, nameof(role));
 
-            var existingUser = _unitOfWork.UserRepository.FindByEmail(email, cancellationToken);
+            var existingUser = await _unitOfWork.UserRepository.FindByEmail(email, cancellationToken);
             if (existingUser != null)
                 throw new EmailAlreadyExistsException(message: "The user with this email has already been registered.");
-
 
             var user = new User(firstName, lastName, email, password, role);
             var hashedPassword = _hasher.HashPassword(user, password);

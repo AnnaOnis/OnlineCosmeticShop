@@ -13,7 +13,7 @@ namespace CosmeticShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ExceptionHandlingFilter]
     public class AdminController : ControllerBase
     {
@@ -265,6 +265,10 @@ namespace CosmeticShop.WebAPI.Controllers
 
             return NoContent();
         }
+
+        // Статистика
+
+
 
     }
 }

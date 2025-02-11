@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, role, logout } = useAuth();
   const { cartItemCount } = useCart();
 
   return (
@@ -21,7 +21,15 @@ const Header = () => {
           
           {isAuthenticated ? (
             <>
-              <Link to="/profile" className="nav-link">Профиль</Link>
+              {role != null ? (
+                <>
+                  <Link to="/admin/profile" className="nav-link">Админ панель</Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/profile" className="nav-link">Профиль</Link>
+                </>
+              )}
               <Link to="/login" className="nav-link" onClick={logout}>Выйти</Link>
             </>
           ) : (
@@ -31,10 +39,15 @@ const Header = () => {
             </>
           )}
           
-          <Link to="/cart" className="cart-link">
-            <i className="fa-solid fa-cart-shopping"></i>
-            <span className="cart-counter">{cartItemCount}</span> {/* Динамическое значение из контекста */}
-          </Link>
+          {!role && (          
+            <>
+              <Link to="/cart" className="cart-link">
+                <i className="fa-solid fa-cart-shopping"></i>
+                <span className="cart-counter">{cartItemCount}</span> {/* Динамическое значение из контекста */}
+              </Link>            
+            </>
+          )}
+
         </div>
       </nav>
     </header>

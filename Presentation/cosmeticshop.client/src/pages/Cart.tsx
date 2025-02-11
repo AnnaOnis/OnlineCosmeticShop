@@ -19,7 +19,7 @@ const CartComponent: React.FC = () => {
   const [favoriteProducts, setFavoriteProducts] = useState<Set<string>>(new Set());
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { isAuthenticated, customerId} = useAuth();
+  const { isAuthenticated, id: customerId} = useAuth();
   
   
   useEffect(() => {

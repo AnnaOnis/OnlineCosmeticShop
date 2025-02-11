@@ -1,0 +1,63 @@
+.admin-profile-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .admin-title {
+    font-size: 2.5rem;
+    color: var(--dark-text);
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+  }
+  
+  .admin-subtitle {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+  }
+  
+  .admin-profile-info {
+    margin-bottom: 2rem;
+  }
+  
+  .admin-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .admin-field label {
+    width: 200px;
+    font-weight: bold;
+  }
+  
+  .admin-links {
+    margin-bottom: 2rem;
+  }
+  
+  .admin-links a {
+    margin-right: 1rem;
+  }
+  
+  .admin-statistics {
+    margin-bottom: 2rem;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
+  }
+  
+  .admin-table th {
+    background-color: var(--gray-bg);
+    text-align: left;
+  }

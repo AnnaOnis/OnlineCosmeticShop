@@ -4,12 +4,15 @@ import { OrderService } from '../../apiClient/http-services/order.service';
 import { ReviewsService } from '../../apiClient/http-services/reviews.service';
 import { UserResponseDto } from '../../apiClient/models';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import "../../styles/admin/AdminProfile.css";
 
 const userService = new UserService('/api');
 const orderService = new OrderService('/api');
 const reviewsService = new ReviewsService('/api');
 
 const AdminProfile: React.FC = () => {
+    const { isAuthenticated, role} = useAuth();
   const [admin, setAdmin] = useState<UserResponseDto | null>(null);
   const [orderIdCount, setOrderIdCount] = useState<number>(0);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
@@ -20,12 +23,16 @@ const AdminProfile: React.FC = () => {
 
   useEffect(() => {
     const fetchAdminProfile = async () => {
+        if (!isAuthenticated || role == null) {
+            navigate('/login');
+            return;
+          }
       try {
-        const adminId = localStorage.getItem('adminId');
+        const adminId = localStorage.getItem('id');
         if (!adminId) {
           throw new Error('Администратор не авторизован');
         }
-        const response = await userService.getUserById(adminId, new AbortController().signal);
+        const response = await userService.getCurrentUserProfile(new AbortController().signal);
         setAdmin(response);
       } catch (error) {
         console.error(error);

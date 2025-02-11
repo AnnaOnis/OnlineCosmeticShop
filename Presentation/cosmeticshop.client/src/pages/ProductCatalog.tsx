@@ -26,7 +26,7 @@ const ProductCatalog: React.FC = () => {
   const productsService = new ProductsService('/api');
   const cartService = new CartService('/api');
   const favoriteService = new FavoriteService('/api');
-  const { isAuthenticated, customerId} = useAuth();
+  const { isAuthenticated, id: customerId} = useAuth();
   const { dispatch } = useCart();
 
   useEffect(() => {

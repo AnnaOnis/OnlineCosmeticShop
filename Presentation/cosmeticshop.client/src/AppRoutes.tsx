@@ -15,6 +15,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AboutPage from './pages/AboutPage';
 import OrderDetails from './pages/OrderDetails';
+import AdminProfile from './pages/admin/AdminProfile';
 
 function AppRoutes() {
   return (
@@ -37,6 +38,7 @@ function AppRoutes() {
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/help" element={<Help />} />
               <Route path="/order/:orderId" element={<OrderDetails />} />
+              <Route path="/admin/profile" element={<AdminProfile/>}/>
             </Routes>
           </main>
           <Footer />

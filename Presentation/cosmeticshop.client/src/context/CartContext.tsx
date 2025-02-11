@@ -30,13 +30,13 @@ const cartReducer = (state: CartState, action: { type: string; payload?: any }):
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartState, setCart] = useReducer(cartReducer, { cart: null, cartItemCount: 0, dispatch: () => {} });
-  const { isAuthenticated} = useAuth();
+  const { isAuthenticated, role} = useAuth();
   const cartService = new CartService('/api');
 
   useEffect(() => {
     const fetchCart = async () => {
-        if (!isAuthenticated) {
-          console.log('User is not authenticated, skipping cart fetch.');
+        if (!isAuthenticated || role != null) {
+          console.log('User is not authenticated or is an admin, skipping cart fetch.');
           return;
         }
   
@@ -54,7 +54,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       setCart({ type: 'SET_CART', payload: null });
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, role]);
 
   return (
     <CartContext.Provider value={{ ...cartState, dispatch: setCart }}>

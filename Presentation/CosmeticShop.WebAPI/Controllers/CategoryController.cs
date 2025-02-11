@@ -31,47 +31,12 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(categoryDtos);
         }
 
-        //[Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<ActionResult<CategoryResponseDto>> CreateCategory([FromBody] CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
-        {
-            string name = categoryRequestDto.CategoryName;
-            var parentId = categoryRequestDto.ParentCategoryId;
-
-            var category = await _categoryService.AddCategoryAsync(name, cancellationToken, parentId is not null ? parentId : null);
-            var responseDto = _mapper.Map<CategoryResponseDto>(category);
-            return Ok(responseDto);
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryResponseDto>> GetCategoryById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id, cancellationToken);
             var responseDto = _mapper.Map<CategoryResponseDto>(category);
             return Ok(responseDto);
-        }
-
-        //[Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
-        {
-            var updatingCategory = await _categoryService.GetCategoryByIdAsync(id, cancellationToken);
-
-            string newName = categoryRequestDto.CategoryName;
-            var parrentId = categoryRequestDto.ParentCategoryId;
-
-            var updatedCategory = await _categoryService.UpdateCategoryAsync(id, newName, cancellationToken, parrentId);
-            var responseDto = _mapper.Map<CategoryResponseDto>(updatedCategory);
-
-            return Ok(responseDto);
-        }
-
-        //[Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken)
-        {
-            await _categoryService.DeleteCategoryAsync(id, cancellationToken);
-            return NoContent();
         }
     }
 }

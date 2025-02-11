@@ -6,9 +6,11 @@ using HttpModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CosmeticShop.WebAPI.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CosmeticShop.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [ExceptionHandlingFilter]
@@ -22,46 +24,6 @@ namespace CosmeticShop.WebAPI.Controllers
             _mapper = mapper;
         }
 
-        //Методы для администратора
-
-        //[Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<ActionResult<PagedResponse<CustomerResponseDto>>> GetCustomers([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
-        {
-            var (customers, totalCustomers) = await _customerService.GetAllCustomers(cancellationToken, 
-                                                                   filterDto.Filter, 
-                                                                   filterDto.SortField, 
-                                                                   filterDto.SortOrder ? "asc" : "desc", 
-                                                                   filterDto.PageNumber, 
-                                                                   filterDto.PageSize);
-
-            var customerDtos = _mapper.Map<CustomerResponseDto[]>(customers);
-
-            var response = new PagedResponse<CustomerResponseDto> { Items = customerDtos, TotalItems = totalCustomers };
-
-            return Ok(response);
-        }
-
-        //[Authorize(Roles = "Admin")]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CustomerResponseDto>> GetCustomerById([FromRoute] Guid id, CancellationToken cancellationToken)
-        {
-            var customer = await _customerService.GetCustomerById(id, cancellationToken);
-            var customerDto = _mapper.Map<CustomerResponseDto>(customer);
-            return Ok(customerDto);
-        }
-
-        //[Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomer([FromRoute] Guid id, CancellationToken cancellationToken)
-        {
-            await _customerService.DeleteCustomer(id, cancellationToken);
-            return NoContent();
-        }
-
-        //Методы для самого пользователя
-
-        //[Authorize]
         [HttpGet("current")]
         public async Task<ActionResult<CustomerResponseDto>> GetCurrentCustomerProfile(CancellationToken cancellationToken)
         {
@@ -74,7 +36,6 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(customerDto);
         }
 
-        //[Authorize]
         [HttpPut]
         public async Task<ActionResult<CustomerResponseDto>> UpdateCustomerProfile([FromBody] CustomerUpdateRequestDto customerRequestDto, CancellationToken cancellationToken)
         {
@@ -93,7 +54,6 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(updatedCustomer);
         }
 
-        //[Authorize]
         [HttpPost]
         public async Task<IActionResult> ResetPasword ([FromBody] PasswordResetRequestDto passwordResetRequest, CancellationToken cancellationToken)
         {

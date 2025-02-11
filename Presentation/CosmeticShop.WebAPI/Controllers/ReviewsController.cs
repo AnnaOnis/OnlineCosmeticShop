@@ -24,15 +24,6 @@ namespace CosmeticShop.WebAPI.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReviewResponseDto>>> GetAllNotApprovedReviews(CancellationToken cancellationToken)
-        {
-            var reviews = await _reviewService.GetAllNotApprovedReviewsAsync(cancellationToken);
-            var reviewDtos = _mapper.Map<ReviewResponseDto[]>(reviews);
-            return Ok(reviewDtos);
-        }
-
         [HttpGet("approved/{productId}")]
         public async Task<ActionResult<IEnumerable<ReviewResponseDto>>> GetApprovedReviewsByProduct([FromRoute] Guid productId, CancellationToken cancellationToken)
         {
@@ -41,6 +32,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(reviewDtos);
         }
 
+        [Authorize]
         [HttpGet("product/{productId}")]
         public async Task<ActionResult<IEnumerable<ReviewResponseDto>>> GetReviewsByProduct([FromRoute] Guid productId, CancellationToken cancellationToken)
         {
@@ -49,8 +41,7 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(reviewDtos);
         }
 
-        
-
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<ReviewResponseDto>> CreateReview([FromBody] ReviewCreateRequestDto reviewRequestDto, CancellationToken cancellationToken)
         {
@@ -66,22 +57,6 @@ namespace CosmeticShop.WebAPI.Controllers
 
             var reviewDto = _mapper.Map<ReviewResponseDto>(review);
             return Ok(reviewDto);
-        }
-
-        //[Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReview([FromRoute] Guid id, CancellationToken cancellationToken)
-        {
-            await _reviewService.DeleteReviewAsync(id, cancellationToken);
-            return NoContent();
-        }
-
-        [HttpPut("{id}/approve")]
-        //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ApproveReview([FromRoute] Guid id, CancellationToken cancellationToken)
-        {
-            await _reviewService.ApproveReviewAsync(id, cancellationToken);
-            return NoContent();
         }
     }
 }

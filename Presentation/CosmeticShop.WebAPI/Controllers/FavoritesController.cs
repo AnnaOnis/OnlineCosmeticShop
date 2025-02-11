@@ -3,11 +3,13 @@ using CosmeticShop.Domain.Services;
 using CosmeticShop.WebAPI.Filters;
 using HttpModels.Requests;
 using HttpModels.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CosmeticShop.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [ExceptionHandlingFilter]

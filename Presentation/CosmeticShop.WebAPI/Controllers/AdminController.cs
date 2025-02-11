@@ -2,6 +2,7 @@
 using CosmeticShop.Domain.Entities;
 using CosmeticShop.Domain.Services;
 using CosmeticShop.WebAPI.Filters;
+using HttpModels;
 using HttpModels.Requests;
 using HttpModels.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -88,8 +89,182 @@ namespace CosmeticShop.WebAPI.Controllers
             return NoContent();
         }
 
+        //Работа с котегориями товаров
+
+        [HttpPut("category/{id}")]
+        public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
+        {
+            var updatingCategory = await _categoryService.GetCategoryByIdAsync(id, cancellationToken);
+
+            string newName = categoryRequestDto.CategoryName;
+            var parrentId = categoryRequestDto.ParentCategoryId;
+
+            var updatedCategory = await _categoryService.UpdateCategoryAsync(id, newName, cancellationToken, parrentId);
+            var responseDto = _mapper.Map<CategoryResponseDto>(updatedCategory);
+
+            return Ok(responseDto);
+        }
+
+        [HttpDelete("category/{id}")]
+        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            await _categoryService.DeleteCategoryAsync(id, cancellationToken);
+            return NoContent();
+        }
+
+        [HttpPost("category")]
+        public async Task<ActionResult<CategoryResponseDto>> CreateCategory([FromBody] CategoryRequestDto categoryRequestDto, CancellationToken cancellationToken)
+        {
+            string name = categoryRequestDto.CategoryName;
+            var parentId = categoryRequestDto.ParentCategoryId;
+
+            var category = await _categoryService.AddCategoryAsync(name, cancellationToken, parentId is not null ? parentId : null);
+            var responseDto = _mapper.Map<CategoryResponseDto>(category);
+            return Ok(responseDto);
+        }
+
         //Работа с заказами и платежами
 
+        [HttpGet("orders")]
+        public async Task<ActionResult<PagedResponse<OrderResponseDto>>> GetOrders([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
+        {
+            var (orders, totalOrders) = await _orderService.GetAllOrdersAsync(cancellationToken,
+                                                               filterDto.Filter,
+                                                               filterDto.SortField,
+                                                               filterDto.SortOrder ? "asc" : "desc",
+                                                               filterDto.PageNumber,
+                                                               filterDto.PageSize);
+            var responseDtos = _mapper.Map<OrderResponseDto[]>(orders);
+            var response = new PagedResponse<OrderResponseDto> { Items = responseDtos, TotalItems = totalOrders };
+
+            return Ok(response);
+        }
+
+        [HttpPut("order/status")]
+        public async Task<IActionResult> UpdateOrderStatus([FromBody] OrderUpdateRequestDto orderRequestDto, CancellationToken cancellationToken)
+        {
+            await _orderService.UpdateOrderStatusAsync(orderRequestDto.Id, orderRequestDto.NewStatus, cancellationToken);
+
+            return NoContent();
+        }
+
+        [HttpPut("payment/status")]
+        public async Task<IActionResult> UpdutePaymentSattus([FromBody] PaymentUpdateStatusRequestDto requestDto, CancellationToken cancellationToken)
+        {
+            await _paymentService.UpdatePaymentStatusAsync(requestDto.Id, requestDto.NewStatus, cancellationToken);
+            return NoContent();
+        }
+
+        [HttpDelete("order/{id}")]
+        public async Task<IActionResult> DeleteOrder([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            await _orderService.DeleteOrder(id, cancellationToken);
+            return NoContent();
+        }
+
+        //Работа с отзывами
+
+        [HttpGet("reviews")]
+        public async Task<ActionResult<IEnumerable<ReviewResponseDto>>> GetAllNotApprovedReviews(CancellationToken cancellationToken)
+        {
+            var reviews = await _reviewService.GetAllNotApprovedReviewsAsync(cancellationToken);
+            var reviewDtos = _mapper.Map<ReviewResponseDto[]>(reviews);
+            return Ok(reviewDtos);
+        }
+
+        [HttpDelete("review/{id}")]
+        public async Task<IActionResult> DeleteReview([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            await _reviewService.DeleteReviewAsync(id, cancellationToken);
+            return NoContent();
+        }
+
+        [HttpPut("review/{id}/approve")]
+        public async Task<IActionResult> ApproveReview([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            await _reviewService.ApproveReviewAsync(id, cancellationToken);
+            return NoContent();
+        }
+
+        //Работа с клиентами магазина
+
+        [HttpGet("customers")]
+        public async Task<ActionResult<PagedResponse<CustomerResponseDto>>> GetCustomers([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
+        {
+            var (customers, totalCustomers) = await _customerService.GetAllCustomers(cancellationToken,
+                                                                   filterDto.Filter,
+                                                                   filterDto.SortField,
+                                                                   filterDto.SortOrder ? "asc" : "desc",
+                                                                   filterDto.PageNumber,
+                                                                   filterDto.PageSize);
+
+            var customerDtos = _mapper.Map<CustomerResponseDto[]>(customers);
+
+            var response = new PagedResponse<CustomerResponseDto> { Items = customerDtos, TotalItems = totalCustomers };
+
+            return Ok(response);
+        }
+
+        [HttpGet("customer/{id}")]
+        public async Task<ActionResult<CustomerResponseDto>> GetCustomerById([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var customer = await _customerService.GetCustomerById(id, cancellationToken);
+            var customerDto = _mapper.Map<CustomerResponseDto>(customer);
+            return Ok(customerDto);
+        }
+
+        [HttpDelete("customer/{id}")]
+        public async Task<IActionResult> DeleteCustomer([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            await _customerService.DeleteCustomer(id, cancellationToken);
+            return NoContent();
+        }
+
+        //Работа с пользователями
+
+        [HttpGet("users")]
+        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetAllUsers([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
+        {
+            var (users, totalUsers) = await _userService.GetAllSortedUsers(cancellationToken,
+                                                             filterDto.Filter,
+                                                             filterDto.SortField,
+                                                             filterDto.SortOrder ? "asc" : "desc",
+                                                             filterDto.PageNumber,
+                                                             filterDto.PageSize);
+
+            var responseDtos = _mapper.Map<UserResponseDto[]>(users);
+            var response = new PagedResponse<UserResponseDto> { Items = responseDtos, TotalItems = totalUsers };
+            return Ok(response);
+        }
+
+        [HttpGet("user/{id}")]
+        public async Task<ActionResult<UserResponseDto>> GetUserInfo([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var user = await _userService.GetUserInfo(id, cancellationToken);
+            var responseDto = _mapper.Map<UserResponseDto>(user);
+            return Ok(responseDto);
+        }
+
+        [HttpDelete("user/{id}")]
+        public async Task<IActionResult> DeleteUser([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            await _userService.DeleteUser(id, cancellationToken);
+
+            return NoContent();
+        }
+
+        [HttpPost("add_user")]
+        public async Task<IActionResult> AddNewUser([FromBody] UserAddRequestDto userRequestDto, CancellationToken cancellationToken)
+        {
+            await _userService.AddUser(userRequestDto.Email,
+                                       userRequestDto.Password,
+                                       userRequestDto.FirstName,
+                                       userRequestDto.LastName,
+                                       userRequestDto.Role,
+                                       cancellationToken);
+
+            return NoContent();
+        }
 
     }
 }

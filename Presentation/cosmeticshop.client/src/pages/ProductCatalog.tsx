@@ -46,7 +46,7 @@ const ProductCatalog: React.FC = () => {
 
     const fetchFavorites = async () => {
       try {
-        if(customerId){
+        if(isAuthenticated && customerId){
           const response = await favoriteService.getAllFavoritesByCustomerId(customerId, new AbortController().signal);
           setFavoriteProducts(new Set(response.map((product: ProductResponseDto) => product.id)));          
         }

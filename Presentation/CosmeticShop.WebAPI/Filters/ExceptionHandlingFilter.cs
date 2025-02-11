@@ -17,7 +17,7 @@ namespace CosmeticShop.WebAPI.Filters
     {
         public void OnException(ExceptionContext context)
         {
-            var response = TryGetErrorResponseFromExeption(context);
+            var response = TryGetErrorResponseFromExсeption(context);
 
             if (response != null)
             {
@@ -31,7 +31,7 @@ namespace CosmeticShop.WebAPI.Filters
 
         }
 
-        public ErrorResponse? TryGetErrorResponseFromExeption(ExceptionContext context)
+        public ErrorResponse? TryGetErrorResponseFromExсeption(ExceptionContext context)
         {
             return context.Exception switch
             {
@@ -51,7 +51,7 @@ namespace CosmeticShop.WebAPI.Filters
                 UserNotFoundException => new ErrorResponse("Пользователь не найден.", StatusCodes.Status404NotFound),
                 CartNotFoundException => new ErrorResponse("Корзина не найдена.", StatusCodes.Status404NotFound),
                 DomainException => new ErrorResponse("Неизвестная ошибка.", StatusCodes.Status409Conflict),
-                _ => null
+                _ => new ErrorResponse("Internal server error", StatusCodes.Status500InternalServerError)
             };
         }
     }

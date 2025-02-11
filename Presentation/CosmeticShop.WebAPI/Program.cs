@@ -16,6 +16,8 @@ using System.Globalization;
 using CosmeticShop.WebAPI.Controllers;
 using Microsoft.AspNetCore.Hosting;
 using System.Text;
+using CosmeticShop.WebAPI.Filters;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CosmeticShop.WebAPI
 {
@@ -45,7 +47,13 @@ namespace CosmeticShop.WebAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(config =>
+            {
+                config.Filters.Add<ExceptionHandlingFilter>();
+            });
+
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -107,7 +115,6 @@ namespace CosmeticShop.WebAPI
             builder.Services.AddScoped<IPaymentGateway, PaymentGatewayService>();
 
             builder.Services.AddAutoMapper(typeof(Mappers.AssemblyMarker).Assembly);
-
 
             var app = builder.Build();
 

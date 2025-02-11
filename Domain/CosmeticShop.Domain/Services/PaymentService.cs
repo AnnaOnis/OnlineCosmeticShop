@@ -24,6 +24,13 @@ namespace CosmeticShop.Domain.Services
             _paymentGateway = paymentGateway;
         }
 
+        public async Task<Payment> GetPaymentByOrderId(Guid orderId, CancellationToken cancellation)
+        {
+            var payment = await _unitOfWork.PaymentRepository.GetPaymentByOrderId(orderId, cancellation);
+            if (payment == null) throw new PaymentNotFoundException();
+            return payment;
+        }
+
         /// <summary>
         /// Initializes a payment for the specified order.
         /// </summary>
@@ -52,7 +59,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="cancellationToken">Token for cancelling the operation.</param>
         /// <returns>Returns true if the payment was successful, otherwise false.</returns>
         /// <exception cref="PaymentNotFoundException">Thrown if the payment is not found.</exception>
-        public async Task<bool> ProcessOnlinePaymentAsync(Guid paymentId, CancellationToken cancellationToken)
+        public async Task<Payment> ProcessOnlinePaymentAsync(Guid paymentId, CancellationToken cancellationToken)
         {
             var payment = await _unitOfWork.PaymentRepository.GetById(paymentId, cancellationToken);
             if (payment == null)
@@ -67,7 +74,7 @@ namespace CosmeticShop.Domain.Services
             await _unitOfWork.PaymentRepository.Update(payment, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return isPaymentSuccessful;
+            return payment;
         }
 
         /// <summary>

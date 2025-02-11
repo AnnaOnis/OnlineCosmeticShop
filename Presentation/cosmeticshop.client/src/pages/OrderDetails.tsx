@@ -66,6 +66,14 @@ const OrderDetails: React.FC = () => {
     1: 'Наличными при получении'
   };
 
+  const orderPaymentStatusMap: { [key: number]: string } = {
+    0: 'Не оплачен',
+    1: 'Оплачен',
+    2: 'Оплата не прошла',
+    3: 'Возврат оплаты',
+    4: 'Отменен'
+  };
+
   const orderShippingMethodMap: {[key: number] : string} = {
     0: 'Почта',
     1: 'Курьер',
@@ -108,6 +116,28 @@ const OrderDetails: React.FC = () => {
     }
   };
 
+  const handlePayOrder = async () => {
+    if (!orderId) return;
+  
+    try {
+      const order = await orderService.orderPaymentProcessing(orderId, new AbortController().signal);
+      setOrder(order);
+      if(order.orderPaymentStatus == 1)
+      {
+        setSuccessMessage('Заказ успешно оплачен!');
+        setTimeout(() => setSuccessMessage(null), 2000);        
+      }else{
+        setErrorMessage('Не удалось оплатить заказ! Попробуйте еще раз.');
+        setTimeout(() => setErrorMessage(null), 2000);
+      }
+
+    } catch (error) {
+      console.error('Ошибка при обработке оплаты:', error);
+      setErrorMessage('Ошибка при обработке оплаты.');
+      setTimeout(() => setErrorMessage(null), 2000);
+    }
+  };
+
 
   return (
     <div className="order-details-container">
@@ -128,6 +158,15 @@ const OrderDetails: React.FC = () => {
         <div className="order-details-info-group">
           <span className="order-details-info-label">Способ оплаты:</span>
           <span className="order-details-info-value">{orderPaymentMethodMap[order.orderPaymentMethod]}</span>
+        </div>
+        <div className="order-details-info-group">
+          <span className="order-details-info-label">Статус оплаты:</span>
+          <span className="order-details-info-value">{orderPaymentStatusMap[order.orderPaymentStatus]}</span>
+          {order.orderPaymentStatus === 0 || order.orderPaymentStatus === 2 ? (
+          <button className="btn btn-primary" onClick={handlePayOrder}>
+            Оплатить
+          </button>
+        ) : null}
         </div>
         <div className="order-details-info-group">
           <span className="order-details-info-label">Способ доставки:</span>

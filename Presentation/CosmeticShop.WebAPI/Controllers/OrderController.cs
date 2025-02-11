@@ -13,23 +13,30 @@ using CosmeticShop.WebAPI.Filters;
 
 namespace CosmeticShop.WebAPI.Controllers
 {
+    [ExceptionHandlingFilter]
     [Route("api/[controller]")]
     [ApiController]
-    [ExceptionHandlingFilter]
     public class OrderController : ControllerBase
     {
         private readonly OrderService _orderService;
         private readonly CartService _cartService;
         private readonly ReviewService _reviewService;
+        private readonly PaymentService _paymentService;
         private readonly IMapper _mapper;
         private readonly ILogger<OrderController> _logger;
         
 
-        public OrderController(OrderService orderService, CartService cartService, ReviewService reviewService, IMapper mapper, ILogger<OrderController> logger)
+        public OrderController(OrderService orderService, 
+                                CartService cartService,
+                                ReviewService reviewService,
+                                PaymentService paymentService,
+                                IMapper mapper, 
+                                ILogger<OrderController> logger)
         {
             _orderService = orderService;
             _cartService = cartService;
             _reviewService = reviewService;
+            _paymentService = paymentService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -55,17 +62,17 @@ namespace CosmeticShop.WebAPI.Controllers
         public async Task<ActionResult<OrderResponseDto>> GetOrderById([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var order = await _orderService.GetOrderDetailsAsync(id, cancellationToken);
+            var payment = await _paymentService.GetPaymentByOrderId(order.Id, cancellationToken);
             var responseDto = _mapper.Map<OrderResponseDto>(order);
+            responseDto.OrderPaymentStatus = payment.Status;
 
-            var guid = GetCurrentCustomerId();
-            var reviews = await _reviewService.GetReviewsByCustomerIdAsync(guid, cancellationToken);
+            var reviews = await _reviewService.GetReviewsByCustomerIdAsync(order.CustomerId, cancellationToken);
             foreach (var item in responseDto.OrderItems)
             {
                 var review = reviews.FirstOrDefault(r => r.ProductId == item.ProductId);
                 if (review != null)
                 {
                     item.Review = _mapper.Map<ReviewResponseDto>(review);
-                    _logger.LogInformation(review.ReviewText);
                 }
             }
 
@@ -85,12 +92,10 @@ namespace CosmeticShop.WebAPI.Controllers
             return Ok(responseDtos);
         }
 
+        //[Authorize]
         [HttpPost]
         public async Task<ActionResult<OrderResponseDto>> CreateOrder([FromBody] OrderCreateRequestDto orderRequestDto, CancellationToken cancellationToken)
         {
-             string orderRequestDtoJson = JsonSerializer.Serialize(orderRequestDto, new JsonSerializerOptions { WriteIndented = true });
-            _logger.LogInformation("Received OrderCreateRequestDto: {@OrderCreateRequestDto}", orderRequestDtoJson);
-
             var currentCustomerId = GetCurrentCustomerId();
 
             var cart = await _cartService.GetCartByCustomerIdAsync(currentCustomerId, cancellationToken);
@@ -103,11 +108,9 @@ namespace CosmeticShop.WebAPI.Controllers
                 if (cartItem != null)
                 {
                     cartItems.Add(cartItem);
-                    _logger.LogInformation(cartItem.ProductId + " - " + cartItem.Quantity);
                 }
                 else
                 {
-                    _logger.LogWarning($"Product with ID {orderItem.ProductId} not found in the cart.");
                     return BadRequest($"Product with ID {orderItem.ProductId} not found in the cart.");
                 }
             }
@@ -120,7 +123,25 @@ namespace CosmeticShop.WebAPI.Controllers
                                                              cartItems,
                                                              cancellationToken);
 
+            var payment = await _paymentService.InitializePaymentAsync(order.Id, cancellationToken);
+
             var responseDto = _mapper.Map<OrderResponseDto>(order);
+            responseDto.OrderPaymentStatus = payment.Status;
+
+            return Ok(responseDto);
+        }
+
+
+        [HttpPost("pay/{orderId}")]
+        public async Task<ActionResult<OrderResponseDto>> OrderPaymentProcessing(Guid orderId, CancellationToken cancellationToken)
+        {
+            var order = await _orderService.GetOrderDetailsAsync(orderId, cancellationToken);
+            var responseDto = _mapper.Map<OrderResponseDto>(order);
+
+            var payment = await _paymentService.GetPaymentByOrderId(orderId, cancellationToken);
+            var processedPayment = await _paymentService.ProcessOnlinePaymentAsync(payment.Id, cancellationToken);
+
+            responseDto.OrderPaymentStatus = processedPayment.Status;
 
             return Ok(responseDto);
         }

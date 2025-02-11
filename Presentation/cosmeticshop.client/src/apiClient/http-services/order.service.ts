@@ -40,6 +40,12 @@ export class OrderService {
     return response;
   }
 
+  //Оплата заказа
+  public async orderPaymentProcessing(orderId: string, cancellationToken: AbortSignal): Promise<OrderResponseDto> {
+    const response = await this.httpClient.post<OrderResponseDto>(`/order/pay/${orderId}`, { signal: cancellationToken });
+    return response;
+  }
+
   // Обновление статуса заказа
   public async updateOrderStatusAsync(body: OrderUpdateRequestDto, cancellationToken: AbortSignal): Promise<void> {
     await this.httpClient.put(`/order`, body, { signal: cancellationToken });

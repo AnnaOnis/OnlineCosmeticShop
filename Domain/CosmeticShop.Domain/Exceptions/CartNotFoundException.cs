@@ -1,7 +1,7 @@
 ﻿namespace CosmeticShop.Domain.Exceptions
 {
     [Serializable]
-    public class CartNotFoundException : Exception
+    public class CartNotFoundException : DomainException
     {
         public CartNotFoundException()
         {

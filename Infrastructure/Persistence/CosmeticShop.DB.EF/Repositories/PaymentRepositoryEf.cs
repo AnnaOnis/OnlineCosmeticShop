@@ -27,5 +27,10 @@ namespace CosmeticShop.DB.EF.Repositories
                 .Include(e => e.Customer)
                 .FirstAsync(x => x.Id == Id, cancellationToken);
         }
+
+        public async Task<Payment?> GetPaymentByOrderId(Guid id, CancellationToken cancellation)
+        {
+            return await Entities.SingleOrDefaultAsync(e => e.OrderId == id, cancellation);
+        }
     }
 }

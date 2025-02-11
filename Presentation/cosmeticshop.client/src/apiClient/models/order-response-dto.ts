@@ -15,6 +15,7 @@
 import { OrderItemResponseDto } from './order-item-response-dto';
 import { OrderStatus } from './order-status';
 import { PaymentMethod } from './payment-method';
+import { PaymentStatus } from './payment-status';
 import { ShippingMethod } from './shipping-method';
  /**
  * 
@@ -71,6 +72,12 @@ export interface OrderResponseDto {
      * @memberof OrderResponseDto
      */
     orderPaymentMethod: PaymentMethod;
+    
+    /**
+     * @type {PaymentStatus}
+     * @memberof OrderResponseDto
+     */
+    orderPaymentStatus: PaymentStatus;
 
     /**
      * @type {Array<OrderItemResponseDto>}

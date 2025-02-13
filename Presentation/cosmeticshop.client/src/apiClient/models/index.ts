@@ -28,3 +28,4 @@ export * from './user-response-dto';
 export * from './user-update-request-dto';
 export * from './favoirte-request-dto';
 export * from './favorite-response-dto';
+export * from './statistic-response';

@@ -191,7 +191,7 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpGet("customers")]
         public async Task<ActionResult<PagedResponse<CustomerResponseDto>>> GetCustomers([FromQuery] FilterDto filterDto, CancellationToken cancellationToken)
         {
-            var (customers, totalCustomers) = await _customerService.GetAllCustomers(cancellationToken,
+            var (customers, totalCustomers) = await _customerService.GetAllCustomersSorted(cancellationToken,
                                                                    filterDto.Filter,
                                                                    filterDto.SortField,
                                                                    filterDto.SortOrder ? "asc" : "desc",
@@ -268,6 +268,34 @@ namespace CosmeticShop.WebAPI.Controllers
 
         // Статистика
 
+        [HttpGet("statistic")]
+        public async Task<ActionResult<StatisticResponse>> GetStatistic (CancellationToken cancellationToken)
+        {
+            var orders = await _orderService.GetAll(cancellationToken);
+            int totalOrders = orders.Count;
+
+            var totalRevenue = orders.Where(o => o.Status == Domain.Enumerations.OrderStatus.Delivered).Sum(o => o.TotalAmount);
+
+            DateTime now = DateTime.Now;
+            DateTime firstDay = new DateTime(now.Year, now.Month, 1);
+            DateTime lastDay = firstDay.AddMonths(1).AddDays(-1);
+            var customers = await _customerService.GetAll(cancellationToken);
+            var newCustomers = customers.Select(c => c.DateRegistered >= firstDay && c.DateRegistered <= lastDay).ToList();
+            int newCustomerCount = newCustomers.Count();
+
+            var reviews = await _reviewService.GetAllApprovedReviews(cancellationToken);
+            var approvedReviewCount = reviews.Count();
+
+            var response = new StatisticResponse
+            {
+                OrderCount = totalOrders,
+                TotalRevenue = totalRevenue,
+                NewCustomerCount = newCustomerCount,
+                ApprovedReviewCount = approvedReviewCount
+            };
+
+            return Ok(response);
+        }
 
 
     }

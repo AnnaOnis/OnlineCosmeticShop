@@ -13,5 +13,6 @@ namespace CosmeticShop.Domain.Repositories
         Task<IReadOnlyList<Review>> GetApprovedReviewsByProductId(Guid productId, CancellationToken cancellationToken);
         Task<IReadOnlyList<Review>> GetReviewsByProductId(Guid productId, CancellationToken cancellationToken);
         Task<IReadOnlyList<Review>> GetReviewsByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<Review>> GetAllApprovedReviews(CancellationToken cancellationToken0);
     }
 }

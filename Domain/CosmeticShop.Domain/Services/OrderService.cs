@@ -169,6 +169,12 @@ namespace CosmeticShop.Domain.Services
             return (orders, totalOrders);
         }
 
+        public async Task<IReadOnlyList<Order>> GetAll(CancellationToken cancellationToken = default)
+        {
+            var orders = await _unitOfWork.OrderRepository.GetAll(cancellationToken);
+            return orders;
+        }
+
         public async Task DeleteOrder(Guid orderId, CancellationToken cancellationToken)
         {
             var order = await _unitOfWork.OrderRepository.GetById(orderId, cancellationToken);

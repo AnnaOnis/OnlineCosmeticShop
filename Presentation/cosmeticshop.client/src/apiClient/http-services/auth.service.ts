@@ -38,7 +38,9 @@ export class AuthService {
 
   public async logout(body: LogoutRequest, cancellationToken: AbortSignal): Promise<void> {
     await this.httpClient.post<void>('/auth/logout', body, { signal: cancellationToken });
-    //localStorage.removeItem('jwtToken'); // Удаляем токен из localStorage
+    // localStorage.removeItem('jwtToken'); // Удаляем токен из localStorage
+    // localStorage.removeItem('id');
+    // localStorage.removeItem('userRole');
     localStorage.clear();//очищаем localStorage от сохраненных данных
   }
 

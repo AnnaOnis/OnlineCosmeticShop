@@ -19,7 +19,10 @@
   }
   
   .admin-profile-info {
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 1rem;
     margin-bottom: 2rem;
+    width: 100%;
   }
   
   .admin-field {
@@ -34,11 +37,17 @@
   }
   
   .admin-links {
-    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
   }
   
   .admin-links a {
-    margin-right: 1rem;
+    text-decoration: none;
   }
   
   .admin-statistics {

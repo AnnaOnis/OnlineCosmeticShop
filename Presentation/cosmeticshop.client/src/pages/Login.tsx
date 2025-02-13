@@ -12,7 +12,13 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await login(email, password);
-    navigate('/');
+    const storedRole = localStorage.getItem('userRole');
+    if(storedRole){
+      navigate('/admin/profile');
+    } else{
+      navigate('/profile');
+    }
+    
   };
 
   return (

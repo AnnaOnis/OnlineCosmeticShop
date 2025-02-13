@@ -129,7 +129,7 @@ namespace CosmeticShop.Domain.Services
         /// <param name="pageNumber">Specifies the page number</param>
         /// <param name="pageSize">Specifies the page size</param>
         /// <returns>List of Customer objects</returns>
-        public async Task<(IReadOnlyList<Customer>, int)> GetAllCustomers(CancellationToken cancellationToken,
+        public async Task<(IReadOnlyList<Customer>, int)> GetAllCustomersSorted(CancellationToken cancellationToken,
                                                                    string? filter = null,
                                                                    string? sortField = "LastName",
                                                                    string sortOrder = "asc",
@@ -182,6 +182,12 @@ namespace CosmeticShop.Domain.Services
                 pageSize: pageSize);
 
             return (customers, totalCustomers);
+        }
+
+        public async Task<IReadOnlyList<Customer>> GetAll(CancellationToken cancellationToken)
+        {
+            var customers = await _unitOfWork.CustomerRepository.GetAll(cancellationToken);
+            return customers;
         }
 
         /// <summary>

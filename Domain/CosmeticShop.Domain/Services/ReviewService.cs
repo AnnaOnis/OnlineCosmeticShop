@@ -173,5 +173,10 @@ namespace CosmeticShop.Domain.Services
         {
             return await _unitOfWork.ReviewRepository.GetAllNotApprovedReviews(cancellationToken);
         }
+
+        public async Task<IReadOnlyList<Review>> GetAllApprovedReviews(CancellationToken cancellationToken)
+        {
+            return await _unitOfWork.ReviewRepository.GetAllApprovedReviews(cancellationToken);
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CosmeticShop.DB.EF.Repositories
@@ -46,6 +47,15 @@ namespace CosmeticShop.DB.EF.Repositories
         {
             return await Entities
                 .Where(r => r.CustomerId == customerId)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<Review>> GetAllApprovedReviews(CancellationToken cancellationToken)
+        {
+            return await Entities
+                .Include(e => e.Customer)
+                .Where(e => e.IsApproved == true)
+                .OrderBy(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);
         }
     }

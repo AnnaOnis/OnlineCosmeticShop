@@ -2,24 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { UserService } from '../../apiClient/http-services/user.service';
 import { OrderService } from '../../apiClient/http-services/order.service';
 import { ReviewsService } from '../../apiClient/http-services/reviews.service';
-import { UserResponseDto } from '../../apiClient/models';
+import { AdminService } from '../../apiClient/http-services/admin.service';
+import { UserResponseDto} from '../../apiClient/models';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import "../../styles/admin/AdminProfile.css";
 
 const userService = new UserService('/api');
+const adminService = new AdminService('/api');
 const orderService = new OrderService('/api');
 const reviewsService = new ReviewsService('/api');
 
 const AdminProfile: React.FC = () => {
-    const { isAuthenticated, role} = useAuth();
+  const { isAuthenticated, role} = useAuth();
   const [admin, setAdmin] = useState<UserResponseDto | null>(null);
-  const [orderIdCount, setOrderIdCount] = useState<number>(0);
+  const [orderCount, setOrderCount] = useState<number>(0);
   const [totalRevenue, setTotalRevenue] = useState<number>(0);
   const [newCustomerCount, setNewCustomerCount] = useState<number>(0);
   const [approvedReviewCount, setApprovedReviewCount] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const roleMap: { [key: number]: string } = {
+    0: 'Администратор',
+    1: 'Менеджер',
+    2: 'Модератор',
+  };
 
   useEffect(() => {
     const fetchAdminProfile = async () => {
@@ -41,15 +49,18 @@ const AdminProfile: React.FC = () => {
       }
     };
 
-    // const fetchOrderIdCount = async () => {
-    //   try {
-    //     const response = await orderService.getOrdersCount(new AbortController().signal);
-    //     setOrderIdCount(response);
-    //   } catch (error) {
-    //     console.error(error);
-    //     setErrorMessage('Ошибка при загрузке количества заказов');
-    //   }
-    // };
+    const fetchStatistic = async () => {
+      try {
+        const response = await adminService.getStatistic(new AbortController().signal);
+        setOrderCount(response.orderCount);
+        setTotalRevenue(response.totalRevenue);
+        setNewCustomerCount(response.newCustomerCount);
+        setApprovedReviewCount(response.approvedReviewCount);
+      } catch (error) {
+        console.error(error);
+        setErrorMessage('Ошибка при загрузке количества заказов');
+      }
+    };
 
     // const fetchTotalRevenue = async () => {
     //   try {
@@ -82,6 +93,7 @@ const AdminProfile: React.FC = () => {
     // };
 
      fetchAdminProfile();
+     fetchStatistic();
     // fetchOrderIdCount();
     // fetchTotalRevenue();
     // fetchNewCustomerCount();
@@ -108,11 +120,10 @@ const AdminProfile: React.FC = () => {
           </div>
           <div className="admin-field">
             <label>Роль:</label>
-            <span>{admin.role}</span>
+            <span>{roleMap[admin.role]}</span>
           </div>
         </div>
       )}
-      <h2 className="admin-subtitle">Функции для работы</h2>
       <div className="admin-links">
         <Link to="/product-admin-table" className="btn btn-outline">Управление товарами</Link>
         <Link to="/order-admin-table" className="btn btn-outline">Управление заказами</Link>
@@ -131,7 +142,7 @@ const AdminProfile: React.FC = () => {
           <tbody>
             <tr>
               <td>Общее количество заказов</td>
-              <td>{orderIdCount}</td>
+              <td>{orderCount}</td>
             </tr>
             <tr>
               <td>Общая выручка</td>

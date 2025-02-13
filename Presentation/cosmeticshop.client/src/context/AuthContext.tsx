@@ -85,7 +85,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         alert('Ошибка при выходе. Попробуйте снова.');
       }
     } else {
-      localStorage.removeItem('jwtToken');
       setIsAuthenticated(false);
       setCustomerOrUserId(null);
       setRole(null);

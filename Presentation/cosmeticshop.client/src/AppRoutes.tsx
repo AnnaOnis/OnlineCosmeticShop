@@ -16,6 +16,9 @@ import Footer from './components/Footer';
 import AboutPage from './pages/AboutPage';
 import OrderDetails from './pages/OrderDetails';
 import AdminProfile from './pages/admin/AdminProfile';
+import ProductAdminTable from './pages/admin/ProductAdminTable';
+import ProductEditForm from './pages/admin/ProductEditForm';
+import ProductAddForm from './pages/admin/ProductAddForm';
 
 function AppRoutes() {
   return (
@@ -39,6 +42,9 @@ function AppRoutes() {
               <Route path="/help" element={<Help />} />
               <Route path="/order/:orderId" element={<OrderDetails />} />
               <Route path="/admin/profile" element={<AdminProfile/>}/>
+              <Route path="/product-admin-table" element={<ProductAdminTable/>}/>
+              <Route path="/admin/product-edit/:productId" element={<ProductEditForm/>}/>
+              <Route path="/admin/product-add" element={<ProductAddForm/>}/>
             </Routes>
           </main>
           <Footer />

@@ -62,42 +62,8 @@ const AdminProfile: React.FC = () => {
       }
     };
 
-    // const fetchTotalRevenue = async () => {
-    //   try {
-    //     const response = await orderService.getTotalRevenue(new AbortController().signal);
-    //     setTotalRevenue(response);
-    //   } catch (error) {
-    //     console.error(error);
-    //     setErrorMessage('Ошибка при загрузке общей выручки');
-    //   }
-    // };
-
-    // const fetchNewCustomerCount = async () => {
-    //   try {
-    //     const response = await userService.getNewCustomersCount(new AbortController().signal);
-    //     setNewCustomerCount(response);
-    //   } catch (error) {
-    //     console.error(error);
-    //     setErrorMessage('Ошибка при загрузке количества новых клиентов');
-    //   }
-    // };
-
-    // const fetchApprovedReviewCount = async () => {
-    //   try {
-    //     const response = await reviewsService.getApprovedReviewsCount(new AbortController().signal);
-    //     setApprovedReviewCount(response);
-    //   } catch (error) {
-    //     console.error(error);
-    //     setErrorMessage('Ошибка при загрузке количества одобренных отзывов');
-    //   }
-    // };
-
      fetchAdminProfile();
      fetchStatistic();
-    // fetchOrderIdCount();
-    // fetchTotalRevenue();
-    // fetchNewCustomerCount();
-    // fetchApprovedReviewCount();
   }, [navigate]);
 
   return (

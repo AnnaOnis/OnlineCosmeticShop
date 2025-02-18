@@ -11,7 +11,7 @@
     padding: 0 1rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
+    gap: 1rem;
   }
   
   .footer-logo {
@@ -60,12 +60,12 @@
     color: var(--accent-color);
   }
   
-  .subscribe-form {
+  .footer-subscribe-form {
     display: flex;
     gap: 0.5rem;
   }
   
-  .subscribe-input {
+  .footer-subscribe-input {
     flex: 1;
     padding: 0.7rem;
     border: none;
@@ -73,7 +73,7 @@
     font-size: 0.9rem;
   }
   
-  .subscribe-btn {
+  .footer-subscribe-btn {
     background: var(--accent-color);
     color: white;
     border: none;
@@ -83,7 +83,7 @@
     transition: opacity 0.3s ease;
   }
   
-  .subscribe-btn:hover {
+  .footer-subscribe-btn:hover {
     opacity: 0.9;
   }
   

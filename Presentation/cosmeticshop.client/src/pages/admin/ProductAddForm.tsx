@@ -77,7 +77,7 @@ const ProductAddForm: React.FC = () => {
   // };
 
   const handleBackToCatalog = () => {
-    navigate('/product-admin-table');
+    navigate('/admin/products');
   }
 
   return (
@@ -86,7 +86,7 @@ const ProductAddForm: React.FC = () => {
       {errorMessage && <div className="message error">{errorMessage}</div>}
       {successMessage && <div className="message success">{successMessage}</div>}
       {categories && categories.length > 0 && (
-        <form onSubmit={handleSubmit}>
+        <form className='product-add-form' onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Категория:</label>
             <select

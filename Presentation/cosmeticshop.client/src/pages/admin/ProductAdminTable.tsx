@@ -4,6 +4,7 @@ import { AdminService } from '../../apiClient/http-services/admin.service';
 import { ProductResponseDto } from '../../apiClient/models';
 import { useNavigate } from 'react-router-dom';
 import "../../styles/admin/ProductAdminTable.css"
+import "../../styles/admin/admin-global.css"
 
 const productsService = new ProductsService('/api');
 const adminService = new AdminService('/api');
@@ -76,9 +77,8 @@ const ProductAdminTable: React.FC = () => {
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    // Проверяем, хочет ли пользователь удалить товар
     if (!confirm('Вы уверены, что хотите удалить этот товар?')) {
-      return; // Если пользователь отменил, выходим из функции
+      return;
     }
 
     try {
@@ -88,6 +88,8 @@ const ProductAdminTable: React.FC = () => {
       setTimeout(() => setSuccessMessage(null), 2000);
     } catch (error) {
       console.error('Ошибка при удалении товара:', error);
+      setErrorMessage('Не удалось удалить товар!');
+      setTimeout(() => setSuccessMessage(null), 2000);
     }
   };
 
@@ -100,16 +102,16 @@ const ProductAdminTable: React.FC = () => {
         </button>        
       </div>
 
-      <div className="filters-container">
+      <div className="admin-filters-container">
         <input
           type="text"
           placeholder="Поиск товаров..."
-          className="search-input"
+          className="admin-search-input"
           value={filterDto.filter}
           onChange={handleFilterChange}
         />
         <select
-          className="filter-select"
+          className="admin-filter-select"
           value={filterDto.sortField}
           onChange={handleSortFieldChange}
         >
@@ -120,7 +122,7 @@ const ProductAdminTable: React.FC = () => {
           <option value="DateAdded">Дате добавления</option>
         </select>
         <select
-          className="filter-select"
+          className="admin-filter-select"
           value={filterDto.sortOrder ? "asc" : "desc"}
           onChange={handleSortOrderChange}
         >
@@ -128,7 +130,7 @@ const ProductAdminTable: React.FC = () => {
           <option value="desc">По убыванию</option>
         </select>
         <select
-          className="filter-select"
+          className="admin-filter-select"
           value={filterDto.pageSize}
           onChange={handlePageSizeChange}
         >

@@ -29,7 +29,7 @@ interface ProductCardProps {
       <div className="product-card">
         <div className="product-image-wrapper" onClick={handleNavigateToProductDetails}>
           <img 
-            src={product.imageUrl} 
+            src={product.imageUrl ? product.imageUrl : '/images/фото пока нет.jpg'} 
             alt={product.name} 
             className="product-image"
           />

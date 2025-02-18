@@ -4,6 +4,10 @@ import { OrderService } from '../apiClient/http-services/order.service';
 import { OrderResponseDto, ReviewCreateRequestDto} from '../apiClient/models';
 import '../styles/OrderDetails.css';
 import { ReviewsService } from '../apiClient/http-services/reviews.service';
+import { orderPaymentMethodMap, 
+         orderPaymentStatusMap, 
+         orderShippingMethodMap, 
+         orderStatusMap } from '../apiClient/models/map/modelMaps';
 
 const OrderDetails: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -51,34 +55,6 @@ const OrderDetails: React.FC = () => {
   if (!order) {
     return <div>Заказ не найден</div>;
   }
-
-  const orderStatusMap: { [key: number]: string } = {
-    0: 'В ожидании',
-    1: 'В обработке',
-    2: 'Отправлен',
-    3: 'Доставлен',
-    4: 'Отменен',
-    5: 'Возвращен'
-  };
-
-  const orderPaymentMethodMap: {[key: number]: string } = {
-    0: 'Картой онлайн',
-    1: 'Наличными при получении'
-  };
-
-  const orderPaymentStatusMap: { [key: number]: string } = {
-    0: 'Не оплачен',
-    1: 'Оплачен',
-    2: 'Оплата не прошла',
-    3: 'Возврат оплаты',
-    4: 'Отменен'
-  };
-
-  const orderShippingMethodMap: {[key: number] : string} = {
-    0: 'Почта',
-    1: 'Курьер',
-    2: 'Самовывоз',
-  };
 
   const validateForm = () => {
     if (reviewText.trim().length === 0) {

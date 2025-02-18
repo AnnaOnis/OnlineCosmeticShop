@@ -134,7 +134,16 @@ namespace CosmeticShop.WebAPI.Controllers
                                                                filterDto.SortOrder ? "asc" : "desc",
                                                                filterDto.PageNumber,
                                                                filterDto.PageSize);
+
             var responseDtos = _mapper.Map<OrderResponseDto[]>(orders);
+
+            foreach (var order in responseDtos)
+            {
+                var payment = await _paymentService.GetPaymentByOrderId(order.Id, cancellationToken);
+                order.OrderPaymentStatus = payment.Status;
+            }
+
+            
             var response = new PagedResponse<OrderResponseDto> { Items = responseDtos, TotalItems = totalOrders };
 
             return Ok(response);
@@ -151,7 +160,8 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpPut("payment/status")]
         public async Task<IActionResult> UpdutePaymentSattus([FromBody] PaymentUpdateStatusRequestDto requestDto, CancellationToken cancellationToken)
         {
-            await _paymentService.UpdatePaymentStatusAsync(requestDto.Id, requestDto.NewStatus, cancellationToken);
+            var payment = await _paymentService.GetPaymentByOrderId(requestDto.OrderId, cancellationToken);
+            await _paymentService.UpdatePaymentStatusAsync(payment.Id, requestDto.NewPaymentStatus, cancellationToken);
             return NoContent();
         }
 

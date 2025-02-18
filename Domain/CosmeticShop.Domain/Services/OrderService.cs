@@ -154,8 +154,11 @@ namespace CosmeticShop.Domain.Services
                     "TotalQuantity" => sortOrder == "asc" 
                         ? q => q.OrderBy(o => o.TotalQuantity) 
                         : q => q.OrderByDescending(o => o.TotalQuantity),
-                    _ => sortOrder == "asc" 
-                        ? q => q.OrderBy(o => o.OrderDate) 
+                    "Status" => sortOrder == "asc"
+                        ? q => q.OrderBy(o => o.Status)
+                        : q => q.OrderByDescending(o => o.Status),
+                    _ => sortOrder == "asc"
+                        ? q => q.OrderBy(o => o.OrderDate)
                         : q => q.OrderByDescending(o => o.OrderDate),
                 };
             }

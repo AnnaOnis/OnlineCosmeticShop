@@ -35,15 +35,15 @@ const Footer = () => {
         </div>
 
         {/* Подписка */}
-        <div className="footer-section">
+        <div className="footer-subscribe-section">
           <h3 className="footer-title">Подписка</h3>
-          <form className="subscribe-form">
+          <form className="footer-subscribe-form">
             <input 
               type="email" 
               placeholder="Ваш email" 
-              className="subscribe-input"
+              className="footer-subscribe-input"
             />
-            <button type="submit" className="subscribe-btn">
+            <button type="submit" className="footer-subscribe-btn">
               Подписаться
             </button>
           </form>

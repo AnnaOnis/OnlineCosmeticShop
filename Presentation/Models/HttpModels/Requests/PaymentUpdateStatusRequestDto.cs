@@ -10,8 +10,8 @@ namespace HttpModels.Requests
 {
     public class PaymentUpdateStatusRequestDto
     {
-        public Guid Id { get; set; }
+        public Guid OrderId { get; set; }
         [Required]
-        public PaymentStatus NewStatus { get; set; }
+        public PaymentStatus NewPaymentStatus { get; set; }
     }
 }

@@ -1,5 +1,11 @@
 import HttpClient from '../httpClient';
-import { ProductRequestDto, ProductResponseDto } from '../models';
+import { FilterDto, 
+         OrderResponseDto, 
+         OrderUpdateRequestDto,
+         PagedResponse, 
+         ProductRequestDto, 
+         ProductResponseDto } from '../models';
+import { PaymentUpdateStatusRequestDto } from '../models/payment-update-status-request-dto';
 import { StatisticResponse } from '../models/statistic-response';
 
 export class AdminService{
@@ -22,6 +28,35 @@ export class AdminService{
     public async deleteProduct(id: string, cancellationToken: AbortSignal): Promise<void> {
       await this.httpClient.delete(`/admin/product/${id}`, { signal: cancellationToken });
     }
+
+    //  --  Работа с заказами и платежами  -- 
+     // Получение всех заказов с фильтрацией, сортировкой и пагинацией
+    public async getAllOrdersAsync(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<PagedResponse<OrderResponseDto>> {
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(filterDto)) {
+        if (value !== undefined && value !== null) {
+          params.append(key, String(value));
+        }
+      }
+      const response = await this.httpClient.get<PagedResponse<OrderResponseDto>>('/admin/orders', { params, signal: cancellationToken });
+      return response;
+    }
+    
+    // Обновление статуса заказа
+    public async updateOrderStatusAsync(body: OrderUpdateRequestDto, cancellationToken: AbortSignal): Promise<void> {
+      await this.httpClient.put(`/admin/order/status`, body, { signal: cancellationToken });
+    }
+
+    // Удаление заказа
+    public async deleteOrderAsync(orderId: string, cancellationToken: AbortSignal): Promise<void> {
+      await this.httpClient.delete(`/admin/order/${orderId}`, { signal: cancellationToken });
+    }
+
+    //Обновление статуса платежа по заказу
+    public async updatePaymentStatusByOrder(body: PaymentUpdateStatusRequestDto, cancellationToken: AbortSignal): Promise<void>{
+      await this.httpClient.put(`/admin/payment/status`, body, { signal: cancellationToken });
+    }
+
 
     //  --  Статистика  --
     public async getStatistic(cancellationToken: AbortSignal): Promise<StatisticResponse> {

@@ -82,7 +82,7 @@ const ProductDetails: React.FC = () => {
       <div className="product-main">
         <div className="product-gallery">
           <img 
-            src={product.imageUrl} 
+            src={product.imageUrl ? product.imageUrl : '/images/фото пока нет.jpg'} 
             alt={product.name} 
             className="main-image"
           />

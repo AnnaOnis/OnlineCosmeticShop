@@ -91,10 +91,10 @@ const AdminProfile: React.FC = () => {
         </div>
       )}
       <div className="admin-links">
-        <Link to="/product-admin-table" className="btn btn-outline">Управление товарами</Link>
-        <Link to="/order-admin-table" className="btn btn-outline">Управление заказами</Link>
-        <Link to="/review-admin-table" className="btn btn-outline">Управление отзывами</Link>
-        <Link to="/user-admin-table" className="btn btn-outline">Управление пользователями</Link>
+        <Link to="/admin/products" className="btn btn-outline">Управление товарами</Link>
+        <Link to="/admin/orders" className="btn btn-outline">Управление заказами</Link>
+        <Link to="/admin/reviews" className="btn btn-outline">Управление отзывами</Link>
+        <Link to="/admin/users" className="btn btn-outline">Управление пользователями</Link>
       </div>
       <h2 className="admin-subtitle">Статистика и аналитика</h2>
       <div className="admin-statistics">

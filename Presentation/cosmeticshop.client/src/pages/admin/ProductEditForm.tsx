@@ -91,7 +91,7 @@ const ProductEditForm: React.FC = () => {
     };
 
   const handleBackToCatalog = () => {
-    navigate('/product-admin-table');
+    navigate('/admin/products');
   }
 
   return (
@@ -100,7 +100,7 @@ const ProductEditForm: React.FC = () => {
       {errorMessage && <div className="message error">{errorMessage}</div>}
       {successMessage && <div className="message success">{successMessage}</div>}
       {product && (
-        <form onSubmit={handleSubmit}>
+        <form className="product-edit-form" onSubmit={handleSubmit}>
             <div className="form-group">
                 <label>Категория:</label>
                 {categories && categories.length > 0 && ( // Проверяем, что категории загружены

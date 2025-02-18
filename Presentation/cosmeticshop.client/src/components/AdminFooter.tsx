@@ -18,15 +18,15 @@ const AdminFooter = () => {
 
         <div className="footer-section">
           <ul className="footer-links">
-            <li><Link to="/product-admin-table" className="nav-link">Товары</Link></li>
-            <li><Link to="/order-admin-table" className="nav-link">Заказы</Link></li>         
+            <li><Link to="/admin/products" className="nav-link">Товары</Link></li>
+            <li><Link to="/admin/orders" className="nav-link">Заказы</Link></li>         
           </ul>
         </div>
 
         <div className="footer-section">
           <ul className="footer-links">
-            <li><Link to="/review-admin-table" className="nav-link">Отзывы</Link></li>
-            <li><Link to="/user-admin-table" className="nav-link">Пользователи</Link></li>
+            <li><Link to="/admin/reviews" className="nav-link">Отзывы</Link></li>
+            <li><Link to="/admin/users" className="nav-link">Пользователи</Link></li>
           </ul>
         </div>
 

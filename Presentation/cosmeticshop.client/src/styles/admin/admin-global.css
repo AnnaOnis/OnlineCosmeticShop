@@ -1,0 +1,132 @@
+.admin-filters-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .admin-search-input {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  .admin-filter-select {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .admin-table-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(58, 46, 40, 0.1);
+  }
+  
+  .admin-table th {
+    background: var(--primary-bg);
+    color: var(--dark-text);
+    font-weight: 600;
+  }
+  
+  .admin-table tr:hover {
+    background: rgba(232, 215, 198, 0.1);
+  }
+
+  .admin-order-status, .admin-payment-status {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 500;
+    height: 50%;
+  }
+
+  /* Цвета статусов */
+  .admin-order-status[class*="0"],
+  .admin-payment-status[class*="3"] { /* В ожидании */
+    background: #fff3e0;
+    color: #ef6c00;
+  }
+
+  .admin-order-status[class*="1"] { /* В обработке */
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .admin-order-status[class*="2"] { /* Отправлен */
+    background: #f3e5f5;
+    color: #9c27b0;
+  }
+
+  .admin-order-status[class*="3"],
+  .admin-payment-status[class*="1"] { /* Доставлен */
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .admin-order-status[class*="4"],
+  .admin-payment-status[class*="0"],
+  .admin-payment-status[class*="2"],
+  .admin-payment-status[class*="4"] { /* Отменен */
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+  
+  .page-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .page-btn:hover {
+    background: var(--accent-color);
+    color: white;
+  }
+  
+  .page-btn.active {
+    background: var(--accent-color);
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .admin-table {
+      display: block;
+      overflow-x: auto;
+    }
+    
+    .admin-title {
+      font-size: 1.5rem;
+    }
+  }
+  

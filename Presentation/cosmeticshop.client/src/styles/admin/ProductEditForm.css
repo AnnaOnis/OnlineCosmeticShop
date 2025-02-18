@@ -11,7 +11,7 @@
     margin-bottom: 1.5rem;
   }
   
-  form {
+  .product-edit-form, .product-add-form {
     background: white;
     padding: 2rem;
     border-radius: 8px;

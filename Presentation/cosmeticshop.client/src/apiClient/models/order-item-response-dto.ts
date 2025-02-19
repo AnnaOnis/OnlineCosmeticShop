@@ -43,8 +43,8 @@ export interface OrderItemResponseDto {
     quantity: number;
 
     /**
-     * @type {ReviewResponseDto}
+     * @type {Array<ReviewResponseDto>}
      * @memberof OrderItemResponseDto
      */
-    review: ReviewResponseDto;
+    reviews: Array<ReviewResponseDto>;
 }

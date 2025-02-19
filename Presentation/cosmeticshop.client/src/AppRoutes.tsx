@@ -22,6 +22,7 @@ import ProductAdminTable from './pages/admin/ProductAdminTable';
 import ProductEditForm from './pages/admin/ProductEditForm';
 import ProductAddForm from './pages/admin/ProductAddForm';
 import OrderAdminTable from './pages/admin/OrderAdminTable';
+import ReviewAdminTable from './pages/admin/ReviewAdminTable';
 
 // const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 //   const { isAuthenticated, role } = useAuth();
@@ -74,6 +75,7 @@ function AppRoutes() {
                 <Route path="/admin/product-edit/:productId" element={<ProductEditForm />} />
                 <Route path="/admin/product-add" element={<ProductAddForm />} />
                 <Route path="/admin/orders" element={<OrderAdminTable />} />
+                <Route path="/admin/reviews" element={<ReviewAdminTable />} />
               </>
             )}
           </Routes>

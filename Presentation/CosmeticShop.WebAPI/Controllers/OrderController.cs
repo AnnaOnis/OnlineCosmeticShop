@@ -54,11 +54,8 @@ namespace CosmeticShop.WebAPI.Controllers
             var reviews = await _reviewService.GetReviewsByCustomerIdAsync(order.CustomerId, cancellationToken);
             foreach (var item in responseDto.OrderItems)
             {
-                var review = reviews.FirstOrDefault(r => r.ProductId == item.ProductId);
-                if (review != null)
-                {
-                    item.Review = _mapper.Map<ReviewResponseDto>(review);
-                }
+                var itemReviews = reviews.Where(r => r.ProductId == item.ProductId);
+                item.Reviews = _mapper.Map<ReviewResponseDto[]>(itemReviews);
             }
 
             return Ok(responseDto);

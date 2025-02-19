@@ -4,7 +4,8 @@ import { FilterDto,
          OrderUpdateRequestDto,
          PagedResponse, 
          ProductRequestDto, 
-         ProductResponseDto } from '../models';
+         ProductResponseDto, 
+         ReviewResponseDto} from '../models';
 import { PaymentUpdateStatusRequestDto } from '../models/payment-update-status-request-dto';
 import { StatisticResponse } from '../models/statistic-response';
 
@@ -14,6 +15,8 @@ export class AdminService{
     constructor(basePath: string) {
       this.httpClient = new HttpClient(basePath);
     }
+
+
     //  --  Работа с товарами  --
       // Создание нового продукта
     public async createProduct(productRequestDto: ProductRequestDto, cancellationToken: AbortSignal): Promise<ProductResponseDto> {
@@ -28,6 +31,8 @@ export class AdminService{
     public async deleteProduct(id: string, cancellationToken: AbortSignal): Promise<void> {
       await this.httpClient.delete(`/admin/product/${id}`, { signal: cancellationToken });
     }
+
+
 
     //  --  Работа с заказами и платежами  -- 
      // Получение всех заказов с фильтрацией, сортировкой и пагинацией
@@ -55,6 +60,24 @@ export class AdminService{
     //Обновление статуса платежа по заказу
     public async updatePaymentStatusByOrder(body: PaymentUpdateStatusRequestDto, cancellationToken: AbortSignal): Promise<void>{
       await this.httpClient.put(`/admin/payment/status`, body, { signal: cancellationToken });
+    }
+
+
+    //Работа с отзывами
+    // Получение всех неподтвержденных отзывов
+    public async getAllNotApprovedReviews(cancellationToken: AbortSignal): Promise<ReviewResponseDto[]> {
+      return this.httpClient.get<ReviewResponseDto[]>('/admin/reviews', { signal: cancellationToken });
+    }
+
+    
+    // Удаление отзыва
+    public async deleteReview(id: string, cancellationToken: AbortSignal): Promise<void> {
+      return this.httpClient.delete(`/admin/review/${id}`, { signal: cancellationToken });
+    }
+
+    // Подтверждение отзыва
+    public async approveReview(id: string, cancellationToken: AbortSignal): Promise<void> {
+      return this.httpClient.put(`/admin/review/${id}/approve`, null, { signal: cancellationToken });
     }
 
 

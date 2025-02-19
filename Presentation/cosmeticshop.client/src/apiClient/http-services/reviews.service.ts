@@ -8,11 +8,6 @@ export class ReviewsService {
     this.httpClient = new HttpClient(basePath);
   }
 
-  // Получение всех неподтвержденных отзывов
-  public async getAllNotApprovedReviews(cancellationToken: AbortSignal): Promise<ReviewResponseDto[]> {
-    return this.httpClient.get<ReviewResponseDto[]>('/reviews', { signal: cancellationToken });
-  }
-
   // Получение подтвержденных отзывов по продукту
   public async getApprovedReviewsByProduct(productId: string, cancellationToken: AbortSignal): Promise<ReviewResponseDto[]> {
     return this.httpClient.get<ReviewResponseDto[]>(`/reviews/approved/${productId}`, { signal: cancellationToken });
@@ -26,15 +21,5 @@ export class ReviewsService {
   // Создание отзыва
   public async createReview(reviewRequestDto: ReviewCreateRequestDto, cancellationToken: AbortSignal): Promise<ReviewResponseDto> {
     return this.httpClient.post<ReviewResponseDto>('/reviews', reviewRequestDto, { signal: cancellationToken });
-  }
-
-  // Удаление отзыва
-  public async deleteReview(id: string, cancellationToken: AbortSignal): Promise<void> {
-    return this.httpClient.delete(`/reviews/${id}`, { signal: cancellationToken });
-  }
-
-  // Подтверждение отзыва
-  public async approveReview(id: string, cancellationToken: AbortSignal): Promise<void> {
-    return this.httpClient.put(`/reviews/${id}/approve`, null, { signal: cancellationToken });
   }
 }

@@ -170,5 +170,14 @@
     .order-details-form-actions {
       flex-direction: column;
     }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(58, 46, 40, 0.05);
+    }
     
   }

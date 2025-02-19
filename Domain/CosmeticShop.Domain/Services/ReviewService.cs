@@ -139,6 +139,7 @@ namespace CosmeticShop.Domain.Services
             // Одобряем отзыв
             review.IsApproved = true;
             await _unitOfWork.ReviewRepository.Update(review, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             // Обновляем рейтинг товара
             var product = await _unitOfWork.ProductRepository.GetById(review.ProductId, cancellationToken);
@@ -151,7 +152,7 @@ namespace CosmeticShop.Domain.Services
             var approvedReviews = await _unitOfWork.ReviewRepository.GetApprovedReviewsByProductId(review.ProductId, cancellationToken);
 
             // Рассчитываем средний рейтинг
-            product.Rating = approvedReviews.Average(r => r.Rating);
+            product.Rating = Math.Round(approvedReviews.Average(r => r.Rating), 1);
 
             // Обновляем информацию о товаре
             await _unitOfWork.ProductRepository.Update(product, cancellationToken);

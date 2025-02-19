@@ -19,6 +19,7 @@ const OrderDetails: React.FC = () => {
   const [rating, setRating] = useState(5);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [expandedReviews, setExpandedReviews] = useState<{ [key: string]: boolean }>({});
   const reviewService = new ReviewsService('/api');
 
   const orderService = new OrderService('/api');
@@ -114,6 +115,13 @@ const OrderDetails: React.FC = () => {
     }
   };
 
+  const toggleReviews = (productId: string) => {
+    setExpandedReviews((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
+
 
   return (
     <div className="order-details-container">
@@ -170,9 +178,8 @@ const OrderDetails: React.FC = () => {
 
             {errorMessage && <div className="message error">{errorMessage}</div>}
             {successMessage && <div className="message success">{successMessage}</div>}
-            
-            {!item.review ? (
-                <div className="order-details-review-section">
+
+            <div className="order-details-review-section">
                     {showReviewForm === item.productId ? (
                     <div className="order-details-review-form">
                         <div className="order-details-rating-stars">
@@ -207,26 +214,42 @@ const OrderDetails: React.FC = () => {
                             Отмена
                         </button>
                         </div>
+                        <br/>
                     </div>
                     ) : (
-                    <button 
-                        className="btn btn-outline"
-                        onClick={() => setShowReviewForm(item.productId)}
-                    >
-                        Оставить отзыв
-                    </button>
+                      <>                     
+                        <div>
+                          <button 
+                              className="btn btn-outline"
+                              onClick={() => setShowReviewForm(item.productId)}>                   
+                              Добавить отзыв
+                          </button>                       
+                        </div><br/>                     
+                      </>
                     )}
-                </div>
-            ) :(
-                <div className="order-details-review-section">
-                <div className="order-details-review-text">
-                  <strong>Ваш отзыв:</strong>
-                  <p>{item.review.reviewText}</p>
-                  <p>Оценка: {item.review.rating} <span className="order-details-star active">★</span></p>
-                  <p>Статус: {item.review.isApproved ? 'одобрен' : 'на модерации'}</p>
-                </div>
               </div>
-                )}
+              {item.reviews.length > 0 && (
+                <div className="order-details-review-section">
+                  <div className='review-header'
+                    onClick={() => toggleReviews(item.productId)}>
+                    <h3>Ваши отзывы</h3>
+                    <i className={`fas fa-${expandedReviews[item.productId] ? 'angle-up' : 'angle-down'}`}></i>
+                  </div>
+                  {expandedReviews[item.productId] && (
+                    <div className="order-details-review-text">
+                      {item.reviews.map((r) => (
+                        <>
+                          <hr/><br/>
+                          <p>{new Date(r.reviewDate).toLocaleDateString('ru-RU')}</p><br/>
+                          <p>{r.reviewText}</p>
+                          <p>Оценка: {r.rating} <span className="order-details-star active">★</span></p>
+                          <p>Статус: {r.isApproved ? 'одобрен' : 'на модерации'}</p>  
+                        </>
+                      ))}
+                    </div> 
+                  )}
+                </div>
+              )}           
           </div>
         ))}
       </div>

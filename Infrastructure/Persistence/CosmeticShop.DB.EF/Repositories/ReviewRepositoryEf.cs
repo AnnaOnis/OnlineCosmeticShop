@@ -20,6 +20,7 @@ namespace CosmeticShop.DB.EF.Repositories
         public async Task<IReadOnlyList<Review>> GetAllNotApprovedReviews(CancellationToken cancellationToken)
         {
             return await Entities
+                .Include(e => e.Product)
                 .Include(e => e.Customer)
                 .Where(e => e.IsApproved == false)
                 .OrderBy(e => e.ReviewDate)
@@ -39,7 +40,7 @@ namespace CosmeticShop.DB.EF.Repositories
         {
             return await Entities
                 .Where(e => e.ProductId == productId)
-                .OrderByDescending(e => e.ReviewDate)
+                .OrderBy(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);
         }
 
@@ -47,6 +48,7 @@ namespace CosmeticShop.DB.EF.Repositories
         {
             return await Entities
                 .Where(r => r.CustomerId == customerId)
+                .OrderByDescending(e => e.ReviewDate)
                 .ToListAsync(cancellationToken);
         }
 

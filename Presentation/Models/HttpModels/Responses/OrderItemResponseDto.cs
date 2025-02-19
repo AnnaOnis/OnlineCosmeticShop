@@ -29,6 +29,6 @@ namespace HttpModels.Responses
         [Required]
         public string ProductImageUrl { get; set; } = string.Empty;
 
-        public ReviewResponseDto Review { get; set; } 
+        public IEnumerable<ReviewResponseDto> Reviews { get; set; }
     }
 }

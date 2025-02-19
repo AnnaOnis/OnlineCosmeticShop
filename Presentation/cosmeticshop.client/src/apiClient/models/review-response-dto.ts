@@ -24,37 +24,43 @@ export interface ReviewResponseDto {
      * @type {string}
      * @memberof ReviewResponseDto
      */
-    id?: string;
+    id: string;
 
     /**
      * @type {string}
      * @memberof ReviewResponseDto
      */
-    productId?: string;
+    productId: string;
 
     /**
      * @type {string}
      * @memberof ReviewResponseDto
      */
-    customerId?: string;
+    productName: string;
+
+    /**
+     * @type {string}
+     * @memberof ReviewResponseDto
+     */
+    customerId: string;
 
         /**
      * @type {string}
      * @memberof ReviewResponseDto
      */
-    customerName?: string;
+    customerName: string;
 
     /**
      * @type {string}
      * @memberof ReviewResponseDto
      */
-    reviewText?: string | null;
+    reviewText: string | null;
 
     /**
      * @type {number}
      * @memberof ReviewResponseDto
      */
-    rating?: number;
+    rating: number;
 
     /**
      * @type {Date}
@@ -66,5 +72,5 @@ export interface ReviewResponseDto {
      * @type {boolean}
      * @memberof ReviewResponseDto
      */
-    isApproved?: boolean;
+    isApproved: boolean;
 }

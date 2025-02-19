@@ -140,7 +140,7 @@ const OrderAdminTable: React.FC = () => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Клиент</th>
+            <th>Дата</th>
             <th>Сумма заказа</th>
             <th>Количество товаров</th>
             <th>Статус</th>
@@ -153,7 +153,7 @@ const OrderAdminTable: React.FC = () => {
           {orders.length > 0 ? orders.map(order => (
             <tr key={order.id}>
               <td>{order.id}</td>
-              <td></td>
+              <td>{new Date(order.orderDate).toLocaleDateString("ru-Ru")}</td>
               <td>{order.totalAmount !== undefined ? order.totalAmount.toLocaleString() : 'Нет данных'} ₽</td>
               <td>{order.totalQuantity !== undefined ? order.totalQuantity : 'Нет данных'}</td>
               <td className={`admin-order-status ${order.status !== undefined ? order.status : ''}`}>

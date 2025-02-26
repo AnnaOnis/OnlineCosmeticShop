@@ -89,7 +89,7 @@ const ProductAdminTable: React.FC = () => {
     } catch (error) {
       console.error('Ошибка при удалении товара:', error);
       setErrorMessage('Не удалось удалить товар!');
-      setTimeout(() => setSuccessMessage(null), 2000);
+      setTimeout(() => setErrorMessage(null), 2000);
     }
   };
 
@@ -183,15 +183,6 @@ const ProductAdminTable: React.FC = () => {
           </button>
         ))}
       </div>
-      {/* <div className="pagination">
-        <ul>
-          {Array.from({ length: totalPages }, (_, index) => (
-            <li key={index} onClick={() => handlePageChange(index + 1)}>
-              {index + 1}
-            </li>
-          ))}
-        </ul>
-      </div> */}
     </div>
   );
 };

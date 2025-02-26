@@ -1,0 +1,50 @@
+.users-list-container, .customers-list-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .add-button{
+    margin-bottom: 2rem;
+  }
+  
+  .user-info, .customer-info {
+    margin-bottom: 2rem;
+  }
+  
+  .user-field, .customer-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .user-field label, .customer-field label {
+    width: 200px;
+    font-weight: bold;
+  }
+
+  .user-details-container, .customer-details-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .customer-details-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .admin-role-select{
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+  }
+
+  .admin-form-button-secton{
+    display: flex;
+    justify-content: space-between;
+  }

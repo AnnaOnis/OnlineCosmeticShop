@@ -32,7 +32,7 @@ const AdminFooter = () => {
 
       <div className="footer-section">
           <ul className="footer-links">
-            <li><Link to="/admin/profile" className="nav-link">Профиль администратора</Link></li>
+            <li><Link to="/admin/profile" className="nav-link">Профиль</Link></li>
           </ul>
         </div>
       </div>

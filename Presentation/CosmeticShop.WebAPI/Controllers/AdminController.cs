@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using CosmeticShop.Domain.Entities;
 using CosmeticShop.Domain.Services;
 using CosmeticShop.WebAPI.Filters;
@@ -266,6 +267,12 @@ namespace CosmeticShop.WebAPI.Controllers
         [HttpPost("add_user")]
         public async Task<IActionResult> AddNewUser([FromBody] UserAddRequestDto userRequestDto, CancellationToken cancellationToken)
         {
+            _logger.LogInformation(userRequestDto.Email + "\n" 
+                                 + userRequestDto.Password + "\n"
+                                 + userRequestDto.FirstName + "\n"
+                                 + userRequestDto.LastName + "\n"
+                                 + userRequestDto.Role);
+
             await _userService.AddUser(userRequestDto.Email,
                                        userRequestDto.Password,
                                        userRequestDto.FirstName,
@@ -274,6 +281,21 @@ namespace CosmeticShop.WebAPI.Controllers
                                        cancellationToken);
 
             return NoContent();
+        }
+
+        [HttpPost("update_user/{id}")]
+        public async Task<ActionResult<UserResponseDto>> UpdateUserProfile([FromRoute] Guid id, [FromBody] AdminUserUpdateRequestDto userRequestDto, CancellationToken cancellationToken)
+        {
+            var updatedUser = await _userService.UpdateUserForAdmin(id,
+                                                            userRequestDto.NewPassword,
+                                                            userRequestDto.Email,
+                                                            userRequestDto.FirstName,
+                                                            userRequestDto.LastName,
+                                                            userRequestDto.UserRole,
+                                                            cancellationToken);
+
+            var responseDto = _mapper.Map<UserResponseDto>(updatedUser);
+            return Ok(responseDto);
         }
 
         // Статистика

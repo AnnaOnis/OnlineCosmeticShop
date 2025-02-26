@@ -25,3 +25,9 @@ export const orderStatusMap: { [key: number]: string } = {
     1: 'Курьер',
     2: 'Самовывоз',
   };
+
+  export const userRoleMap: {[key: number] : string} = {
+    0: 'Администратор',
+    1: 'Менеджер',
+    2: 'Модератор',
+  };

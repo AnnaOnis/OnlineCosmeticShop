@@ -93,6 +93,35 @@
     color: #c62828;
   }
 
+  .product-edit-form, 
+  .product-add-form,
+  .user-add-form,
+  .update-user-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
+  
+  .admin-form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .admin-form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--dark-text);
+  }
+  
+  .admin-form-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
   .pagination {
     display: flex;
     justify-content: center;

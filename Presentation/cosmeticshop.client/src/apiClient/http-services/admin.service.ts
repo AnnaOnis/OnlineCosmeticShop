@@ -5,7 +5,10 @@ import { FilterDto,
          PagedResponse, 
          ProductRequestDto, 
          ProductResponseDto, 
-         ReviewResponseDto} from '../models';
+         ReviewResponseDto,
+         UserAddRequestDto,
+         UserResponseDto} from '../models';
+import { AdminUserUpdateRequestDto } from '../models/admin-user-update-request-dto';
 import { PaymentUpdateStatusRequestDto } from '../models/payment-update-status-request-dto';
 import { StatisticResponse } from '../models/statistic-response';
 
@@ -78,6 +81,43 @@ export class AdminService{
     // Подтверждение отзыва
     public async approveReview(id: string, cancellationToken: AbortSignal): Promise<void> {
       return this.httpClient.put(`/admin/review/${id}/approve`, null, { signal: cancellationToken });
+    }
+
+
+    //Работа с пользователями
+
+    // Получение всех пользователей с фильтрацией, сортировкой и пагинацией
+    public async getAllUsers(filterDto: FilterDto, cancellationToken: AbortSignal): Promise<PagedResponse<UserResponseDto>> {
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(filterDto)) {
+        if (value !== undefined && value !== null) {
+          params.append(key, String(value));
+        }
+      }
+      const response = await this.httpClient.get<PagedResponse<UserResponseDto>>('/admin/users', { params, signal: cancellationToken });
+      return response;
+    }
+
+    // Получение пользователя по ID
+    public async getUserById(id: string, cancellationToken: AbortSignal): Promise<UserResponseDto> {
+      const response = await this.httpClient.get<UserResponseDto>(`/admin/user/${id}`, { signal: cancellationToken });
+      return response;
+    }
+
+    // Удаление пользователя по ID
+    public async deleteUser(id: string, cancellationToken: AbortSignal): Promise<void> {
+      await this.httpClient.delete(`/admin/user/${id}`, { signal: cancellationToken });
+    }
+
+    // Добавление нового пользователя
+    public async addUser(body: UserAddRequestDto, cancellationToken: AbortSignal): Promise<void> {
+      await this.httpClient.post('/admin/add_user', body, { signal: cancellationToken });
+    }
+
+    //Обновление пользователя
+    public async updateUser(id: string, body: AdminUserUpdateRequestDto, cancellationToken: AbortSignal): Promise<UserResponseDto> {
+      const response = await this.httpClient.post<UserResponseDto>(`/admin/update_user/${id}`, body, { signal: cancellationToken });
+      return response;
     }
 
 

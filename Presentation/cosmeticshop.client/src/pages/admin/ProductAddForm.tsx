@@ -3,7 +3,7 @@ import { CategoryService } from '../../apiClient/http-services/category.service'
 import { AdminService } from '../../apiClient/http-services/admin.service';
 import { CategoryResponseDto, ProductRequestDto } from '../../apiClient/models';
 import { useNavigate } from 'react-router-dom';
-import "../../styles/admin/ProductEditForm.css"
+import "../../styles/admin/admin-global.css"
 
 const categoryService = new CategoryService('/api');
 const adminService = new AdminService('/api');
@@ -101,49 +101,49 @@ const ProductAddForm: React.FC = () => {
               ))}
             </select>
           </div>
-          <div className="form-group">
+          <div className="admin-form-group">
             <label>Название:</label>
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              className="form-input"
+              className="admin-form-input"
             />
           </div>
-          <div className="form-group">
+          <div className="admin-form-group">
             <label>Описание:</label>
             <input
               type="text"
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="form-input"
+              className="admin-form-input"
             />
           </div>
-          <div className="form-group">
+          <div className="admin-form-group">
             <label>Производитель:</label>
             <input
               type="text"
               value={manufacturer}
               onChange={e => setManufacturer(e.target.value)}
-              className="form-input"
+              className="admin-form-input"
             />
           </div>
-          <div className="form-group">
+          <div className="admin-form-group">
             <label>Цена:</label>
             <input
               type="number"
               value={price}
               onChange={e => setPrice(parseFloat(e.target.value))}
-              className="form-input"
+              className="admin-form-input"
             />
           </div>
-          <div className="form-group">
+          <div className="admin-form-group">
             <label>Количество на складе:</label>
             <input
               type="number"
               value={stockQuantity}
               onChange={e => setStockQuantity(parseInt(e.target.value, 10))}
-              className="form-input"
+              className="admin-form-input"
             />
           </div>
           {/* <div className="form-group">

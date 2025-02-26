@@ -146,8 +146,12 @@ const ReviewAdminTable: React.FC = () => {
               <td>{review.rating}</td>
               <td>{review.isApproved ? 'Одобрен' : 'На модерации'}</td>
               <td>
-                <button className="btn btn-outline" onClick={() => handleApproveReview(review.id)}>Одобрить</button>
-                <button className="btn btn-primary" onClick={() => handleDeleteReview(review.id)}>Удалить</button>
+                <button className="btn btn-outline" onClick={() => handleApproveReview(review.id)}>
+                  <i className="fas fa-check"></i>
+                </button>
+                <button className="btn btn-outline" onClick={() => handleDeleteReview(review.id)}>
+                  <i className="fas fa-trash-alt"></i>
+                </button>
               </td>
             </tr>
           )) : <p>Новых отзывов пока еще никто не написал! :))</p>}

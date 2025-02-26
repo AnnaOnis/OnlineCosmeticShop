@@ -195,6 +195,50 @@ namespace CosmeticShop.Domain.Services
             return user;
         }
 
+
+        /// <summary>
+        /// Updates the profile of a user.
+        /// </summary>
+        /// <param name="userId">User's ID</param>
+        /// <param name="newEmail">New email address</param>
+        /// <param name="newFirstName">New first name</param>
+        /// <param name="newLastName">New last name</param>
+        /// <param name="password">New password</param>
+        /// <param name="role">New role</param>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="newEmail"/>, <paramref name="newFirstName"/>, 
+        /// <paramref name="password"/>, <paramref name="newLastName"/> is <c>null</c> or contains only a space.</exception>
+        /// <exception cref="UserNotFoundException">Thrown when user not found.</exception>
+        /// /// <exception cref="ArgumentOutOfRangeException">Thrown when role is not exist in RoleType.</exception>
+        public async Task<User> UpdateUserForAdmin(Guid userId,
+                                     string password,
+                                     string newEmail,
+                                     string newFirstName,
+                                     string newLastName,
+                                     RoleType role,
+                                     CancellationToken cancellationToken)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(newFirstName, nameof(newFirstName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newLastName, nameof(newLastName));
+            ArgumentException.ThrowIfNullOrWhiteSpace(newEmail, nameof(newEmail));
+            ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
+            if(!Enum.IsDefined(typeof(RoleType), role)) throw new ArgumentOutOfRangeException(nameof(role));
+
+            var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+            if (user == null)
+                throw new UserNotFoundException("User not found.");
+
+            user.PasswordHash = _hasher.HashPassword(user, password);
+            user.Email = newEmail;
+            user.FirstName = newFirstName;
+            user.LastName = newLastName;
+            user.Role = role;
+
+            await _unitOfWork.UserRepository.Update(user, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return user;
+        }
+
         /// <summary>
         /// Resets the user's password.
         /// </summary>

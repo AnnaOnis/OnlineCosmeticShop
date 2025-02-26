@@ -19,7 +19,7 @@ const AdminHeader: React.FC = () => {
           <Link to="/admin/orders" className="nav-link">Заказы</Link>
           <Link to="/admin/reviews" className="nav-link">Отзывы</Link>
           <Link to="/admin/users" className="nav-link">Пользователи</Link>
-          <Link to="/admin/profile" className="nav-link">Профиль администратора</Link>
+          <Link to="/admin/profile" className="nav-link">Профиль</Link>
           <Link to="/login" className="nav-link" onClick={logout}>Выйти</Link>
         </div>
       </nav>

@@ -12,48 +12,43 @@
  * Do not edit the class manually.
  */
 
-import { RoleType } from './role-type';
+import { RoleType } from "./role-type";
+
  /**
  * 
  *
  * @export
- * @interface UserResponseDto
+ * @interface AdminUserUpdateRequestDto
  */
-export interface UserResponseDto {
+export interface AdminUserUpdateRequestDto {
 
     /**
      * @type {string}
-     * @memberof UserResponseDto
+     * @memberof AdminUserUpdateRequestDto
      */
-    token?: string | null;
+    newPassword: string;
 
     /**
      * @type {string}
-     * @memberof UserResponseDto
-     */
-    id: string;
-
-    /**
-     * @type {string}
-     * @memberof UserResponseDto
+     * @memberof AdminUserUpdateRequestDto
      */
     firstName: string;
 
     /**
      * @type {string}
-     * @memberof UserResponseDto
+     * @memberof AdminUserUpdateRequestDto
      */
     lastName: string;
 
     /**
      * @type {string}
-     * @memberof UserResponseDto
+     * @memberof AdminUserUpdateRequestDto
      */
     email: string;
 
     /**
      * @type {RoleType}
-     * @memberof UserResponseDto
+     * @memberof AdminUserUpdateRequestDto
      */
-    role: RoleType;
+    userRole: RoleType;
 }

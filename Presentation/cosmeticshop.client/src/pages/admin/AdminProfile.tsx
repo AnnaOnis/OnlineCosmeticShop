@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { UserService } from '../../apiClient/http-services/user.service';
-import { OrderService } from '../../apiClient/http-services/order.service';
-import { ReviewsService } from '../../apiClient/http-services/reviews.service';
 import { AdminService } from '../../apiClient/http-services/admin.service';
 import { UserResponseDto} from '../../apiClient/models';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import "../../styles/admin/AdminProfile.css";
+import "../../styles/admin/admin-global.css";
 
 const userService = new UserService('/api');
 const adminService = new AdminService('/api');
-const orderService = new OrderService('/api');
-const reviewsService = new ReviewsService('/api');
 
 const AdminProfile: React.FC = () => {
   const { isAuthenticated, role} = useAuth();

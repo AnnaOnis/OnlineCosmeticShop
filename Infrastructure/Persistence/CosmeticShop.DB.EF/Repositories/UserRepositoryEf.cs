@@ -17,7 +17,7 @@ namespace CosmeticShop.DB.EF.Repositories
         {
         }
 
-        public Task<User?> FindByEmail(string email, CancellationToken cancellationToken)
+        public Task<User?>  FindByEmail(string email, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(email))
                 throw new ArgumentException($"\"{nameof(email)}\" cannot be empty or contain only a space.", nameof(email));

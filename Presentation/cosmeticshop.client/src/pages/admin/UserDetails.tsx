@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AdminService } from '../../apiClient/http-services/admin.service';
 import { RoleType, UserResponseDto, } from '../../apiClient/models';
 import "../../styles/admin/admin-global.css";
@@ -16,12 +16,20 @@ const UserDetails: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState<boolean>(false); 
   const [updatedUser, setUpdatedUser] = useState<AdminUserUpdateRequestDto | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await adminService.getUserById(id!, new AbortController().signal);
         setUser(response);
+        const newUpdatedUser: AdminUserUpdateRequestDto = {
+          firstName: response.firstName,
+          lastName: response.lastName,
+          email: response.email,
+          userRole: response.role
+        };
+        setUpdatedUser(newUpdatedUser); 
       } catch (error) {
         console.error(error);
         setErrorMessage('Ошибка при загрузке информации о пользователе');
@@ -31,7 +39,7 @@ const UserDetails: React.FC = () => {
     fetchUser();
   }, [id]);
 
-  if (!user) return <div>Загрузка...</div>;
+  if (!user || !updatedUser) return <div>Загрузка...</div>;
 
   const handleDeleteUser = async (userId: string) => {
     if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) {
@@ -41,7 +49,9 @@ const UserDetails: React.FC = () => {
     try {
       await adminService.deleteUser(userId, new AbortController().signal);
       setSuccessMessage('Пользователь успешно удален!');
-      setTimeout(() => setSuccessMessage(null), 2000);      
+      setTimeout(() => setSuccessMessage(null), 2000);
+      setTimeout(() => navigate("/admin/users"), 2500);
+      ;      
     } catch (error) {
       console.error('Ошибка при удалении пользователя:', error);
       setErrorMessage('Ошибка при удалении пользователя! Попробуйте еще раз.');
@@ -58,7 +68,7 @@ const UserDetails: React.FC = () => {
     if (updatedUser) {
       setUpdatedUser({
         ...updatedUser,
-        [name]: name === 'role' ? Number(value) : value
+        [name]: name === 'userRole' ? Number(value) : value
       });
     }
   };
@@ -100,7 +110,7 @@ const UserDetails: React.FC = () => {
             <label>Имя:</label>
             <input name="firstName" 
                    type="text" 
-                   value={user.firstName || ''} 
+                   value={updatedUser.firstName || ''} 
                    onChange={handleChange} 
                    className="admin-form-input"/>
           </div>
@@ -108,7 +118,7 @@ const UserDetails: React.FC = () => {
             <label>Фамилия:</label>
             <input name="lastName" 
                    type="text" 
-                   value={user.lastName || ''} 
+                   value={updatedUser.lastName || ''} 
                    onChange={handleChange} 
                    className="admin-form-input"/>
           </div>
@@ -116,23 +126,15 @@ const UserDetails: React.FC = () => {
             <label>Email:</label>
             <input name="email" 
                    type="text" 
-                   value={user.email || ''} 
-                   onChange={handleChange} 
-                   className="admin-form-input"/>
-          </div>
-          <div className="admin-form-group">
-            <label>Password:</label>
-            <input name="newPassword" 
-                   type="text" 
-                   value={''} 
+                   value={updatedUser.email || ''} 
                    onChange={handleChange} 
                    className="admin-form-input"/>
           </div>
           <div className="admin-form-group">
             <label>Роль:</label>
             <select
-              name="role"
-              value={user.role}
+              name="userRole"
+              value={updatedUser.userRole}
               onChange={handleChange}
               className="admin-role-select"
             >

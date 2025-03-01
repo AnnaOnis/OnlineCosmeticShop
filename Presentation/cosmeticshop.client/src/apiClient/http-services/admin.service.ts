@@ -1,5 +1,5 @@
 import HttpClient from '../httpClient';
-import { FilterDto, 
+import { CustomerResponseDto, FilterDto, 
          OrderResponseDto, 
          OrderUpdateRequestDto,
          PagedResponse, 
@@ -119,6 +119,13 @@ export class AdminService{
       const response = await this.httpClient.post<UserResponseDto>(`/admin/update_user/${id}`, body, { signal: cancellationToken });
       return response;
     }
+
+    //Работа с клиентами магазина
+      // Получение клиента по ID
+  public async getCustomerById(id: string, cancellationToken: AbortSignal): Promise<CustomerResponseDto> {
+    const response = await this.httpClient.get<CustomerResponseDto>(`/admin/customer/${id}`, {signal: cancellationToken,});
+    return response;
+  }
 
 
     //  --  Статистика  --

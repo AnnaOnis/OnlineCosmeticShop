@@ -210,7 +210,6 @@ namespace CosmeticShop.Domain.Services
         /// <exception cref="UserNotFoundException">Thrown when user not found.</exception>
         /// /// <exception cref="ArgumentOutOfRangeException">Thrown when role is not exist in RoleType.</exception>
         public async Task<User> UpdateUserForAdmin(Guid userId,
-                                     string password,
                                      string newEmail,
                                      string newFirstName,
                                      string newLastName,
@@ -220,14 +219,12 @@ namespace CosmeticShop.Domain.Services
             ArgumentException.ThrowIfNullOrWhiteSpace(newFirstName, nameof(newFirstName));
             ArgumentException.ThrowIfNullOrWhiteSpace(newLastName, nameof(newLastName));
             ArgumentException.ThrowIfNullOrWhiteSpace(newEmail, nameof(newEmail));
-            ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
             if(!Enum.IsDefined(typeof(RoleType), role)) throw new ArgumentOutOfRangeException(nameof(role));
 
             var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
             if (user == null)
                 throw new UserNotFoundException("User not found.");
 
-            user.PasswordHash = _hasher.HashPassword(user, password);
             user.Email = newEmail;
             user.FirstName = newFirstName;
             user.LastName = newLastName;

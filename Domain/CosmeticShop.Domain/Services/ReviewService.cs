@@ -113,6 +113,7 @@ namespace CosmeticShop.Domain.Services
             }
 
             await _unitOfWork.ReviewRepository.Delete(review.Id , cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>

@@ -1,7 +1,16 @@
 import '../styles/Footer.css';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { RoleType } from '../apiClient/models/role-type';
 
 const AdminFooter = () => {
+
+  const { role} = useAuth();
+
+  const isAdministrator = role === RoleType.NUMBER_0;
+  const isManager = role === RoleType.NUMBER_1;
+  const isModerator = role === RoleType.NUMBER_2;
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -18,15 +27,31 @@ const AdminFooter = () => {
 
         <div className="footer-section">
           <ul className="footer-links">
-            <li><Link to="/admin/products" className="nav-link">Товары</Link></li>
-            <li><Link to="/admin/orders" className="nav-link">Заказы</Link></li>         
+          {(isAdministrator || isManager) && (
+              <>
+                <li><Link to="/admin/products" className="nav-link">Товары</Link></li>
+              </>
+            )}   
+          {(isAdministrator || isModerator) && (
+              <>
+                <li><Link to="/admin/reviews" className="nav-link">Отзывы</Link></li>
+              </>
+            )}
           </ul>
         </div>
 
         <div className="footer-section">
           <ul className="footer-links">
-            <li><Link to="/admin/reviews" className="nav-link">Отзывы</Link></li>
-            <li><Link to="/admin/users" className="nav-link">Пользователи</Link></li>
+          {(isAdministrator || isManager) && (
+              <>
+                <li><Link to="/admin/orders" className="nav-link">Заказы</Link></li>
+              </>
+            )}  
+            {isAdministrator && (
+              <>
+                <li><Link to="/admin/users" className="nav-link">Пользователи</Link></li>
+              </>
+            )}
           </ul>
         </div>
 

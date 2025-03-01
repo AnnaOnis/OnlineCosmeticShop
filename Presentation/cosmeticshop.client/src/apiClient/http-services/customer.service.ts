@@ -20,12 +20,6 @@ export class CustomerService {
     return response;
   }
 
-  // Получение клиента по ID
-  public async getCustomerById(id: string, cancellationToken: AbortSignal): Promise<CustomerResponseDto> {
-    const response = await this.httpClient.get<CustomerResponseDto>(`/customer/${id}`, {signal: cancellationToken,});
-    return response;
-  }
-
   // Удаление клиента по ID
   public async deleteCustomer(id: string, cancellationToken: AbortSignal): Promise<void> {
     await this.httpClient.delete(`/customer/${id}`, {signal: cancellationToken,});

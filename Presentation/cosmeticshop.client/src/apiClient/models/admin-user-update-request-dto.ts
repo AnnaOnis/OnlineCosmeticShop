@@ -26,12 +26,6 @@ export interface AdminUserUpdateRequestDto {
      * @type {string}
      * @memberof AdminUserUpdateRequestDto
      */
-    newPassword: string;
-
-    /**
-     * @type {string}
-     * @memberof AdminUserUpdateRequestDto
-     */
     firstName: string;
 
     /**

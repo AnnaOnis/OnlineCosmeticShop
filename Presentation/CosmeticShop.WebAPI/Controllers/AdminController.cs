@@ -287,7 +287,6 @@ namespace CosmeticShop.WebAPI.Controllers
         public async Task<ActionResult<UserResponseDto>> UpdateUserProfile([FromRoute] Guid id, [FromBody] AdminUserUpdateRequestDto userRequestDto, CancellationToken cancellationToken)
         {
             var updatedUser = await _userService.UpdateUserForAdmin(id,
-                                                            userRequestDto.NewPassword,
                                                             userRequestDto.Email,
                                                             userRequestDto.FirstName,
                                                             userRequestDto.LastName,

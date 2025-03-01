@@ -10,6 +10,7 @@ const adminService = new AdminService('/api');
 
 const OrderAdminTable: React.FC = () => {
   const [orders, setOrders] = useState<OrderResponseDto[]>([]);
+  const [customers, setCustomers] = useState<{ [key: string]: { firstName: string, lastName: string } }>({});
   const [filterDto, setFilterDto] = useState({
     filter: '',
     sortField: '',
@@ -26,6 +27,14 @@ const OrderAdminTable: React.FC = () => {
         const response = await adminService.getAllOrdersAsync(filterDto, new AbortController().signal);
         setOrders(response.items);
         setTotalPages(Math.ceil(response.totalItems / filterDto.pageSize));
+        // Загрузка информации о пользователях
+        const customerPromises = response.items.map(order => adminService.getCustomerById(order.customerId, new AbortController().signal));
+        const customerResponses = await Promise.all(customerPromises);
+        const customersMap = customerResponses.reduce((acc, customer) => {
+          acc[customer.id] = { firstName: customer.firstName, lastName: customer.lastName };
+          return acc;
+        }, {} as { [key: string]: { firstName: string, lastName: string } });
+        setCustomers(customersMap);
       } catch (error) {
         console.error(error);
       }
@@ -141,6 +150,7 @@ const OrderAdminTable: React.FC = () => {
           <tr>
             <th>ID</th>
             <th>Дата</th>
+            <th>Пользователь</th>
             <th>Сумма заказа</th>
             <th>Количество товаров</th>
             <th>Статус</th>
@@ -154,6 +164,7 @@ const OrderAdminTable: React.FC = () => {
             <tr key={order.id}>
               <td>{order.id}</td>
               <td>{new Date(order.orderDate).toLocaleDateString("ru-Ru")}</td>
+            <td>{customers[order.customerId]?.firstName || 'Нет данных'}{'\n'}{customers[order.customerId]?.lastName || 'Нет данных'}</td>
               <td>{order.totalAmount !== undefined ? order.totalAmount.toLocaleString() : 'Нет данных'} ₽</td>
               <td>{order.totalQuantity !== undefined ? order.totalQuantity : 'Нет данных'}</td>
               <td className={`admin-order-status ${order.status !== undefined ? order.status : ''}`}>

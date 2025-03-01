@@ -3,6 +3,7 @@ import { AdminService } from '../../apiClient/http-services/admin.service';
 import { RoleType, UserAddRequestDto, UserResponseDto } from '../../apiClient/models';
 import { userRoleMap } from '../../apiClient/models/map/modelMaps';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import "../../styles/admin/admin-global.css";
 import "../../styles/admin/admin-user.css";
 
@@ -10,6 +11,7 @@ import "../../styles/admin/admin-user.css";
 const adminService = new AdminService('/api');
 
 const UsersList: React.FC = () => {
+  const { id } = useAuth();
   const [users, setUsers] = useState<UserResponseDto[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -35,7 +37,7 @@ const UsersList: React.FC = () => {
     const fetchUsers = async () => {
       try {
         const response = await adminService.getAllUsers(filterDto, new AbortController().signal);
-        setUsers(response.items);
+        setUsers(response.items.filter(u => u.id !== id));
         setTotalPages(Math.ceil(response.totalItems / filterDto.pageSize));
       } catch (error) {
         console.error(error);

@@ -10,9 +10,6 @@ namespace HttpModels.Requests
 {
     public class AdminUserUpdateRequestDto
     {
-        [Required]
-        [StringLength(30, ErrorMessage = "Пароль не должен быть меньше 8 символов!", MinimumLength = 8)]
-        public string NewPassword { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "First name is required")]
         [StringLength(50, ErrorMessage = "First name cannot be longer than 50 characters")]
